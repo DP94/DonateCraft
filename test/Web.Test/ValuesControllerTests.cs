@@ -5,7 +5,7 @@ using Amazon.Lambda.TestUtilities;
 using Amazon.Lambda.APIGatewayEvents;
 
 
-namespace Web.Tests;
+namespace Web.Test;
 
 public class ValuesControllerTests
 {
