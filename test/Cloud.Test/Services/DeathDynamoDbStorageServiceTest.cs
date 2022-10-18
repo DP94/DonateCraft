@@ -28,6 +28,7 @@ public class DeathDynamoDbStorageServiceTest
     public async Task SetUp()
     {
         await LocalDynamoDbSetup.ClearTables(this._dynamoDb);
+        await LocalDynamoDbSetup.CreateTables(this._dynamoDb);
     }
 
     [Test]
@@ -130,10 +131,10 @@ public class DeathDynamoDbStorageServiceTest
             Reason = "Died from writing too many unit tests"
         };
     }
-    //
-    // [OneTimeTearDown]
-    // public void TearDown()
-    // {
-    //     this._localDynamoDbSetup.KillProcess();
-    // }
+
+    [OneTimeTearDown]
+    public void TearDown()
+    {
+        this._localDynamoDbSetup.KillProcess();
+    }
 }

@@ -29,7 +29,7 @@ public class LocalDynamoDbSetup : IDisposable
         await CreateTables(client);
     }
 
-    private async static Task CreateTables(IAmazonDynamoDB client)
+    public async static Task CreateTables(IAmazonDynamoDB client)
     {
         await CreatePlayerTable(client);
         await CreateDeathTable(client);
@@ -39,7 +39,6 @@ public class LocalDynamoDbSetup : IDisposable
     {
         await client.DeleteTableAsync(DynamoDbConstants.PlayerTableName);
         await client.DeleteTableAsync(DynamoDbConstants.DeathTableName);
-        await CreateTables(client);
     }
 
     public void KillProcess()

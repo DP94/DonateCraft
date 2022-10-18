@@ -29,6 +29,7 @@ public class PlayerDynamoDbStorageServiceTest
     public async Task SetUp()
     {
         await LocalDynamoDbSetup.ClearTables(this._dynamoDb);
+        await LocalDynamoDbSetup.CreateTables(this._dynamoDb);
     }
 
     [Test]
@@ -146,9 +147,9 @@ public class PlayerDynamoDbStorageServiceTest
         return DynamoDbUtility.GetPlayerFromAttributes(response.Item);
     }
 
-    // [OneTimeTearDown]
-    // public void TearDown()
-    // {
-    //     this._localDynamoDbSetup.KillProcess();
-    // }
+    [OneTimeTearDown]
+    public void TearDown()
+    {
+        this._localDynamoDbSetup.KillProcess();
+    }
 }
