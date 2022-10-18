@@ -81,5 +81,7 @@ public class Startup
                 await context.Response.WriteAsync("Welcome to running ASP.NET Core on AWS Lambda");
             });
         });
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
 }
