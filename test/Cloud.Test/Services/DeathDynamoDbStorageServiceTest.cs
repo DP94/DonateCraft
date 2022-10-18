@@ -130,10 +130,10 @@ public class DeathDynamoDbStorageServiceTest
             Reason = "Died from writing too many unit tests"
         };
     }
-
-    [OneTimeTearDown]
-    public void TearDown()
-    {
-        this._localDynamoDbSetup.KillProcess();
-    }
+    //
+    // [OneTimeTearDown]
+    // public void TearDown()
+    // {
+    //     this._localDynamoDbSetup.KillProcess();
+    // }
 }
