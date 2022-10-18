@@ -1,4 +1,5 @@
-﻿using Amazon.DynamoDBv2.Model;
+﻿using System.Globalization;
+using Amazon.DynamoDBv2.Model;
 using Common.Models;
 using Common.Util;
 
@@ -20,6 +21,8 @@ public static class DynamoDbUtility
         attributeValues.TryAdd(DynamoDbConstants.DeathIdColName, new AttributeValue(death.Id));
         attributeValues.TryAdd(DynamoDbConstants.DeathPlayerIdColName, new AttributeValue(death.PlayerId));
         attributeValues.TryAdd(DynamoDbConstants.DeathReasonColName, new AttributeValue(death.Reason));
+        attributeValues.TryAdd(DynamoDbConstants.DeathPlayerNameColName, new AttributeValue(death.PlayerName));
+        attributeValues.TryAdd(DynamoDbConstants.DeathCreatedDateColName, new AttributeValue(death.CreatedDate.ToString(CultureInfo.InvariantCulture)));
         return attributeValues;
     }
 
@@ -42,12 +45,16 @@ public static class DynamoDbUtility
         var death = new Death();
 
         if (attributeValues.TryGetValue(DynamoDbConstants.DeathIdColName, out var id) &&
-            attributeValues.TryGetValue(DynamoDbConstants.DeathPlayerIdColName, out var name)
-            && attributeValues.TryGetValue(DynamoDbConstants.DeathReasonColName, out var reason))
+            attributeValues.TryGetValue(DynamoDbConstants.DeathPlayerIdColName, out var playerId)
+            && attributeValues.TryGetValue(DynamoDbConstants.DeathReasonColName, out var reason)
+            && attributeValues.TryGetValue(DynamoDbConstants.DeathPlayerNameColName, out var playerName)
+            && attributeValues.TryGetValue(DynamoDbConstants.DeathCreatedDateColName, out var createdDate))
         {
             death.Id = id.S;
-            death.PlayerId = name.S;
+            death.PlayerId = playerId.S;
             death.Reason = reason.S;
+            death.PlayerName = playerName.S;
+            death.CreatedDate = DateTime.Parse(createdDate.S);
         }
             
         return death;

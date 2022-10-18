@@ -25,8 +25,8 @@ public class DeathControllerTest
     {
         var deaths = new List<Death>
         {
-            new("abc", "def", "test"),
-            new("ghi", "jkl", "test")
+            new("abc", "def", "test", "dan"),
+            new("ghi", "jkl", "test", "ronni")
         };
         A.CallTo(() => this._deathService.GetDeaths()).Returns(deaths);
         var result = await this._controller.GetDeaths() as ObjectResult;

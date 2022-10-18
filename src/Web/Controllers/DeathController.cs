@@ -40,13 +40,14 @@ public class DeathController : ControllerBase
     [HttpPost]
     [SwaggerResponse(201, "Success", typeof(Death))]
     [SwaggerOperation("Creates a deaths")]
-    public async Task<IActionResult> CreateDeath(Death death)
+    public async Task<IActionResult> CreateDeath([FromBody] Death death)
     {
         if (string.IsNullOrWhiteSpace(death.PlayerId))
         {
             return BadRequest("A death must have a player ID associated with it");
         }
-        
+        death.Id = Guid.NewGuid().ToString();
+        death.CreatedDate = DateTime.UtcNow;
         var createdDeath = await this._deathService.CreateDeath(death);
         return Created($"{this._httpContextAccessor.HttpContext?.Request.GetEncodedUrl()}/{death.Id}", createdDeath);
     }
