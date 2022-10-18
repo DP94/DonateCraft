@@ -87,7 +87,7 @@ public class PlayerControllerTest
             Name = "def"
         };
         A.CallTo(() => this._playerService.UpdatePlayer(player)).Returns(player);
-        var result = await this._controller.Put(player.Id, player) as ObjectResult;
+        var result = await this._controller.Put(player) as ObjectResult;
         Assert.AreEqual(player, result.Value);
         Assert.AreEqual(200, result.StatusCode);
     }

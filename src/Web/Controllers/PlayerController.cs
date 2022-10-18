@@ -53,8 +53,8 @@ public class PlayerController : ControllerBase
 
     [SwaggerOperation("Updates a player")]
     [SwaggerResponse(200, "Player updated", typeof(Player))]
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put([SwaggerParameter("ID of the player to update")] string id, [FromBody] Player player)
+    [HttpPut]
+    public async Task<IActionResult> Put([FromBody] Player player)
     {
         var updatedPlayer = await this._playerService.UpdatePlayer(player);
         return Ok(updatedPlayer);
