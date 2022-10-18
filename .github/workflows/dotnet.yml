@@ -21,5 +21,13 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Setup DynamoDB Local
+      uses: rrainn/dynamodb-action@v2.0.1
+      with:
+        sharedDb: true
+        port: 8000
+        cors: '*'
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      env:
+        ASPNETCORE_ENVIRONMENT: GITHUB
