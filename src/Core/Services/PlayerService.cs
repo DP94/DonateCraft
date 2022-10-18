@@ -7,23 +7,23 @@ namespace Core.Services;
 public class PlayerService : IPlayerService
 {
 
-    private readonly IPlayerDynamoDbStorageService _playerDynamoDbStorageService;
+    private readonly IPlayerCloudService _playerCloudService;
 
-    public PlayerService(IPlayerDynamoDbStorageService playerDynamoDbStorageService)
+    public PlayerService(IPlayerCloudService playerCloudService)
     {
-        _playerDynamoDbStorageService = playerDynamoDbStorageService;
+        this._playerCloudService = playerCloudService;
     }
 
     public async Task<List<Player>> GetPlayers()
     {
-        return await this._playerDynamoDbStorageService.GetPlayers();
+        return await this._playerCloudService.GetPlayers();
     }
 
     public async Task<Player?> GetPlayerById(string id)
     {
         try
         {
-            return await this._playerDynamoDbStorageService.GetPlayerById(id);
+            return await this._playerCloudService.GetPlayerById(id);
         }
         catch (ResourceNotFoundException)
         {
@@ -33,12 +33,12 @@ public class PlayerService : IPlayerService
 
     public async Task<Player> CreatePlayer(Player player)
     {
-        return await this._playerDynamoDbStorageService.CreatePlayer(player);
+        return await this._playerCloudService.CreatePlayer(player);
     }
 
     public async Task DeletePlayer(string id)
     {
-        await this._playerDynamoDbStorageService.DeletePlayer(id);
+        await this._playerCloudService.DeletePlayer(id);
     }
 
     public Task<Player> UpdatePlayer(Player player)

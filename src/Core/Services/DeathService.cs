@@ -6,35 +6,35 @@ namespace Core.Services;
 public class DeathService : IDeathService
 {
 
-    private IDeathDynamoDbStorageService _deathDynamoDbStorageService;
+    private IDeathCloudService _deathCloudService;
 
-    public DeathService(IDeathDynamoDbStorageService deathDynamoDbStorageService)
+    public DeathService(IDeathCloudService deathCloudService)
     {
-        this._deathDynamoDbStorageService = deathDynamoDbStorageService;
+        this._deathCloudService = deathCloudService;
     }
 
     public async Task<List<Death>> GetDeaths()
     {
-        return await this._deathDynamoDbStorageService.GetDeaths();
+        return await this._deathCloudService.GetDeaths();
     }
 
     public async Task<Death> GetDeathById(string id)
     {
-        return await this._deathDynamoDbStorageService.GetDeathById(id);;
+        return await this._deathCloudService.GetDeathById(id);;
     }
 
     public async Task<Death> CreateDeath(Death death)
     {
-        return await this._deathDynamoDbStorageService.CreateDeath(death);
+        return await this._deathCloudService.CreateDeath(death);
     }
 
     public async Task DeleteDeath(string id)
     {
-        await this._deathDynamoDbStorageService.DeleteDeath(id);
+        await this._deathCloudService.DeleteDeath(id);
     }
 
     public async Task<Death> UpdateDeath(Death death)
     {
-        return await this._deathDynamoDbStorageService.UpdateDeath(death);
+        return await this._deathCloudService.UpdateDeath(death);
     }
 }

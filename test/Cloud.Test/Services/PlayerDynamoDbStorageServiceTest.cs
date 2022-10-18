@@ -12,7 +12,7 @@ namespace Cloud.Test.Services;
 
 public class PlayerDynamoDbStorageServiceTest
 {
-    private IPlayerDynamoDbStorageService _dynamoDbStorageService;
+    private IPlayerCloudService _cloudService;
     private IAmazonDynamoDB _dynamoDb;
     private LocalDynamoDbSetup _localDynamoDbSetup;
 
@@ -23,7 +23,7 @@ public class PlayerDynamoDbStorageServiceTest
         await this._localDynamoDbSetup.SetupDynamoDb();
         await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
-        this._dynamoDbStorageService = new PlayerDynamoDbStorageService(this._dynamoDb);
+        this._cloudService = new PlayerDynamoDbCloudService(this._dynamoDb);
     }
 
     [Test]
@@ -40,8 +40,8 @@ public class PlayerDynamoDbStorageServiceTest
             Id = Guid.NewGuid().ToString(),
             Name = "Test"
         };
-        await this._dynamoDbStorageService.CreatePlayer(player);
-        await this._dynamoDbStorageService.CreatePlayer(player2);
+        await this._cloudService.CreatePlayer(player);
+        await this._cloudService.CreatePlayer(player2);
 
         var players = new List<Player>
         {
@@ -49,7 +49,7 @@ public class PlayerDynamoDbStorageServiceTest
             player
         };
         
-        var retrievedPlayers = await this._dynamoDbStorageService.GetPlayers();
+        var retrievedPlayers = await this._cloudService.GetPlayers();
         //Collections assert being weird, need to re-visit
         Assert.AreEqual(players.Count, retrievedPlayers.Count);
     }
@@ -62,8 +62,8 @@ public class PlayerDynamoDbStorageServiceTest
             Id = Guid.NewGuid().ToString(),
             Name = "Test"
         };
-        await this._dynamoDbStorageService.CreatePlayer(player);
-        var retrievedPlayer = await this._dynamoDbStorageService.GetPlayerById(player.Id);
+        await this._cloudService.CreatePlayer(player);
+        var retrievedPlayer = await this._cloudService.GetPlayerById(player.Id);
         Assert.AreEqual(player.Id, retrievedPlayer.Id);
         Assert.AreEqual(player.Name,retrievedPlayer.Name);
     }
@@ -71,7 +71,7 @@ public class PlayerDynamoDbStorageServiceTest
     [Test]
     public void GetPlayer_WhichDoesntExist_Throws_ResourceNotFoundException()
     {
-        Assert.ThrowsAsync<ResourceNotFoundException>(() => this._dynamoDbStorageService.GetPlayerById(Guid.NewGuid().ToString()));
+        Assert.ThrowsAsync<ResourceNotFoundException>(() => this._cloudService.GetPlayerById(Guid.NewGuid().ToString()));
     }
     
     [Test]
@@ -82,7 +82,7 @@ public class PlayerDynamoDbStorageServiceTest
             Id = Guid.NewGuid().ToString(),
             Name = "Test"
         };
-        await this._dynamoDbStorageService.CreatePlayer(player);
+        await this._cloudService.CreatePlayer(player);
         var retrievedPlayer = await GetPlayer(player.Id);
         Assert.AreEqual(player.Id, retrievedPlayer.Id);
         Assert.AreEqual(player.Name,retrievedPlayer.Name);
@@ -96,9 +96,9 @@ public class PlayerDynamoDbStorageServiceTest
             Id = Guid.NewGuid().ToString(),
             Name = "Test"
         };
-        await this._dynamoDbStorageService.CreatePlayer(player);
+        await this._cloudService.CreatePlayer(player);
         player.Name = "Updated";
-        await this._dynamoDbStorageService.UpdatePlayer(player);
+        await this._cloudService.UpdatePlayer(player);
         
         var retrievedPlayer = await GetPlayer(player.Id);
         Assert.AreEqual(player.Id, retrievedPlayer.Id);
@@ -113,11 +113,11 @@ public class PlayerDynamoDbStorageServiceTest
             Id = Guid.NewGuid().ToString(),
             Name = "Test"
         };
-        await this._dynamoDbStorageService.CreatePlayer(player);
+        await this._cloudService.CreatePlayer(player);
         var retrievedPlayer = await GetPlayer(player.Id);
         Assert.NotNull(retrievedPlayer);
 
-        await this._dynamoDbStorageService.DeletePlayer(player.Id);
+        await this._cloudService.DeletePlayer(player.Id);
         retrievedPlayer = await GetPlayer(player.Id);
         Assert.Null(retrievedPlayer);
     }

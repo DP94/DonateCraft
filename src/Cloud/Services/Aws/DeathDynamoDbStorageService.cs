@@ -6,7 +6,7 @@ using Common.Util;
 
 namespace Cloud.Services;
 
-public class DeathDynamoDbStorageService : IDeathDynamoDbStorageService
+public class DeathDynamoDbStorageService : IDeathCloudService
 {
     private readonly IAmazonDynamoDB _dynamoDb;
     
