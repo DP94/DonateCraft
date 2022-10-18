@@ -2,7 +2,7 @@
 
 namespace Cloud.Services;
 
-public interface IPlayerDynamoDbStorageService
+public interface IPlayerCloudService
 {
     Task<List<Player>> GetPlayers();
     Task<Player?> GetPlayerById(string id);

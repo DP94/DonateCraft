@@ -11,7 +11,7 @@ namespace Cloud.Test.Services;
 
 public class DeathDynamoDbStorageServiceTest
 {
-    private IDeathDynamoDbStorageService _dynamoDbStorageService;
+    private IDeathCloudService _cloudService;
     private IAmazonDynamoDB _dynamoDb;
     private LocalDynamoDbSetup _localDynamoDbSetup;
 
@@ -22,7 +22,7 @@ public class DeathDynamoDbStorageServiceTest
         await this._localDynamoDbSetup.SetupDynamoDb();
         await this._localDynamoDbSetup.CreateTables(null, DynamoDbConstants.DeathTableName);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
-        this._dynamoDbStorageService = new DeathDynamoDbStorageService(this._dynamoDb);
+        this._cloudService = new DeathDynamoDbStorageService(this._dynamoDb);
     }
 
     [Test]
@@ -32,8 +32,8 @@ public class DeathDynamoDbStorageServiceTest
         
         var death = CreateDeath();
         var death2 = CreateDeath();
-        await this._dynamoDbStorageService.CreateDeath(death);
-        await this._dynamoDbStorageService.CreateDeath(death2);
+        await this._cloudService.CreateDeath(death);
+        await this._cloudService.CreateDeath(death2);
 
         var deaths = new List<Death>
         {
@@ -41,7 +41,7 @@ public class DeathDynamoDbStorageServiceTest
             death
         };
         
-        var retrievedDeaths = await this._dynamoDbStorageService.GetDeaths();
+        var retrievedDeaths = await this._cloudService.GetDeaths();
         //Collections assert being weird, need to re-visit
         Assert.AreEqual(deaths.Count, retrievedDeaths.Count);
     }
@@ -50,48 +50,57 @@ public class DeathDynamoDbStorageServiceTest
     public async Task GetDeath_SuccessfullyGetsDeath()
     {
         var death = CreateDeath();
-        await this._dynamoDbStorageService.CreateDeath(death);
-        var retrievedDeath = await this._dynamoDbStorageService.GetDeathById(death.Id);
+        await this._cloudService.CreateDeath(death);
+        var retrievedDeath = await this._cloudService.GetDeathById(death.Id);
         Assert.AreEqual(death.Id, retrievedDeath.Id);
+        Assert.AreEqual(death.Reason, retrievedDeath.Reason);
+        Assert.AreEqual(death.PlayerId, retrievedDeath.PlayerId);
+        Assert.AreEqual(death.PlayerName, retrievedDeath.PlayerName);
     }
 
     [Test]
     public void GetDeath_WhichDoesntExist_Throws_ResourceNotFoundException()
     {
-        Assert.ThrowsAsync<ResourceNotFoundException>(() => this._dynamoDbStorageService.GetDeathById(Guid.NewGuid().ToString()));
+        Assert.ThrowsAsync<ResourceNotFoundException>(() => this._cloudService.GetDeathById(Guid.NewGuid().ToString()));
     }
     
     [Test]
     public async Task CreateDeath_SuccessfullyCreatesDeath()
     {
         var death = CreateDeath();
-        await this._dynamoDbStorageService.CreateDeath(death);
+        await this._cloudService.CreateDeath(death);
         var retrievedDeath = await GetDeath(death.Id);
         Assert.AreEqual(death.Id, retrievedDeath.Id);
+        Assert.AreEqual(death.Reason, retrievedDeath.Reason);
+        Assert.AreEqual(death.PlayerId, retrievedDeath.PlayerId);
+        Assert.AreEqual(death.PlayerName, retrievedDeath.PlayerName);
     }
 
     [Test]
     public async Task UpdateDeath_SuccessfullyUpdatesDeath()
     {
         var death = CreateDeath();
-        await this._dynamoDbStorageService.CreateDeath(death);
+        await this._cloudService.CreateDeath(death);
         death.PlayerName = "Updated";
-        await this._dynamoDbStorageService.UpdateDeath(death);
+        await this._cloudService.UpdateDeath(death);
         
         var retrievedDeath = await GetDeath(death.Id);
         Assert.AreEqual(death.Id, retrievedDeath.Id);
         Assert.AreEqual("Updated", retrievedDeath.PlayerName);
+        Assert.AreEqual(death.Id, retrievedDeath.Id);
+        Assert.AreEqual(death.Reason, retrievedDeath.Reason);
+        Assert.AreEqual(death.PlayerId, retrievedDeath.PlayerId);
     }
     
     [Test]
     public async Task DeleteDeath_SuccessfullyDeletesDeath()
     {
         var death = CreateDeath();
-        await this._dynamoDbStorageService.CreateDeath(death);
+        await this._cloudService.CreateDeath(death);
         var retrievedDeath = await GetDeath(death.Id);
         Assert.NotNull(retrievedDeath);
 
-        await this._dynamoDbStorageService.DeleteDeath(death.Id);
+        await this._cloudService.DeleteDeath(death.Id);
         retrievedDeath = await GetDeath(death.Id);
         Assert.Null(retrievedDeath);
     }

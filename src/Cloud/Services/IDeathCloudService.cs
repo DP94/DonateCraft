@@ -2,7 +2,7 @@
 
 namespace Cloud.Services;
 
-public interface IDeathDynamoDbStorageService
+public interface IDeathCloudService
 {
     Task<List<Death>> GetDeaths();
     Task<Death?> GetDeathById(string id);

@@ -4,6 +4,7 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Cloud.DynamoDbLocal;
 using Cloud.Services;
+using Common.Util;
 using Core.Services;
 
 namespace Web;
@@ -28,7 +29,9 @@ public class Startup
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         if (env == "LOCAL")
         {
-            new LocalDynamoDbSetup().SetupDynamoDb();
+            var localDynamo = new LocalDynamoDbSetup();
+            localDynamo.SetupDynamoDb().Wait();
+            localDynamo.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.DeathTableName).Wait();
             awsOptions.Credentials = new BasicAWSCredentials("x", "x");
             awsOptions.DefaultClientConfig.ServiceURL = "http://localhost:8000";
         }
@@ -38,8 +41,8 @@ public class Startup
 
         services.AddSingleton<IPlayerService, PlayerService>();
         services.AddSingleton<IDeathService, DeathService>();
-        services.AddSingleton<IPlayerDynamoDbStorageService, PlayerDynamoDbStorageService>();
-        services.AddSingleton<IDeathDynamoDbStorageService, DeathDynamoDbStorageService>();
+        services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
+        services.AddSingleton<IDeathCloudService, DeathDynamoDbStorageService>();
 
         services.AddSwaggerGen(options => { options.EnableAnnotations(); });
         services.AddHttpContextAccessor();

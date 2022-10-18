@@ -6,12 +6,12 @@ using Common.Util;
 
 namespace Cloud.Services;
 
-public class PlayerDynamoDbStorageService : IPlayerDynamoDbStorageService
+public class PlayerDynamoDbCloudService : IPlayerCloudService
 {
     
     private readonly IAmazonDynamoDB _dynamoDb;
     
-    public PlayerDynamoDbStorageService(IAmazonDynamoDB dynamoDb)
+    public PlayerDynamoDbCloudService(IAmazonDynamoDB dynamoDb)
     {
         this._dynamoDb = dynamoDb;
     }
