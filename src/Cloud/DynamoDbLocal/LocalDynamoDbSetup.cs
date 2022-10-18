@@ -21,7 +21,8 @@ public class LocalDynamoDbSetup : IDisposable
     {
         this._process = this.StartDynamoProcess();
         var client = this.GetClient();
-        await this.CreatePlayerTable(client);
+        await CreatePlayerTable(client);
+        await CreateDeathTable(client);
     }
 
     public void KillProcess()
@@ -39,7 +40,7 @@ public class LocalDynamoDbSetup : IDisposable
         return new AmazonDynamoDBClient(credentials, config);
     }
 
-    private async Task CreatePlayerTable(IAmazonDynamoDB client)
+    private static async Task CreatePlayerTable(IAmazonDynamoDB client)
     {
         await client.CreateTableAsync(new CreateTableRequest(
             DynamoDbConstants.PlayerTableName,
@@ -49,6 +50,41 @@ public class LocalDynamoDbSetup : IDisposable
                 new(DynamoDbConstants.PlayerIdColName, ScalarAttributeType.S)
             },
             new ProvisionedThroughput(100, 100)));
+    }
+    
+    private static async Task CreateDeathTable(IAmazonDynamoDB client)
+    {
+        await client.CreateTableAsync(new CreateTableRequest
+        {
+            TableName = DynamoDbConstants.DeathTableName,
+            KeySchema = new List<KeySchemaElement> { new(DynamoDbConstants.DeathIdColName, KeyType.HASH) },
+            AttributeDefinitions = new List<AttributeDefinition>
+            {
+                new(DynamoDbConstants.DeathIdColName, ScalarAttributeType.S),
+                new(DynamoDbConstants.DeathPlayerIdColName, ScalarAttributeType.S)
+            },
+            GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>
+            {
+                new()
+                {
+                    IndexName = DynamoDbConstants.DeathPlayerIdColName,
+                    KeySchema = new List<KeySchemaElement>
+                    {
+                        new()
+                        {
+                            AttributeName = DynamoDbConstants.DeathPlayerIdColName,
+                            KeyType = KeyType.HASH
+                        }
+                    },
+                    ProvisionedThroughput = new ProvisionedThroughput(100, 100),
+                    Projection = new Projection
+                    {
+                        ProjectionType = ProjectionType.ALL
+                    }
+                }
+            },
+            ProvisionedThroughput = new ProvisionedThroughput(100, 100)
+        });
     }
 
     private Process StartDynamoProcess()

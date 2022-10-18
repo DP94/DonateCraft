@@ -37,7 +37,9 @@ public class Startup
         services.AddAWSService<IAmazonDynamoDB>(awsOptions);
 
         services.AddSingleton<IPlayerService, PlayerService>();
+        services.AddSingleton<IDeathService, DeathService>();
         services.AddSingleton<IPlayerDynamoDbStorageService, PlayerDynamoDbStorageService>();
+        services.AddSingleton<IDeathDynamoDbStorageService, DeathDynamoDbStorageService>();
 
         services.AddSwaggerGen(options => { options.EnableAnnotations(); });
         services.AddHttpContextAccessor();

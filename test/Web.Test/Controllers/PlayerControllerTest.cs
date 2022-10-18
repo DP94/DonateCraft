@@ -26,12 +26,8 @@ public class PlayerControllerTest
     {
         var players = new List<Player>
         {
-            {
-                new Player("abc", "def")
-            },
-            {
-                new Player("ghi", "jkl")
-            }
+            new("abc", "def"),
+            new("ghi", "jkl")
         };
         A.CallTo(() => this._playerService.GetPlayers()).Returns(players);
         var result = await this._controller.Get() as ObjectResult;
@@ -80,5 +76,19 @@ public class PlayerControllerTest
     {
         var result = await this._controller.Delete("abc") as StatusCodeResult;
         Assert.AreEqual(204, result.StatusCode);
+    }
+    
+    [Test]
+    public async Task Put_UpdatesPlayer_Successfully()
+    {
+        var player = new Player
+        {
+            Id = "abc",
+            Name = "def"
+        };
+        A.CallTo(() => this._playerService.UpdatePlayer(player)).Returns(player);
+        var result = await this._controller.Put(player.Id, player) as ObjectResult;
+        Assert.AreEqual(player, result.Value);
+        Assert.AreEqual(200, result.StatusCode);
     }
 }

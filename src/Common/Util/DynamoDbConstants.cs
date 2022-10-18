@@ -8,4 +8,11 @@ public static class DynamoDbConstants
     public const string PlayerIdColName = "id";
     public const string PlayerNameColName = "name";
     #endregion
+    
+    #region Death
+    public const string DeathTableName = "Death";
+    public const string DeathIdColName = "id";
+    public const string DeathPlayerIdColName = "playerId";
+    public const string DeathReasonColName = "name";
+    #endregion
 }

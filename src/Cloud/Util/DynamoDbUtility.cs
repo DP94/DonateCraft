@@ -13,6 +13,15 @@ public static class DynamoDbUtility
         attributeValues.TryAdd(DynamoDbConstants.PlayerNameColName, new AttributeValue(player.Name));
         return attributeValues;
     }
+    
+    public static Dictionary<string, AttributeValue> GetAttributesFromDeath(Death death)
+    {
+        var attributeValues = new Dictionary<string, AttributeValue>();
+        attributeValues.TryAdd(DynamoDbConstants.DeathIdColName, new AttributeValue(death.Id));
+        attributeValues.TryAdd(DynamoDbConstants.DeathPlayerIdColName, new AttributeValue(death.PlayerId));
+        attributeValues.TryAdd(DynamoDbConstants.DeathReasonColName, new AttributeValue(death.Reason));
+        return attributeValues;
+    }
 
     public static Player GetPlayerFromAttributes(Dictionary<string, AttributeValue> attributeValues)
     {
@@ -26,5 +35,21 @@ public static class DynamoDbUtility
         }
             
         return player;
+    }
+    
+    public static Death GetDeathFromAttributes(Dictionary<string, AttributeValue> attributeValues)
+    {
+        var death = new Death();
+
+        if (attributeValues.TryGetValue(DynamoDbConstants.DeathIdColName, out var id) &&
+            attributeValues.TryGetValue(DynamoDbConstants.DeathPlayerIdColName, out var name)
+            && attributeValues.TryGetValue(DynamoDbConstants.DeathReasonColName, out var reason))
+        {
+            death.Id = id.S;
+            death.PlayerId = name.S;
+            death.Reason = reason.S;
+        }
+            
+        return death;
     }
 }
