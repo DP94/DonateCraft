@@ -20,7 +20,6 @@ public class LocalDynamoDbSetup : IDisposable
     public async Task SetupDynamoDb()
     {
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        Console.WriteLine($"Env is {env}");
         if (env != "GITHUB")
         {
             this._process = this.StartDynamoProcess();
