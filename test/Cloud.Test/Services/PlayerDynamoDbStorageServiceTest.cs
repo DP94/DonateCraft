@@ -21,20 +21,15 @@ public class PlayerDynamoDbStorageServiceTest
     {
         this._localDynamoDbSetup = new LocalDynamoDbSetup();
         await this._localDynamoDbSetup.SetupDynamoDb();
+        await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
         this._dynamoDbStorageService = new PlayerDynamoDbStorageService(this._dynamoDb);
-    }
-
-    [SetUp]
-    public async Task SetUp()
-    {
-        await LocalDynamoDbSetup.ClearTables(this._dynamoDb);
-        await LocalDynamoDbSetup.CreateTables(this._dynamoDb);
     }
 
     [Test]
     public async Task GetPlayers_SuccessfullyGets_AllPlayers()
     {
+        await this._localDynamoDbSetup.ClearTables(DynamoDbConstants.PlayerTableName, null);
         var player = new Player
         {
             Id = Guid.NewGuid().ToString(),

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Amazon.Runtime;
@@ -19,25 +20,32 @@ public class LocalDynamoDbSetup : IDisposable
 
     public async Task SetupDynamoDb()
     {
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        if (env != "GITHUB")
-        {
-            this._process = this.StartDynamoProcess();
-        }
-        var client = this.GetClient();
-        await CreateTables(client);
+        this._process = this.StartDynamoProcess();
     }
 
-    public async static Task CreateTables(IAmazonDynamoDB client)
+    public async Task CreateTables(string playerTableName, string deathTableName)
     {
-        await CreatePlayerTable(client);
-        await CreateDeathTable(client);
+        if (!string.IsNullOrWhiteSpace(playerTableName))
+        {
+            await CreatePlayerTable(GetClient());
+        }
+        if (!string.IsNullOrWhiteSpace(deathTableName))
+        {
+            await CreateDeathTable(GetClient());
+        }
     }
     
-    public async static Task ClearTables(IAmazonDynamoDB client)
+    public async Task ClearTables(string playerTableName, string deathTableName)
     {
-        await client.DeleteTableAsync(DynamoDbConstants.PlayerTableName);
-        await client.DeleteTableAsync(DynamoDbConstants.DeathTableName);
+        if (!string.IsNullOrWhiteSpace(playerTableName))
+        {
+            await this.GetClient().DeleteTableAsync(DynamoDbConstants.PlayerTableName);
+        }
+        if (!string.IsNullOrWhiteSpace(deathTableName))
+        {
+            await this.GetClient().DeleteTableAsync(DynamoDbConstants.DeathTableName);
+        }
+        await this.CreateTables(playerTableName, deathTableName);
     }
 
     public void KillProcess()
