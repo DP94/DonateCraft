@@ -1,0 +1,27 @@
+
+[*]
+
+# Microsoft .NET properties
+csharp_new_line_before_members_in_object_initializers = false
+csharp_preferred_modifier_order = public, protected, private, internal, new, async, abstract, virtual, sealed, override, readonly, extern, unsafe, volatile, static:suggestion
+csharp_preserve_single_line_blocks = true
+dotnet_style_qualification_for_event = true:suggestion
+dotnet_style_qualification_for_field = true:suggestion
+dotnet_style_qualification_for_method = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+
+# ReSharper properties
+resharper_blank_lines_after_block_statements = 0
+resharper_blank_lines_around_single_line_auto_property = 1
+resharper_braces_for_ifelse = required
+resharper_csharp_blank_lines_around_region = 0
+resharper_csharp_blank_lines_inside_region = 0
+resharper_csharp_max_line_length = 126
+resharper_keep_existing_enum_arrangement = false
+resharper_parentheses_redundancy_style = remove
+resharper_place_expr_method_on_single_line = false
+resharper_place_simple_initializer_on_single_line = false
+resharper_remove_blank_lines_near_braces_in_declarations = false
+resharper_space_within_empty_braces = false
+resharper_wrap_chained_binary_expressions = chop_if_long
+resharper_wrap_object_and_collection_initializer_style = chop_always
