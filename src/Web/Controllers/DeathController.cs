@@ -39,6 +39,7 @@ public class DeathController : ControllerBase
     
     [HttpPost]
     [SwaggerResponse(201, "Success", typeof(Death))]
+    [SwaggerResponse(400, "Bad request")]
     [SwaggerOperation("Creates a deaths")]
     public async Task<IActionResult> CreateDeath([FromBody] Death death)
     {
@@ -54,6 +55,7 @@ public class DeathController : ControllerBase
     
     [HttpPut]
     [SwaggerResponse(200, "Success", typeof(Death))]
+    [SwaggerResponse(400, "Bad request")]
     [SwaggerOperation("Updates a death")]
     public async Task<IActionResult> UpdateDeath(Death death)
     {

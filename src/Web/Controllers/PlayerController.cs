@@ -31,6 +31,7 @@ public class PlayerController : ControllerBase
 
     [HttpGet("{id}")]
     [SwaggerResponse(200, "Success", typeof(Player))]
+    [SwaggerResponse(400, "Player not found")]
     [SwaggerOperation("Gets all player by id")]
     public async Task<IActionResult> Get(string id)
     {

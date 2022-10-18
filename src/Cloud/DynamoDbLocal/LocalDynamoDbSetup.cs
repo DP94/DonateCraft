@@ -21,8 +21,20 @@ public class LocalDynamoDbSetup : IDisposable
     {
         this._process = this.StartDynamoProcess();
         var client = this.GetClient();
+        await CreateTables(client);
+    }
+
+    private async static Task CreateTables(IAmazonDynamoDB client)
+    {
         await CreatePlayerTable(client);
         await CreateDeathTable(client);
+    }
+    
+    public async static Task ClearTables(IAmazonDynamoDB client)
+    {
+        await client.DeleteTableAsync(DynamoDbConstants.PlayerTableName);
+        await client.DeleteTableAsync(DynamoDbConstants.DeathTableName);
+        await CreateTables(client);
     }
 
     public void KillProcess()

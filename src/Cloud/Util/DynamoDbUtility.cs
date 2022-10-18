@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Security.Cryptography;
 using Amazon.DynamoDBv2.Model;
 using Common.Models;
 using Common.Util;
@@ -22,7 +23,7 @@ public static class DynamoDbUtility
         attributeValues.TryAdd(DynamoDbConstants.DeathPlayerIdColName, new AttributeValue(death.PlayerId));
         attributeValues.TryAdd(DynamoDbConstants.DeathReasonColName, new AttributeValue(death.Reason));
         attributeValues.TryAdd(DynamoDbConstants.DeathPlayerNameColName, new AttributeValue(death.PlayerName));
-        attributeValues.TryAdd(DynamoDbConstants.DeathCreatedDateColName, new AttributeValue(death.CreatedDate.ToString(CultureInfo.InvariantCulture)));
+        attributeValues.TryAdd(DynamoDbConstants.DeathCreatedDateColName, new AttributeValue(death.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")));
         return attributeValues;
     }
 
@@ -54,7 +55,7 @@ public static class DynamoDbUtility
             death.PlayerId = playerId.S;
             death.Reason = reason.S;
             death.PlayerName = playerName.S;
-            death.CreatedDate = DateTime.Parse(createdDate.S);
+            death.CreatedDate = DateTime.ParseExact(createdDate.S, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
             
         return death;
