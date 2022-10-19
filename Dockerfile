@@ -9,13 +9,9 @@ COPY src/Core/Core.csproj ./src/Core/
 COPY src/Common/Common.csproj ./src/Common/
 COPY src/Cloud/Cloud.csproj ./src/Cloud/
 
-COPY test/Web.Test/Web.Test.csproj ./test/Web.Test/
-COPY test/Cloud.Test/Cloud.Test.csproj ./test/Cloud.Test/
-
 RUN dotnet restore
 
 COPY src/. ./src/
-COPY test/. ./test/
 
 RUN dotnet build DonateCraft.sln -c Release
 
