@@ -11,5 +11,5 @@
   "function-runtime": "dotnet6",
   "function-memory-size": 256,
   "function-timeout": 30,
-  "function-handler": "DeathLambda::DeathLambda.Function::FunctionHandler"
+  "function-handler": "DeathLambda::DeathLambda.DeathLambda::HandleRequest"
 }

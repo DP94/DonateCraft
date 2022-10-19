@@ -26,6 +26,15 @@ public static class DynamoDbUtility
         attributeValues.TryAdd(DynamoDbConstants.DeathCreatedDateColName, new AttributeValue(death.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")));
         return attributeValues;
     }
+    
+    public static Dictionary<string, AttributeValue> GetAttributesFromLock(Lock theLock)
+    {
+        var attributeValues = new Dictionary<string, AttributeValue>();
+        attributeValues.TryAdd(DynamoDbConstants.LockIdColName, new AttributeValue(theLock.Id));
+        attributeValues.TryAdd(DynamoDbConstants.LockKeyColName, new AttributeValue(theLock.Key));
+        attributeValues.TryAdd(DynamoDbConstants.LockUnlockedColName, new AttributeValue {BOOL = theLock.Unlocked});
+        return attributeValues;
+    }
 
     public static Player GetPlayerFromAttributes(Dictionary<string, AttributeValue> attributeValues)
     {
@@ -59,5 +68,21 @@ public static class DynamoDbUtility
         }
             
         return death;
+    }
+    
+    public static Lock GetLockFromAttributes(Dictionary<string, AttributeValue> attributeValues)
+    {
+        var newLock = new Lock();
+
+        if (attributeValues.TryGetValue(DynamoDbConstants.LockIdColName, out var id) &&
+            attributeValues.TryGetValue(DynamoDbConstants.LockKeyColName, out var key) &&
+            attributeValues.TryGetValue(DynamoDbConstants.LockUnlockedColName, out var unlocked))
+        {
+            newLock.Id = id.S;
+            newLock.Key = key.S;
+            newLock.Unlocked = unlocked.BOOL;
+        }
+            
+        return newLock;
     }
 }

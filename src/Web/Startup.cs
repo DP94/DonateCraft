@@ -4,6 +4,7 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Cloud.DynamoDbLocal;
 using Cloud.Services;
+using Cloud.Services.Aws;
 using Common.Util;
 using Core.Services;
 
@@ -31,7 +32,7 @@ public class Startup
         {
             var localDynamo = new LocalDynamoDbSetup();
             localDynamo.SetupDynamoDb().Wait();
-            localDynamo.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.DeathTableName).Wait();
+            localDynamo.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.DeathTableName, DynamoDbConstants.LockTableName).Wait();
             awsOptions.Credentials = new BasicAWSCredentials("x", "x");
             awsOptions.DefaultClientConfig.ServiceURL = "http://localhost:8000";
         }
