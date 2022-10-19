@@ -16,13 +16,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{A140A63B-F855-475F-B0B2-DE6A3070C22D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		Dockerfile = Dockerfile
 		.github\workflows\main.yml = .github\workflows\main.yml
 		.github\workflows\pr.yml = .github\workflows\pr.yml
-		Dockerfile = Dockerfile
 		serverless.template = serverless.template
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cloud.Test", "test\Cloud.Test\Cloud.Test.csproj", "{7B30948F-4B9D-4B3A-A10D-398640675C68}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeathLambda", "src\DeathLambda\DeathLambda.csproj", "{A6DD12B7-42B5-4464-A798-3FD815925126}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeathLambda.Tests", "test\DeathLambda.Tests\DeathLambda.Tests.csproj", "{7620D9FE-C57B-4814-BC40-2ED7BF306C67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +58,14 @@ Global
 		{7B30948F-4B9D-4B3A-A10D-398640675C68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B30948F-4B9D-4B3A-A10D-398640675C68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B30948F-4B9D-4B3A-A10D-398640675C68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6DD12B7-42B5-4464-A798-3FD815925126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6DD12B7-42B5-4464-A798-3FD815925126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6DD12B7-42B5-4464-A798-3FD815925126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6DD12B7-42B5-4464-A798-3FD815925126}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7620D9FE-C57B-4814-BC40-2ED7BF306C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7620D9FE-C57B-4814-BC40-2ED7BF306C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7620D9FE-C57B-4814-BC40-2ED7BF306C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7620D9FE-C57B-4814-BC40-2ED7BF306C67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

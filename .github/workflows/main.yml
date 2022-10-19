@@ -35,5 +35,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
-      - name: Deploy to Lambda
+      - name: Deploy to API lambda
         run: dotnet lambda deploy-serverless --stack-name donatecraft --s3-bucket donatecraft --template serverless.template
+      - name: Deploy DeathLambda
+        run: dotnet lambda deploy-function -fn deathlambda -pl src/DeathLambda/
