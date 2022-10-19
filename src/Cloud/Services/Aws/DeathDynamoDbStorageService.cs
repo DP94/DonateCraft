@@ -4,7 +4,7 @@ using Cloud.Util;
 using Common.Models;
 using Common.Util;
 
-namespace Cloud.Services;
+namespace Cloud.Services.Aws;
 
 public class DeathDynamoDbStorageService : IDeathCloudService
 {

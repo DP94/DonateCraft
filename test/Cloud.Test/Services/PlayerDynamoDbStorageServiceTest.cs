@@ -3,6 +3,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Cloud.DynamoDbLocal;
 using Cloud.Services;
+using Cloud.Services.Aws;
 using Cloud.Util;
 using Common.Models;
 using Common.Util;
@@ -21,7 +22,7 @@ public class PlayerDynamoDbStorageServiceTest
     {
         this._localDynamoDbSetup = new LocalDynamoDbSetup();
         await this._localDynamoDbSetup.SetupDynamoDb();
-        await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, null);
+        await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, null, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
         this._cloudService = new PlayerDynamoDbCloudService(this._dynamoDb);
     }
@@ -29,7 +30,7 @@ public class PlayerDynamoDbStorageServiceTest
     [Test]
     public async Task GetPlayers_SuccessfullyGets_AllPlayers()
     {
-        await this._localDynamoDbSetup.ClearTables(DynamoDbConstants.PlayerTableName, null);
+        await this._localDynamoDbSetup.ClearTables(DynamoDbConstants.PlayerTableName, null, null);
         var player = new Player
         {
             Id = Guid.NewGuid().ToString(),

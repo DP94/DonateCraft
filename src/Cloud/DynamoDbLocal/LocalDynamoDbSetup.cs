@@ -23,7 +23,7 @@ public class LocalDynamoDbSetup : IDisposable
         this._process = this.StartDynamoProcess();
     }
 
-    public async Task CreateTables(string playerTableName, string deathTableName)
+    public async Task CreateTables(string playerTableName, string deathTableName, string lockTableName)
     {
         if (!string.IsNullOrWhiteSpace(playerTableName))
         {
@@ -33,9 +33,13 @@ public class LocalDynamoDbSetup : IDisposable
         {
             await CreateDeathTable(GetClient());
         }
+        if (!string.IsNullOrWhiteSpace(lockTableName))
+        {
+            await CreateLockTable(GetClient());
+        }
     }
     
-    public async Task ClearTables(string playerTableName, string deathTableName)
+    public async Task ClearTables(string playerTableName, string deathTableName, string lockTableName)
     {
         if (!string.IsNullOrWhiteSpace(playerTableName))
         {
@@ -45,7 +49,11 @@ public class LocalDynamoDbSetup : IDisposable
         {
             await this.GetClient().DeleteTableAsync(DynamoDbConstants.DeathTableName);
         }
-        await this.CreateTables(playerTableName, deathTableName);
+        if (!string.IsNullOrWhiteSpace(lockTableName))
+        {
+            await this.GetClient().DeleteTableAsync(DynamoDbConstants.LockTableName);
+        }
+        await this.CreateTables(playerTableName, deathTableName, lockTableName);
     }
 
     public void KillProcess()
@@ -63,7 +71,7 @@ public class LocalDynamoDbSetup : IDisposable
         return new AmazonDynamoDBClient(credentials, config);
     }
 
-    private static async Task CreatePlayerTable(IAmazonDynamoDB client)
+    private async static Task CreatePlayerTable(IAmazonDynamoDB client)
     {
         await client.CreateTableAsync(new CreateTableRequest(
             DynamoDbConstants.PlayerTableName,
@@ -75,7 +83,7 @@ public class LocalDynamoDbSetup : IDisposable
             new ProvisionedThroughput(100, 100)));
     }
     
-    private static async Task CreateDeathTable(IAmazonDynamoDB client)
+    private async static Task CreateDeathTable(IAmazonDynamoDB client)
     {
         await client.CreateTableAsync(new CreateTableRequest
         {
@@ -105,6 +113,20 @@ public class LocalDynamoDbSetup : IDisposable
                         ProjectionType = ProjectionType.ALL
                     }
                 }
+            },
+            ProvisionedThroughput = new ProvisionedThroughput(100, 100)
+        });
+    }
+
+    private async static Task CreateLockTable(IAmazonDynamoDB client)
+    {
+        await client.CreateTableAsync(new CreateTableRequest
+        {
+            TableName = DynamoDbConstants.LockTableName,
+            KeySchema = new List<KeySchemaElement> { new(DynamoDbConstants.LockIdColName, KeyType.HASH) },
+            AttributeDefinitions = new List<AttributeDefinition>
+            {
+                new(DynamoDbConstants.LockIdColName, ScalarAttributeType.S)
             },
             ProvisionedThroughput = new ProvisionedThroughput(100, 100)
         });
