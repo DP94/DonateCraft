@@ -1,44 +1,41 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32602.291
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Test", "test\Web.Test\Web.Test.csproj", "{99347138-E4D3-48A0-8B09-BF02B716FCA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Test", "test\Web.Test\Web.Test.csproj", "{99347138-E4D3-48A0-8B09-BF02B716FCA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Web.csproj", "{DEF39AFD-A344-47E8-9882-77DD8C453508}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "src\Web\Web.csproj", "{DEF39AFD-A344-47E8-9882-77DD8C453508}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\Common\Common.csproj", "{53F17971-1C4D-4B12-8FB7-830D19506222}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Common\Common.csproj", "{53F17971-1C4D-4B12-8FB7-830D19506222}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cloud", "src\Cloud\Cloud.csproj", "{BDFC7756-1A59-4FC5-BADD-656278C0E2EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cloud", "src\Cloud\Cloud.csproj", "{BDFC7756-1A59-4FC5-BADD-656278C0E2EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{A17AD3FB-8F94-4F79-9B63-E68AAE3CEC5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core.csproj", "{A17AD3FB-8F94-4F79-9B63-E68AAE3CEC5D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{A140A63B-F855-475F-B0B2-DE6A3070C22D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		Dockerfile = Dockerfile
-		.github\workflows\pr.yml = .github\workflows\pr.yml
 		.github\workflows\main.yml = .github\workflows\main.yml
+		.github\workflows\pr.yml = .github\workflows\pr.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cloud.Test", "test\Cloud.Test\Cloud.Test.csproj", "{7B30948F-4B9D-4B3A-A10D-398640675C68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cloud.Test", "test\Cloud.Test\Cloud.Test.csproj", "{7B30948F-4B9D-4B3A-A10D-398640675C68}"
 EndProject
 Global
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F797CDB9-48DA-4A73-85B7-2D27FFF80349}
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DEF39AFD-A344-47E8-9882-77DD8C453508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DEF39AFD-A344-47E8-9882-77DD8C453508}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DEF39AFD-A344-47E8-9882-77DD8C453508}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DEF39AFD-A344-47E8-9882-77DD8C453508}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99347138-E4D3-48A0-8B09-BF02B716FCA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99347138-E4D3-48A0-8B09-BF02B716FCA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99347138-E4D3-48A0-8B09-BF02B716FCA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99347138-E4D3-48A0-8B09-BF02B716FCA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEF39AFD-A344-47E8-9882-77DD8C453508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEF39AFD-A344-47E8-9882-77DD8C453508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEF39AFD-A344-47E8-9882-77DD8C453508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEF39AFD-A344-47E8-9882-77DD8C453508}.Release|Any CPU.Build.0 = Release|Any CPU
 		{53F17971-1C4D-4B12-8FB7-830D19506222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{53F17971-1C4D-4B12-8FB7-830D19506222}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53F17971-1C4D-4B12-8FB7-830D19506222}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -56,8 +53,10 @@ Global
 		{7B30948F-4B9D-4B3A-A10D-398640675C68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B30948F-4B9D-4B3A-A10D-398640675C68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F797CDB9-48DA-4A73-85B7-2D27FFF80349}
 	EndGlobalSection
 EndGlobal
