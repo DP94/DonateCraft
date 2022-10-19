@@ -26,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cloud.Test", "test\Cloud.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeathLambda", "src\DeathLambda\DeathLambda.csproj", "{A6DD12B7-42B5-4464-A798-3FD815925126}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeathLambda.Tests", "test\DeathLambda.Tests\DeathLambda.Tests.csproj", "{7620D9FE-C57B-4814-BC40-2ED7BF306C67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeathLambda.Test", "test\DeathLambda.Test\DeathLambda.Test.csproj", "{05944D8E-4A13-43E5-885E-DE371A7257CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,10 +62,10 @@ Global
 		{A6DD12B7-42B5-4464-A798-3FD815925126}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6DD12B7-42B5-4464-A798-3FD815925126}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6DD12B7-42B5-4464-A798-3FD815925126}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7620D9FE-C57B-4814-BC40-2ED7BF306C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7620D9FE-C57B-4814-BC40-2ED7BF306C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7620D9FE-C57B-4814-BC40-2ED7BF306C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7620D9FE-C57B-4814-BC40-2ED7BF306C67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05944D8E-4A13-43E5-885E-DE371A7257CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05944D8E-4A13-43E5-885E-DE371A7257CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05944D8E-4A13-43E5-885E-DE371A7257CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05944D8E-4A13-43E5-885E-DE371A7257CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

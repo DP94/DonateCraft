@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "CstS6H9s9Cel24/I56tituocj4y5kJmYNtEwUyxTR0VpfudawCVT5YRl4XG6BWNrs/NvCcQ6Z5wP48VbjAomiA==",
+  "dgSpecHash": "kRk4VzpEtlkL/3fl17g3X2nHWkeIWx8utpK8JJklYndwEz5lDHn4H7Q+28ep42hkYof2gon4LHWF2ImTvv1KDw==",
   "success": true,
   "projectFilePath": "C:\\Users\\dpell\\RiderProjects\\DonateCraft\\src\\DeathLambda\\DeathLambda.csproj",
   "expectedPackageFiles": [
@@ -9,8 +9,6 @@
     "C:\\Users\\dpell\\.nuget\\packages\\amazon.lambda.serialization.systemtextjson\\2.3.0\\amazon.lambda.serialization.systemtextjson.2.3.0.nupkg.sha512",
     "C:\\Users\\dpell\\.nuget\\packages\\awssdk.core\\3.7.10.8\\awssdk.core.3.7.10.8.nupkg.sha512",
     "C:\\Users\\dpell\\.nuget\\packages\\awssdk.dynamodbv2\\3.7.3.24\\awssdk.dynamodbv2.3.7.3.24.nupkg.sha512",
-    "C:\\Users\\dpell\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-x64\\6.0.6\\microsoft.netcore.app.runtime.linux-x64.6.0.6.nupkg.sha512",
-    "C:\\Users\\dpell\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-x64\\6.0.6\\microsoft.aspnetcore.app.runtime.linux-x64.6.0.6.nupkg.sha512",
     "C:\\Users\\dpell\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\6.0.6\\microsoft.netcore.app.crossgen2.win-x64.6.0.6.nupkg.sha512"
   ],
   "logs": []
