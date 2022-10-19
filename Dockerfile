@@ -1,4 +1,6 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+FROM public.ecr.aws/lambda/dotnet:6 AS base
+FROM mcr.microsoft.com/dotnet/sdk:6.0-bullseye-slim as build
+
 WORKDIR /app
 
 COPY DonateCraft.sln .
@@ -19,15 +21,9 @@ RUN dotnet build DonateCraft.sln -c Release
 
 RUN dotnet test test/Web.Test/Web.Test.csproj --no-build -c Release; exit 0
 
-RUN dotnet publish src/Web/Web.csproj --no-build -c Release -o /app/publish/Web
+FROM build AS publish
+RUN dotnet publish src/Web/Web.csproj --configuration Release --runtime linux-x64 --self-contained false --output /app/publish -p:PublishReadyToRun=true  
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
-
-WORKDIR /etc
-RUN mkdir ./docker
-
-env ASPNETCORE_URLS = "http://*:80" \
-WORKDIR /app
-COPY --from=build-env /app/publish/Web .
-EXPOSE 80
-ENTRYPOINT ["dotnet", "Web.dll"]
+FROM base AS final
+WORKDIR /var/task
+COPY --from=publish /app/publish .

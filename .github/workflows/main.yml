@@ -36,4 +36,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
       - name: Deploy to Lambda
-        run: dotnet lambda deploy-serverless --stack-name donatecraft --s3-bucket donatecraft --template src/Web/serverless.template
+        run: dotnet lambda deploy-serverless --stack-name donatecraft --s3-bucket donatecraft --template serverless.template
