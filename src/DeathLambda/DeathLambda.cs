@@ -43,7 +43,7 @@ public class DeathLambda
             
             if (record.Dynamodb.NewImage.TryGetValue(DynamoDbConstants.DeathPlayerIdColName, out var playerId))
             {
-                LambdaLogger.Log($"Creating a new lock for player {playerId}!");
+                LambdaLogger.Log($"Creating a new lock for player {playerId.S}!");
                 await this._lockService.Create(new Lock
                 {
                     Id = Guid.NewGuid().ToString(),
