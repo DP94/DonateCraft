@@ -1,7 +1,7 @@
-name: .NET
+name: Pull request build
 
 on:
-  push:
+  pull_request:
     branches: [ "main" ]
 
 jobs:
