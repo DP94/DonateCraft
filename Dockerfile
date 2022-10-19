@@ -18,7 +18,6 @@ COPY test/. ./test/
 RUN dotnet build DonateCraft.sln -c Release
 
 RUN dotnet test test/Web.Test/Web.Test.csproj --no-build -c Release; exit 0
-RUN dotnet test test/Cloud.Test/Cloud.Test.csproj --no-build -c Release; exit 0
 
 RUN dotnet publish src/Web/Web.csproj --no-build -c Release -o /app/publish/Web
 
