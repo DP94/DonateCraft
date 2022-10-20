@@ -31,4 +31,9 @@ public class LockService : ILockService
     {
         await this._lockCloudService.DeleteLock(id);
     }
+
+    public async Task<Lock> UpdateLock(Lock theLock)
+    {
+        return await this._lockCloudService.UpdateLock(theLock);
+    }
 }

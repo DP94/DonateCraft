@@ -42,8 +42,10 @@ public class Startup
 
         services.AddSingleton<IPlayerService, PlayerService>();
         services.AddSingleton<IDeathService, DeathService>();
+        services.AddSingleton<ILockService, LockService>();
         services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
         services.AddSingleton<IDeathCloudService, DeathDynamoDbStorageService>();
+        services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
 
         services.AddSwaggerGen(options => { options.EnableAnnotations(); });
         services.AddHttpContextAccessor();
