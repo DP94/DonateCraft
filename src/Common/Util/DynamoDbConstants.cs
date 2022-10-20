@@ -23,4 +23,12 @@ public static class DynamoDbConstants
     public const string LockUnlockedColName = "unlocked";
     public const string LockKeyColName = "key";
     #endregion
+    
+    #region Charity
+    public const string CharityTableName = "Charity";
+    public const string CharityIdColName = "id";
+    public const string CharityNameColName = "name";
+    public const string CharityDescriptionColName = "description";
+    public const string CharityURLColName = "url";
+    #endregion
 }

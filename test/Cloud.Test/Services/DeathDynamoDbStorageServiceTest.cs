@@ -21,7 +21,7 @@ public class DeathDynamoDbStorageServiceTest
     {
         this._localDynamoDbSetup = new LocalDynamoDbSetup();
         await this._localDynamoDbSetup.SetupDynamoDb();
-        await this._localDynamoDbSetup.CreateTables(null, DynamoDbConstants.DeathTableName, null);
+        await this._localDynamoDbSetup.CreateTables(null, DynamoDbConstants.DeathTableName, null, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
         this._cloudService = new DeathDynamoDbStorageService(this._dynamoDb);
     }
@@ -29,7 +29,7 @@ public class DeathDynamoDbStorageServiceTest
     [Test]
     public async Task GetDeaths_SuccessfullyGets_AllDeaths()
     {
-        await this._localDynamoDbSetup.ClearTables(null, DynamoDbConstants.DeathTableName, null);
+        await this._localDynamoDbSetup.ClearTables(null, DynamoDbConstants.DeathTableName, null, null);
         
         var death = CreateDeath();
         var death2 = CreateDeath();

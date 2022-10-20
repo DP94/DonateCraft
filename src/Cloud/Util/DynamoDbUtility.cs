@@ -35,6 +35,16 @@ public static class DynamoDbUtility
         attributeValues.TryAdd(DynamoDbConstants.LockUnlockedColName, new AttributeValue {BOOL = theLock.Unlocked});
         return attributeValues;
     }
+    
+    public static Dictionary<string, AttributeValue> GetAttributesFromCharity(Charity charity)
+    {
+        var attributeValues = new Dictionary<string, AttributeValue>();
+        attributeValues.TryAdd(DynamoDbConstants.CharityIdColName, new AttributeValue(charity.Id));
+        attributeValues.TryAdd(DynamoDbConstants.CharityNameColName, new AttributeValue(charity.Name));
+        attributeValues.TryAdd(DynamoDbConstants.CharityDescriptionColName, new AttributeValue(charity.Description));
+        attributeValues.TryAdd(DynamoDbConstants.CharityURLColName, new AttributeValue(charity.Url));
+        return attributeValues;
+    }
 
     public static Player GetPlayerFromAttributes(Dictionary<string, AttributeValue> attributeValues)
     {
@@ -84,5 +94,23 @@ public static class DynamoDbUtility
         }
             
         return newLock;
+    }
+    
+    public static Charity GetCharityFromAttributes(Dictionary<string, AttributeValue> attributeValues)
+    {
+        var charity = new Charity();
+
+        if (attributeValues.TryGetValue(DynamoDbConstants.CharityIdColName, out var id) &&
+            attributeValues.TryGetValue(DynamoDbConstants.CharityNameColName, out var name) &&
+            attributeValues.TryGetValue(DynamoDbConstants.CharityDescriptionColName, out var description) &&
+            attributeValues.TryGetValue(DynamoDbConstants.CharityURLColName, out var url))
+        {
+            charity.Id = id.S;
+            charity.Description = description.S;
+            charity.Name = name.S;
+            charity.Url = url.S;
+        }
+            
+        return charity;
     }
 }

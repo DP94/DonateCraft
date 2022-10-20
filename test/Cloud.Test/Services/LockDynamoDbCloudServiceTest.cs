@@ -21,7 +21,7 @@ public class LockDynamoDbCloudServiceTest
     {
         this._localDynamoDbSetup = new LocalDynamoDbSetup();
         await this._localDynamoDbSetup.SetupDynamoDb();
-        await this._localDynamoDbSetup.CreateTables(null, null, DynamoDbConstants.LockTableName);
+        await this._localDynamoDbSetup.CreateTables(null, null, DynamoDbConstants.LockTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
         this._cloudService = new LockDynamoDbCloudService(this._dynamoDb);
     }
@@ -29,7 +29,7 @@ public class LockDynamoDbCloudServiceTest
     [Test]
     public async Task GetLocks_SuccessfullyGets_AllLocks()
     {
-        await this._localDynamoDbSetup.ClearTables(null, null, DynamoDbConstants.LockTableName);
+        await this._localDynamoDbSetup.ClearTables(null, null, DynamoDbConstants.LockTableName, null);
         
         var newLock = CreateLock();
         var newLock2 = CreateLock();
@@ -52,10 +52,10 @@ public class LockDynamoDbCloudServiceTest
     {
         var newLock = CreateLock();
         await this._cloudService.Create(newLock);
-        var retrievedDeath = await GetLock(newLock.Id);
-        Assert.AreEqual(newLock.Id, retrievedDeath.Id);
-        Assert.AreEqual(newLock.Key, retrievedDeath.Key);
-        Assert.AreEqual(newLock.Unlocked, retrievedDeath.Unlocked);
+        var retrievedLock = await GetLock(newLock.Id);
+        Assert.AreEqual(newLock.Id, retrievedLock.Id);
+        Assert.AreEqual(newLock.Key, retrievedLock.Key);
+        Assert.AreEqual(newLock.Unlocked, retrievedLock.Unlocked);
     }
     
     [Test]
@@ -63,10 +63,10 @@ public class LockDynamoDbCloudServiceTest
     {
         var newLock = CreateLock();
         await this._cloudService.Create(newLock);
-        var retrievedDeath = await this._cloudService.GetLock(newLock.Id);
-        Assert.AreEqual(newLock.Id, retrievedDeath.Id);
-        Assert.AreEqual(newLock.Key, retrievedDeath.Key);
-        Assert.AreEqual(newLock.Unlocked, retrievedDeath.Unlocked);
+        var retrievedLock = await this._cloudService.GetLock(newLock.Id);
+        Assert.AreEqual(newLock.Id, retrievedLock.Id);
+        Assert.AreEqual(newLock.Key, retrievedLock.Key);
+        Assert.AreEqual(newLock.Unlocked, retrievedLock.Unlocked);
     }
     
     [Test]
@@ -80,12 +80,12 @@ public class LockDynamoDbCloudServiceTest
     {
         var newLock = CreateLock();
         await this._cloudService.Create(newLock);
-        var retrievedDeath = await GetLock(newLock.Id);
-        Assert.NotNull(retrievedDeath);
+        var retrievedLock = await GetLock(newLock.Id);
+        Assert.NotNull(retrievedLock);
 
         await this._cloudService.DeleteLock(newLock.Id);
-        retrievedDeath = await GetLock(newLock.Id);
-        Assert.Null(retrievedDeath);
+        retrievedLock = await GetLock(newLock.Id);
+        Assert.Null(retrievedLock);
     }
     
     //Purposefully not using the service method for GET for test code isolation
@@ -97,7 +97,7 @@ public class LockDynamoDbCloudServiceTest
             Key = new Dictionary<string, AttributeValue>
             {
                 {
-                    DynamoDbConstants.DeathIdColName, new AttributeValue(id)
+                    DynamoDbConstants.LockIdColName, new AttributeValue(id)
                 }
             }
         });

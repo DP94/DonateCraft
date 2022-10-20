@@ -23,23 +23,28 @@ public class LocalDynamoDbSetup : IDisposable
         this._process = this.StartDynamoProcess();
     }
 
-    public async Task CreateTables(string playerTableName, string deathTableName, string lockTableName)
+    public async Task CreateTables(string playerTableName, string deathTableName, string lockTableName, string charityTableName)
     {
+        var client = GetClient();
         if (!string.IsNullOrWhiteSpace(playerTableName))
         {
-            await CreatePlayerTable(GetClient());
+            await CreatePlayerTable(client);
         }
         if (!string.IsNullOrWhiteSpace(deathTableName))
         {
-            await CreateDeathTable(GetClient());
+            await CreateDeathTable(client);
         }
         if (!string.IsNullOrWhiteSpace(lockTableName))
         {
-            await CreateLockTable(GetClient());
+            await CreateLockTable(client);
+        }
+        if (!string.IsNullOrWhiteSpace(charityTableName))
+        {
+            await CreateCharityTable(client);
         }
     }
     
-    public async Task ClearTables(string playerTableName, string deathTableName, string lockTableName)
+    public async Task ClearTables(string playerTableName, string deathTableName, string lockTableName, string charityTableName)
     {
         if (!string.IsNullOrWhiteSpace(playerTableName))
         {
@@ -53,7 +58,11 @@ public class LocalDynamoDbSetup : IDisposable
         {
             await this.GetClient().DeleteTableAsync(DynamoDbConstants.LockTableName);
         }
-        await this.CreateTables(playerTableName, deathTableName, lockTableName);
+        if (!string.IsNullOrWhiteSpace(charityTableName))
+        {
+            await this.GetClient().DeleteTableAsync(DynamoDbConstants.CharityTableName);
+        }
+        await this.CreateTables(playerTableName, deathTableName, lockTableName, charityTableName);
     }
 
     public void KillProcess()
@@ -127,6 +136,20 @@ public class LocalDynamoDbSetup : IDisposable
             AttributeDefinitions = new List<AttributeDefinition>
             {
                 new(DynamoDbConstants.LockIdColName, ScalarAttributeType.S)
+            },
+            ProvisionedThroughput = new ProvisionedThroughput(100, 100)
+        });
+    }
+    
+    private async static Task CreateCharityTable(IAmazonDynamoDB client)
+    {
+        await client.CreateTableAsync(new CreateTableRequest
+        {
+            TableName = DynamoDbConstants.CharityTableName,
+            KeySchema = new List<KeySchemaElement> { new(DynamoDbConstants.CharityIdColName, KeyType.HASH) },
+            AttributeDefinitions = new List<AttributeDefinition>
+            {
+                new(DynamoDbConstants.CharityIdColName, ScalarAttributeType.S)
             },
             ProvisionedThroughput = new ProvisionedThroughput(100, 100)
         });
