@@ -8,4 +8,5 @@ public interface ILockService
     Task<List<Lock>> GetLocks();
     Task<Lock> GetLock(string id);
     Task DeleteLock(string id);
+    Task<Lock> UpdateLock(Lock theLock);
 }

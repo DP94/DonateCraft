@@ -65,4 +65,14 @@ public class LockDynamoDbCloudService : ILockCloudService
             }
         });
     }
+
+    public async Task<Lock> UpdateLock(Lock theLock)
+    {
+        await this._amazonDynamoDb.PutItemAsync(new PutItemRequest
+        {
+            TableName = DynamoDbConstants.LockTableName,
+            Item = DynamoDbUtility.GetAttributesFromLock(theLock)
+        });
+        return theLock;
+    }
 }
