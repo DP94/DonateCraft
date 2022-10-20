@@ -32,7 +32,8 @@ public class Startup
         {
             var localDynamo = new LocalDynamoDbSetup();
             localDynamo.SetupDynamoDb().Wait();
-            localDynamo.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.DeathTableName, DynamoDbConstants.LockTableName).Wait();
+            localDynamo.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.DeathTableName,
+                DynamoDbConstants.LockTableName, DynamoDbConstants.CharityTableName).Wait();
             awsOptions.Credentials = new BasicAWSCredentials("x", "x");
             awsOptions.DefaultClientConfig.ServiceURL = "http://localhost:8000";
         }
@@ -43,9 +44,11 @@ public class Startup
         services.AddSingleton<IPlayerService, PlayerService>();
         services.AddSingleton<IDeathService, DeathService>();
         services.AddSingleton<ILockService, LockService>();
+        services.AddSingleton<ICharityService, CharityService>();
         services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
         services.AddSingleton<IDeathCloudService, DeathDynamoDbStorageService>();
         services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
+        services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
 
         services.AddSwaggerGen(options => { options.EnableAnnotations(); });
         services.AddHttpContextAccessor();
