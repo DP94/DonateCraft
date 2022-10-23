@@ -13,6 +13,24 @@ public static class DynamoDbUtility
         var attributeValues = new Dictionary<string, AttributeValue>();
         attributeValues.TryAdd(DynamoDbConstants.PlayerIdColName, new AttributeValue(player.Id));
         attributeValues.TryAdd(DynamoDbConstants.PlayerNameColName, new AttributeValue(player.Name));
+        if (player.Deaths.Count <= 0)
+        {
+            return attributeValues;
+        }
+        
+        var deathList = new AttributeValue
+        {
+            L = new List<AttributeValue>()
+        };
+        foreach (var death in player.Deaths)
+        {
+            death.PlayerId = player.Id;
+            deathList.L.Add(new AttributeValue
+            {
+                M = GetAttributesFromDeath(death)
+            });
+        }
+        attributeValues.TryAdd(DynamoDbConstants.PlayerDeathsColName, deathList);
         return attributeValues;
     }
     
@@ -22,7 +40,6 @@ public static class DynamoDbUtility
         attributeValues.TryAdd(DynamoDbConstants.DeathIdColName, new AttributeValue(death.Id));
         attributeValues.TryAdd(DynamoDbConstants.DeathPlayerIdColName, new AttributeValue(death.PlayerId));
         attributeValues.TryAdd(DynamoDbConstants.DeathReasonColName, new AttributeValue(death.Reason));
-        attributeValues.TryAdd(DynamoDbConstants.DeathPlayerNameColName, new AttributeValue(death.PlayerName));
         attributeValues.TryAdd(DynamoDbConstants.DeathCreatedDateColName, new AttributeValue(death.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")));
         return attributeValues;
     }
@@ -56,7 +73,18 @@ public static class DynamoDbUtility
             player.Id = id.S;
             player.Name = name.S;
         }
-            
+
+        if (!attributeValues.TryGetValue(DynamoDbConstants.PlayerDeathsColName, out var deaths))
+        {
+            return player;
+        }
+        
+        foreach (var death in deaths.L.Select(deathAttributes => GetDeathFromAttributes(deathAttributes.M)))
+        {
+            death.PlayerId = player.Id;
+            player.Deaths.Add(death);
+        }
+
         return player;
     }
     
@@ -65,15 +93,11 @@ public static class DynamoDbUtility
         var death = new Death();
 
         if (attributeValues.TryGetValue(DynamoDbConstants.DeathIdColName, out var id) &&
-            attributeValues.TryGetValue(DynamoDbConstants.DeathPlayerIdColName, out var playerId)
-            && attributeValues.TryGetValue(DynamoDbConstants.DeathReasonColName, out var reason)
-            && attributeValues.TryGetValue(DynamoDbConstants.DeathPlayerNameColName, out var playerName)
-            && attributeValues.TryGetValue(DynamoDbConstants.DeathCreatedDateColName, out var createdDate))
+            attributeValues.TryGetValue(DynamoDbConstants.DeathReasonColName, out var reason) &&
+            attributeValues.TryGetValue(DynamoDbConstants.DeathCreatedDateColName, out var createdDate))
         {
             death.Id = id.S;
-            death.PlayerId = playerId.S;
             death.Reason = reason.S;
-            death.PlayerName = playerName.S;
             death.CreatedDate = DateTime.ParseExact(createdDate.S, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
             
