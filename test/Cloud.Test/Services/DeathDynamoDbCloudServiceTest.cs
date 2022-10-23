@@ -3,6 +3,7 @@ using Amazon.DynamoDBv2.Model;
 using Cloud.DynamoDbLocal;
 using Cloud.Services;
 using Cloud.Services.Aws;
+using Cloud.Util;
 using Common.Models;
 using Common.Util;
 using NUnit.Framework;
@@ -146,8 +147,9 @@ public class DeathDynamoDbCloudServiceTest
     }
     
     [OneTimeTearDown]
-    public void TearDown()
+    public async Task TearDown()
     {
+        await this._localDynamoDbSetup.ClearTables(DynamoDbConstants.PlayerTableName, null, null);
         this._localDynamoDbSetup.KillProcess();
     }
 }

@@ -144,8 +144,9 @@ public class PlayerDynamoDbStorageServiceTest
     }
 
     [OneTimeTearDown]
-    public void TearDown()
+    public async Task TearDown()
     {
+        await this._localDynamoDbSetup.ClearTables(DynamoDbConstants.PlayerTableName, null, null);
         this._localDynamoDbSetup.KillProcess();
     }
 }
