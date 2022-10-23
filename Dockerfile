@@ -8,11 +8,9 @@ COPY src/Web/Web.csproj ./src/Web/
 COPY src/Core/Core.csproj ./src/Core/
 COPY src/Common/Common.csproj ./src/Common/
 COPY src/Cloud/Cloud.csproj ./src/Cloud/
-COPY src/DeathLambda/DeathLambda.csproj ./src/DeathLambda/
 
 COPY test/Web.Test/Web.Test.csproj ./test/Web.Test/
 COPY test/Cloud.Test/Cloud.Test.csproj ./test/Cloud.Test/
-COPY test/DeathLambda.Test/DeathLambda.Test.csproj ./test/DeathLambda.Test/
 
 RUN dotnet restore
 
@@ -25,7 +23,6 @@ RUN dotnet build DonateCraft.sln -c Release
 
 FROM build AS publish
 RUN dotnet publish src/Web/Web.csproj --configuration Release --runtime linux-x64 --self-contained false --output /app/publish/Web -p:PublishReadyToRun=true
-RUN dotnet publish src/DeathLambda/DeathLambda.csproj --configuration Release --runtime linux-x64 --self-contained false --output /app/publish/DeathLambda -p:PublishReadyToRun=true
 
 FROM base AS final
 WORKDIR /var/task

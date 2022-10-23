@@ -6,8 +6,6 @@ src/Core/bin/
 src/Core/obj/
 src/Cloud/obj/
 src/Cloud/bin/
-src/DeathLambda/obj/
-src/DeathLambda/bin/
 src/Cloud/DynamoDbLocal/DynamoDBLocal_lib/
 src/Common/obj/
 src/Common/bin/
@@ -15,8 +13,6 @@ test/Core.Test/bin/
 test/Core.Test/obj/
 test/Cloud.Test/obj/
 test/Cloud.Test/bin/
-test/DeathLambda.Test/obj/
-test/DeathLambda.Test/bin/
 .vs
 packages
 .idea/*

@@ -37,5 +37,3 @@ jobs:
           aws-region: eu-west-2
       - name: Deploy API
         run: dotnet lambda deploy-serverless --stack-name donatecraft --s3-bucket donatecraft --template serverless.template
-      - name: Deploy DeathLambda
-        run: dotnet lambda deploy-function -fn deathlambda -pl src/DeathLambda/

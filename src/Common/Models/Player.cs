@@ -7,10 +7,13 @@ public class Player
     public string Name { get; set; }
     
     public List<Death> Deaths { get; set; }
+    
+    public List<Donation> Donations { get; set; }
 
     public Player()
     {
         Deaths = new List<Death>();
+        Donations = new List<Donation>();
     }
     
     public Player(string id, string name)
@@ -18,5 +21,6 @@ public class Player
         Id = id;
         Name = name;
         Deaths = new List<Death>();
+        Donations = new List<Donation>();
     }
 }

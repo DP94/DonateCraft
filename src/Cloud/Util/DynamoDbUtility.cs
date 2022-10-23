@@ -13,24 +13,37 @@ public static class DynamoDbUtility
         var attributeValues = new Dictionary<string, AttributeValue>();
         attributeValues.TryAdd(DynamoDbConstants.PlayerIdColName, new AttributeValue(player.Id));
         attributeValues.TryAdd(DynamoDbConstants.PlayerNameColName, new AttributeValue(player.Name));
-        if (player.Deaths.Count <= 0)
+        if (player.Deaths.Count > 0)
         {
-            return attributeValues;
-        }
-        
-        var deathList = new AttributeValue
-        {
-            L = new List<AttributeValue>()
-        };
-        foreach (var death in player.Deaths)
-        {
-            death.PlayerId = player.Id;
-            deathList.L.Add(new AttributeValue
+            var deathList = new AttributeValue
             {
-                M = GetAttributesFromDeath(death)
-            });
+                L = new List<AttributeValue>()
+            };
+            foreach (var death in player.Deaths)
+            {
+                death.PlayerId = player.Id;
+                deathList.L.Add(new AttributeValue
+                {
+                    M = GetAttributesFromDeath(death)
+                });
+            }
+            attributeValues.TryAdd(DynamoDbConstants.PlayerDeathsColName, deathList);
         }
-        attributeValues.TryAdd(DynamoDbConstants.PlayerDeathsColName, deathList);
+        if (player.Donations.Count > 0)
+        {
+            var donationList = new AttributeValue
+            {
+                L = new List<AttributeValue>()
+            };
+            foreach (var donation in player.Donations)
+            {
+                donationList.L.Add(new AttributeValue
+                {
+                    M = GetAttributesFromDonation(donation)
+                });
+            }
+            attributeValues.TryAdd(DynamoDbConstants.PlayerDonationsColName, donationList);
+        }
         return attributeValues;
     }
     
@@ -62,6 +75,17 @@ public static class DynamoDbUtility
         attributeValues.TryAdd(DynamoDbConstants.CharityURLColName, new AttributeValue(charity.Url));
         return attributeValues;
     }
+    
+    public static Dictionary<string, AttributeValue> GetAttributesFromDonation(Donation donation)
+    {
+        var attributeValues = new Dictionary<string, AttributeValue>();
+        attributeValues.TryAdd(DynamoDbConstants.DonationIdColName, new AttributeValue(donation.Id));
+        attributeValues.TryAdd(DynamoDbConstants.DonationAmountColName, new AttributeValue { N =  donation.Amount.ToString(CultureInfo.InvariantCulture) });
+        attributeValues.TryAdd(DynamoDbConstants.DonationCharityIdColName, new AttributeValue { N = donation.CharityId.ToString()});
+        attributeValues.TryAdd(DynamoDbConstants.DonationCharityNameColName, new AttributeValue(donation.CharityName));
+        attributeValues.TryAdd(DynamoDbConstants.DonationCreatedDateColName, new AttributeValue(donation.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")));
+        return attributeValues;
+    }
 
     public static Player GetPlayerFromAttributes(Dictionary<string, AttributeValue> attributeValues)
     {
@@ -74,16 +98,24 @@ public static class DynamoDbUtility
             player.Name = name.S;
         }
 
-        if (!attributeValues.TryGetValue(DynamoDbConstants.PlayerDeathsColName, out var deaths))
+        if (attributeValues.TryGetValue(DynamoDbConstants.PlayerDeathsColName, out var deaths))
         {
-            return player;
+            foreach (var death in deaths.L.Select(deathAttributes => GetDeathFromAttributes(deathAttributes.M)))
+            {
+                death.PlayerId = player.Id;
+                player.Deaths.Add(death);
+            }
         }
         
-        foreach (var death in deaths.L.Select(deathAttributes => GetDeathFromAttributes(deathAttributes.M)))
+        if (attributeValues.TryGetValue(DynamoDbConstants.PlayerDonationsColName, out var donations))
         {
-            death.PlayerId = player.Id;
-            player.Deaths.Add(death);
+            foreach (var donation in donations.L.Select(deathAttributes => GetDonationFromAttributes(deathAttributes.M)))
+            {
+                player.Donations.Add(donation);
+            }
         }
+        
+
 
         return player;
     }
@@ -136,5 +168,25 @@ public static class DynamoDbUtility
         }
             
         return charity;
+    }
+    
+    public static Donation GetDonationFromAttributes(Dictionary<string, AttributeValue> attributeValues)
+    {
+        var donation = new Donation();
+
+        if (attributeValues.TryGetValue(DynamoDbConstants.DonationIdColName, out var id) &&
+            attributeValues.TryGetValue(DynamoDbConstants.DonationCharityNameColName, out var charityName) &&
+            attributeValues.TryGetValue(DynamoDbConstants.DonationCharityIdColName, out var charityId) &&
+            attributeValues.TryGetValue(DynamoDbConstants.DonationAmountColName, out var amount) &&
+            attributeValues.TryGetValue(DynamoDbConstants.DonationCreatedDateColName, out var createdDate))
+        {
+            donation.Id = id.S;
+            donation.CharityId = Convert.ToInt32(charityId.N);
+            donation.CharityName = charityName.S;
+            donation.Amount = Convert.ToDouble(amount.N);
+            donation.CreatedDate = DateTime.ParseExact(createdDate.S, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+        }
+            
+        return donation;
     }
 }

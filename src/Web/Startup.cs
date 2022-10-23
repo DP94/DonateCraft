@@ -45,12 +45,14 @@ public class Startup
         services.AddSingleton<IDeathService, DeathService>();
         services.AddSingleton<ILockService, LockService>();
         services.AddSingleton<ICharityService, CharityService>();
+        services.AddSingleton<IDonationService, DonationService>();
         services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
         services.AddSingleton<IDeathCloudService, DeathDynamoDbStorageService>();
         services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
         services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
-
-        var client = new HttpClient()
+        services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
+        
+        var client = new HttpClient
         {
             BaseAddress = new Uri("https://api.staging.justgiving.com/")
         };
