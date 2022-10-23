@@ -26,18 +26,25 @@ public class LocalDynamoDbSetup : IDisposable
     public async Task CreateTables(string playerTableName, string lockTableName, string charityTableName)
     {
         var client = GetClient();
-        if (!string.IsNullOrWhiteSpace(playerTableName))
+        try
         {
-            await CreatePlayerTable(client);
-        }
-        if (!string.IsNullOrWhiteSpace(lockTableName))
+            if (!string.IsNullOrWhiteSpace(playerTableName))
+            {
+                await CreatePlayerTable(client);
+            }
+            if (!string.IsNullOrWhiteSpace(lockTableName))
+            {
+                await CreateLockTable(client);
+            }
+            if (!string.IsNullOrWhiteSpace(charityTableName))
+            {
+                await CreateCharityTable(client);
+            }
+        } catch (ResourceInUseException)
         {
-            await CreateLockTable(client);
+          //DDB is already setup   
         }
-        if (!string.IsNullOrWhiteSpace(charityTableName))
-        {
-            await CreateCharityTable(client);
-        }
+
     }
     
     public async Task ClearTables(string playerTableName, string lockTableName, string charityTableName)
