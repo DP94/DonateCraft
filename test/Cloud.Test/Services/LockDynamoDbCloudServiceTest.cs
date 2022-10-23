@@ -21,7 +21,7 @@ public class LockDynamoDbCloudServiceTest
     {
         this._localDynamoDbSetup = new LocalDynamoDbSetup();
         await this._localDynamoDbSetup.SetupDynamoDb();
-        await this._localDynamoDbSetup.CreateTables(null, null, DynamoDbConstants.LockTableName, null);
+        await this._localDynamoDbSetup.CreateTables(null, DynamoDbConstants.LockTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
         this._cloudService = new LockDynamoDbCloudService(this._dynamoDb);
     }
@@ -29,7 +29,7 @@ public class LockDynamoDbCloudServiceTest
     [Test]
     public async Task GetLocks_SuccessfullyGets_AllLocks()
     {
-        await this._localDynamoDbSetup.ClearTables(null, null, DynamoDbConstants.LockTableName, null);
+        await this._localDynamoDbSetup.ClearTables(null, DynamoDbConstants.LockTableName, null);
         
         var newLock = CreateLock();
         var newLock2 = CreateLock();

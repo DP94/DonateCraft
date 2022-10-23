@@ -8,70 +8,62 @@ namespace Cloud.Services.Aws;
 
 public class DeathDynamoDbStorageService : IDeathCloudService
 {
-    private readonly IAmazonDynamoDB _dynamoDb;
+    private readonly IPlayerCloudService _playerCloudService;
     
-    public DeathDynamoDbStorageService(IAmazonDynamoDB dynamoDb)
+    public DeathDynamoDbStorageService(IPlayerCloudService playerCloudService)
     {
-        this._dynamoDb = dynamoDb;
+        this._playerCloudService = playerCloudService;
     }
 
-    public async Task<List<Death>> GetDeaths()
+    public async Task<List<Death>> GetDeaths(string playerId)
     {
-        var result = await this._dynamoDb.ScanAsync(new ScanRequest(DynamoDbConstants.DeathTableName));
-        return result.Items.Select(DynamoDbUtility.GetDeathFromAttributes).ToList();
+        var result = await this._playerCloudService.GetPlayerById(playerId);
+        return result.Deaths;
     }
 
-    public async Task<Death?> GetDeathById(string id)
+    public async Task<Death?> GetDeathById(string playerId, string id)
     {
-        var response = await this._dynamoDb.GetItemAsync(new GetItemRequest
+        var player = await this._playerCloudService.GetPlayerById(playerId);
+        foreach (var death in player.Deaths.Where(death => death.Id == id))
         {
-            TableName = DynamoDbConstants.DeathTableName,
-            Key = new Dictionary<string, AttributeValue>
-            {
-                {
-                    DynamoDbConstants.DeathIdColName, new AttributeValue(id)
-                }
-            }
-        });
-        if (response.Item == null || response.Item.Count == 0)
-        {
-            throw new ResourceNotFoundException($"Death {id} not found");
+            return death;
         }
-
-        return DynamoDbUtility.GetDeathFromAttributes(response.Item);
+        throw new ResourceNotFoundException($"Death with {id} not found");
     }
 
-    public async Task<Death> CreateDeath(Death death)
+    public async Task<Death> CreateDeath(string playerId, Death death)
     {
-        await this._dynamoDb.PutItemAsync(new PutItemRequest
-        {
-            TableName = DynamoDbConstants.DeathTableName,
-            Item = DynamoDbUtility.GetAttributesFromDeath(death)
-        });
+        var player = await this._playerCloudService.GetPlayerById(playerId);
+        player.Deaths.Add(death);
+        await this._playerCloudService.UpdatePlayer(player);
         return death;
     }
 
-    public async Task DeleteDeath(string id)
+    public async Task DeleteDeath(string playerId, string id)
     {
-        await this._dynamoDb.DeleteItemAsync(new DeleteItemRequest
+        var player = await this._playerCloudService.GetPlayerById(playerId);
+        var deathToDelete = player.Deaths.Find(death => death.Id == id);
+        if (deathToDelete == null)
         {
-            TableName = DynamoDbConstants.DeathTableName,
-            Key = new Dictionary<string, AttributeValue>
-            {
-                {
-                    DynamoDbConstants.DeathIdColName, new AttributeValue(id)
-                }
-            }
-        });
+            throw new ResourceNotFoundException($"Death {id} not found for player {playerId}");
+        }
+        player.Deaths.Remove(deathToDelete);
+        await this._playerCloudService.UpdatePlayer(player);
     }
 
-    public async Task<Death> UpdateDeath(Death death)
+    public async Task<Death> UpdateDeath(string playerId, Death death)
     {
-        await this._dynamoDb.PutItemAsync(new PutItemRequest
+
+        var player = await this._playerCloudService.GetPlayerById(playerId);
+        var deathToDelete = player.Deaths.Find(d => d.Id == death.Id);
+        if (deathToDelete == null)
         {
-            TableName = DynamoDbConstants.DeathTableName,
-            Item = DynamoDbUtility.GetAttributesFromDeath(death)
-        });
-        return death;
+            throw new ResourceNotFoundException($"Death {death.Id} not found for player {playerId}");
+        }
+        //Only reason is mutable
+        deathToDelete.Reason = death.Reason;
+        await this._playerCloudService.UpdatePlayer(player);
+        return deathToDelete;
     }
+    
 }

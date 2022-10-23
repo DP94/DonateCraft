@@ -22,7 +22,7 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
         return result.Items.Select(DynamoDbUtility.GetPlayerFromAttributes).ToList();
     }
 
-    public async Task<Player?> GetPlayerById(string id)
+    public async Task<Player> GetPlayerById(string id)
     {
         var response = await this._dynamoDb.GetItemAsync(new GetItemRequest
         {

@@ -32,7 +32,7 @@ public class Startup
         {
             var localDynamo = new LocalDynamoDbSetup();
             localDynamo.SetupDynamoDb().Wait();
-            localDynamo.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.DeathTableName,
+            localDynamo.CreateTables(DynamoDbConstants.PlayerTableName,
                 DynamoDbConstants.LockTableName, DynamoDbConstants.CharityTableName).Wait();
             awsOptions.Credentials = new BasicAWSCredentials("x", "x");
             awsOptions.DefaultClientConfig.ServiceURL = "http://localhost:8000";
@@ -50,6 +50,12 @@ public class Startup
         services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
         services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
 
+        var client = new HttpClient()
+        {
+            BaseAddress = new Uri("https://api.staging.justgiving.com/")
+        };
+        services.AddSingleton(client);
+        
         services.AddSwaggerGen(options => { options.EnableAnnotations(); });
         services.AddHttpContextAccessor();
         services.AddCors(options =>

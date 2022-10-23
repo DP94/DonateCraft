@@ -21,7 +21,7 @@ public class CharityDynamoDbCloudServiceTest
     {
         this._localDynamoDbSetup = new LocalDynamoDbSetup();
         await this._localDynamoDbSetup.SetupDynamoDb();
-        await this._localDynamoDbSetup.CreateTables(null, null, null, DynamoDbConstants.CharityTableName);
+        await this._localDynamoDbSetup.CreateTables(null, null, DynamoDbConstants.CharityTableName);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
         this._cloudService = new CharityDynamoDbCloudService(this._dynamoDb);
     }
@@ -29,7 +29,7 @@ public class CharityDynamoDbCloudServiceTest
     [Test]
     public async Task GetCharities_SuccessfullyGets_AllCharities()
     {
-        await this._localDynamoDbSetup.ClearTables(null, null, null, DynamoDbConstants.CharityTableName);
+        await this._localDynamoDbSetup.ClearTables(null, null, DynamoDbConstants.CharityTableName);
         
         var charity = CreateCharity();
         var charity2 = CreateCharity();

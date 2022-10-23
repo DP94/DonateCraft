@@ -4,12 +4,12 @@ namespace Core.Services;
 
 public interface IDeathService
 {
-    Task<List<Death>> GetDeaths();
-    Task<Death> GetDeathById(string id);
+    Task<List<Death>> GetDeaths(string playerId);
+    Task<Death> GetDeathById(string playerId, string id);
 
-    Task<Death> CreateDeath(Death death);
+    Task<Death> CreateDeath(string playerId, Death death);
 
-    Task DeleteDeath(string id);
+    Task DeleteDeath(string playerId, string id);
 
-    Task<Death> UpdateDeath(Death death);
+    Task<Death> UpdateDeath(string playerId, Death death);
 }
