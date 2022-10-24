@@ -13,7 +13,7 @@ public static class DynamoDbUtility
         var attributeValues = new Dictionary<string, AttributeValue>();
         attributeValues.TryAdd(DynamoDbConstants.PlayerIdColName, new AttributeValue(player.Id));
         attributeValues.TryAdd(DynamoDbConstants.PlayerNameColName, new AttributeValue(player.Name));
-        if (player.Deaths.Count > 0)
+        if (player.Deaths?.Count > 0)
         {
             var deathList = new AttributeValue
             {
@@ -29,7 +29,7 @@ public static class DynamoDbUtility
             }
             attributeValues.TryAdd(DynamoDbConstants.PlayerDeathsColName, deathList);
         }
-        if (player.Donations.Count > 0)
+        if (player.Donations?.Count > 0)
         {
             var donationList = new AttributeValue
             {

@@ -13,6 +13,7 @@ namespace Cloud.Test.Services;
 public class DeathDynamoDbCloudServiceTest
 {
     private IDeathCloudService _deathCloudService;
+    private ILockCloudService _lockCloudService;
     private IPlayerCloudService _playerCloudService;
     private IAmazonDynamoDB _dynamoDb;
     private LocalDynamoDbSetup _localDynamoDbSetup;
@@ -22,10 +23,11 @@ public class DeathDynamoDbCloudServiceTest
     {
         this._localDynamoDbSetup = new LocalDynamoDbSetup();
         await this._localDynamoDbSetup.SetupDynamoDb();
-        await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, null, null);
+        await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.LockTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
         this._playerCloudService = new PlayerDynamoDbCloudService(this._dynamoDb);
-        this._deathCloudService = new DeathDynamoDbStorageService(this._playerCloudService);
+        this._lockCloudService = new LockDynamoDbCloudService(this._dynamoDb);
+        this._deathCloudService = new DeathDynamoDbStorageService(this._playerCloudService, this._lockCloudService);
     }
 
     [Test]
@@ -99,6 +101,17 @@ public class DeathDynamoDbCloudServiceTest
         Assert.AreEqual(death.Id, savedDeath.Id);
         Assert.AreEqual(death.Reason, savedDeath.Reason);
         Assert.AreEqual(player.Id, savedDeath.PlayerId);
+    }
+    
+    [Test]
+    public async Task CreateDeath_SuccessfullyCreatesLock()
+    {
+        var playerId = Guid.NewGuid().ToString();
+        var deathId = Guid.NewGuid().ToString();
+        await this.CreateDeathForPlayer(playerId, deathId);
+        var theLock = await this._lockCloudService.GetLockByKey(playerId);
+        Assert.AreEqual(playerId, theLock.Key);
+        Assert.False(theLock.Unlocked);
     }
     
     [Test]

@@ -5,6 +5,7 @@ using Amazon.Runtime;
 using Cloud.DynamoDbLocal;
 using Cloud.Services;
 using Cloud.Services.Aws;
+using Common.Models;
 using Common.Util;
 using Core.Services;
 
@@ -27,7 +28,7 @@ public class Startup
         {
             Region = RegionEndpoint.EUWest2
         };
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var env = Environment.GetEnvironmentVariable(Constants.ASPNETCORE_ENVIRONMENT);
         if (env == "LOCAL")
         {
             var localDynamo = new LocalDynamoDbSetup();
@@ -40,22 +41,19 @@ public class Startup
 
         services.AddDefaultAWSOptions(awsOptions);
         services.AddAWSService<IAmazonDynamoDB>(awsOptions);
+        RegisterServices(services);
 
-        services.AddSingleton<IPlayerService, PlayerService>();
-        services.AddSingleton<IDeathService, DeathService>();
-        services.AddSingleton<ILockService, LockService>();
-        services.AddSingleton<ICharityService, CharityService>();
-        services.AddSingleton<IDonationService, DonationService>();
-        services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
-        services.AddSingleton<IDeathCloudService, DeathDynamoDbStorageService>();
-        services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
-        services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
-        services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
         
-        var client = new HttpClient
+        var justGivingHost = Environment.GetEnvironmentVariable(Constants.JG_API_URL) ?? "https://api.staging.justgiving.com/";
+        var justGivingAPIKey = Environment.GetEnvironmentVariable(Constants.JG_API_KEY);
+        if (justGivingAPIKey == null)
         {
-            BaseAddress = new Uri("https://api.staging.justgiving.com/")
-        };
+            throw new InvalidOperationException($"{Constants.JG_API_KEY} could not be found as an environment variable!");
+        }
+        
+        services.Configure<DonateCraftOptions>(Configuration.GetSection(DonateCraftOptions.DonateCraft));
+
+        var client = new HttpClient { BaseAddress = new Uri(justGivingHost) };
         services.AddSingleton(client);
         
         services.AddSwaggerGen(options => { options.EnableAnnotations(); });
@@ -100,5 +98,19 @@ public class Startup
         });
         app.UseSwagger();
         app.UseSwaggerUI();
+    }
+
+    private static void RegisterServices(IServiceCollection services)
+    {
+        services.AddSingleton<IPlayerService, PlayerService>();
+        services.AddSingleton<IDeathService, DeathService>();
+        services.AddSingleton<ILockService, LockService>();
+        services.AddSingleton<ICharityService, CharityService>();
+        services.AddSingleton<IDonationService, DonationService>();
+        services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
+        services.AddSingleton<IDeathCloudService, DeathDynamoDbStorageService>();
+        services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
+        services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
+        services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
     }
 }

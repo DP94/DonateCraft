@@ -99,9 +99,30 @@ public class LocalDynamoDbSetup : IDisposable
             KeySchema = new List<KeySchemaElement> { new(DynamoDbConstants.LockIdColName, KeyType.HASH) },
             AttributeDefinitions = new List<AttributeDefinition>
             {
-                new(DynamoDbConstants.LockIdColName, ScalarAttributeType.S)
+                new(DynamoDbConstants.LockIdColName, ScalarAttributeType.S),
+                new(DynamoDbConstants.LockKeyColName, ScalarAttributeType.S)
             },
-            ProvisionedThroughput = new ProvisionedThroughput(100, 100)
+            ProvisionedThroughput = new ProvisionedThroughput(100, 100),
+            GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>
+            {
+                new()
+                {
+                    IndexName = DynamoDbConstants.LockKeyIndexName,
+                    KeySchema = new List<KeySchemaElement>
+                    {
+                        new()
+                        {
+                            AttributeName = DynamoDbConstants.LockKeyColName,
+                            KeyType = KeyType.HASH
+                        }
+                    },
+                    ProvisionedThroughput = new ProvisionedThroughput(100, 100),
+                    Projection = new Projection
+                    {
+                        ProjectionType = ProjectionType.ALL
+                    }
+                }
+            },
         });
     }
     

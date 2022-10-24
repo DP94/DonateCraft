@@ -36,4 +36,9 @@ public class LockService : ILockService
     {
         return await this._lockCloudService.UpdateLock(theLock);
     }
+
+    public async Task<Lock> GetLockByKey(string key)
+    {
+        return await this._lockCloudService.GetLockByKey(key);
+    }
 }
