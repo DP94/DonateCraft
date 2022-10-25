@@ -73,7 +73,7 @@ public class CallbackController : ControllerBase
 
         currentLock.Unlocked = true;
         await this._lockService.UpdateLock(currentLock);
-        return Redirect(this._apiKey);
+        return Redirect(this._donateCraftUi);
     }
 
     private async Task<JustGivingDonation> GetDonationData(string donationId)
