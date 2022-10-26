@@ -49,7 +49,7 @@ public class CallbackController : ControllerBase
             //Send error back here
             return Redirect(this._donateCraftUi);
         }
-        var currentLock = await this._lockService.GetLockByKey(player);
+        var currentLock = await this._lockService.GetLock(player);
         if (currentLock == null)
         {
             //In the event of someone donating when no lock is present
@@ -71,6 +71,7 @@ public class CallbackController : ControllerBase
             CreatedDate = DateTime.Now,
         });
 
+        currentLock.DonationId = justGivingDonation.Id.ToString();
         currentLock.Unlocked = true;
         await this._lockService.UpdateLock(currentLock);
         return Redirect(this._donateCraftUi);

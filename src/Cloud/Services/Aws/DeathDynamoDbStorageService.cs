@@ -41,8 +41,7 @@ public class DeathDynamoDbStorageService : IDeathCloudService
 
         await this._lockCloudService.Create(new Lock
         {
-            Id = Guid.NewGuid().ToString(),
-            Key = playerId,
+            Id = playerId,
             Unlocked = false
         });
         

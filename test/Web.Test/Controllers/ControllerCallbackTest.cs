@@ -73,7 +73,7 @@ public class ControllerCallbackTest
     public async Task CallbackController_RedirectsToUi_WhenLockNotFound()
     {
         //FakeItEasy returns a blank proxy (but not null!) when stubs are not specified...
-        A.CallTo(() => this._lockService.GetLockByKey(A<string>.Ignored)).Returns((Lock)null);
+        A.CallTo(() => this._lockService.GetLock(A<string>.Ignored)).Returns((Lock)null);
         var result = await this._controller.Callback("1|5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         Assert.AreEqual("test.com", result.Url);
     }
@@ -82,7 +82,7 @@ public class ControllerCallbackTest
     [Test]
     public async Task CallbackController_RedirectsToUi_WhenLock_AlreadyUnlocked()
     {
-        A.CallTo(() => this._lockService.GetLockByKey(A<string>.Ignored)).Returns(new Lock()
+        A.CallTo(() => this._lockService.GetLock(A<string>.Ignored)).Returns(new Lock()
         {
             Unlocked = true
         });
@@ -100,9 +100,9 @@ public class ControllerCallbackTest
         this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options);
         var theLock = new Lock()
         {
-            Key = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747"
+            Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747"
         };
-        A.CallTo(() => this._lockService.GetLockByKey(theLock.Key)).Returns(theLock);
+        A.CallTo(() => this._lockService.GetLock(theLock.Id)).Returns(theLock);
 
         var result = await this._controller.Callback("1|5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         
@@ -113,7 +113,7 @@ public class ControllerCallbackTest
                     donation.CharityId == 2201 &&
                     donation.Id == "1500333570")))
             .MustHaveHappenedOnceExactly();
-        A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Key == theLock.Key)))
+        A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
             .MustHaveHappenedOnceExactly();
 
         Assert.AreEqual("test.com", result.Url);

@@ -22,6 +22,11 @@ public class LockService : ILockService
         return await this._lockCloudService.GetLocks();
     }
 
+    public async Task<List<Lock>> GetLocksForPlayers(List<string> playerIds)
+    {
+        return await this._lockCloudService.GetLocksForPlayers(playerIds);
+    }
+
     public async Task<Lock> GetLock(string id)
     {
         return await this._lockCloudService.GetLock(id);
@@ -35,10 +40,5 @@ public class LockService : ILockService
     public async Task<Lock> UpdateLock(Lock theLock)
     {
         return await this._lockCloudService.UpdateLock(theLock);
-    }
-
-    public async Task<Lock> GetLockByKey(string key)
-    {
-        return await this._lockCloudService.GetLockByKey(key);
     }
 }
