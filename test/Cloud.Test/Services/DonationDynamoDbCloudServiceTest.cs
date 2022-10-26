@@ -34,7 +34,6 @@ public class DonationDynamoDbCloudServiceTest
         var donationId = Guid.NewGuid().ToString();
         await this.CreateDonationForPlayer(playerId, donationId);
         var donation = await this._donationCloudService.GetDonation(playerId, donationId);
-        Assert.AreEqual(donationId, donation.Id);
     }
     
     [Test]
@@ -58,8 +57,8 @@ public class DonationDynamoDbCloudServiceTest
     [Test]
     public async Task GetDonations_SuccessfullyGetsAllPlayerDonations()
     {
-        var donation = new Donation(Guid.NewGuid().ToString(), 1, DateTime.Now, 1, "Test");
-        var secondDonation = new Donation(Guid.NewGuid().ToString(), 2, DateTime.Now, 2, "Test");
+        var donation = new Donation(Guid.NewGuid().ToString(), 1, DateTime.Now, 1, "Test", Guid.NewGuid().ToString());
+        var secondDonation = new Donation(Guid.NewGuid().ToString(), 2, DateTime.Now, 2, "Test", Guid.NewGuid().ToString());
         var player = new Player
         {
             Id = Guid.NewGuid().ToString(),
@@ -94,6 +93,10 @@ public class DonationDynamoDbCloudServiceTest
 
         var savedDonation = player.Donations.First();
         Assert.AreEqual(donation.Id, savedDonation.Id);
+        Assert.AreEqual(donation.Amount, savedDonation.Amount);
+        Assert.AreEqual(donation.CharityId, savedDonation.CharityId);
+        Assert.AreEqual(donation.CharityName, savedDonation.CharityName);
+        Assert.AreEqual(donation.PaidForId, savedDonation.PaidForId);
     }
     
     [Test]
@@ -136,7 +139,8 @@ public class DonationDynamoDbCloudServiceTest
             CreatedDate = DateTime.Now,
             Amount = 1,
             CharityId = 1,
-            CharityName = "Test"
+            CharityName = "Test",
+            PaidForId = Guid.NewGuid().ToString()
         };
         await this._playerCloudService.CreatePlayer(player);
         await this._donationCloudService.Create(player.Id, donation);
