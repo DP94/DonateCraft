@@ -10,10 +10,12 @@ public class LockDynamoDbCloudService : ILockCloudService
 {
 
     private IAmazonDynamoDB _amazonDynamoDb;
+    private IDonationCloudService _donationCloudService;
 
-    public LockDynamoDbCloudService(IAmazonDynamoDB amazonDynamoDb)
+    public LockDynamoDbCloudService(IAmazonDynamoDB amazonDynamoDb, IDonationCloudService donationCloudService)
     {
         this._amazonDynamoDb = amazonDynamoDb;
+        this._donationCloudService = donationCloudService;
     }
 
     public async Task<Lock> Create(Lock newLock)
@@ -30,6 +32,49 @@ public class LockDynamoDbCloudService : ILockCloudService
     {
         var result = await this._amazonDynamoDb.ScanAsync(new ScanRequest(DynamoDbConstants.LockTableName));
         return result.Items.Select(DynamoDbUtility.GetLockFromAttributes).ToList();
+    }
+
+    public async Task<List<Lock>> GetLocksForPlayers(List<string> playerIds)
+    {
+        var request = new BatchGetItemRequest
+        {
+            RequestItems = new Dictionary<string, KeysAndAttributes>
+            {
+                {
+                    DynamoDbConstants.LockTableName,
+                    new KeysAndAttributes
+                    {
+                        Keys = new List<Dictionary<string, AttributeValue>>()
+                    }
+                }
+            }
+        };
+        playerIds.ForEach(id =>
+        {
+            request.RequestItems[DynamoDbConstants.LockTableName].Keys.Add(new Dictionary<string, AttributeValue>
+            {
+                {
+                    DynamoDbConstants.LockIdColName, new AttributeValue(id)
+                }
+            });
+        });
+        var locks = new List<Lock>();
+        var response = await this._amazonDynamoDb.BatchGetItemAsync(request);
+        if (response != null && response.Responses.TryGetValue(DynamoDbConstants.LockTableName, out var ddbLocks))
+        {
+            foreach (var aLock in ddbLocks)
+            {
+                var newLock = DynamoDbUtility.GetLockFromAttributes(aLock);
+                var donationId = newLock.DonationId;
+                if (!string.IsNullOrWhiteSpace(donationId))
+                {
+                    var donation = await this._donationCloudService.GetDonation(newLock.Id, donationId);
+                    newLock.Donation = donation;
+                }
+                locks.Add(newLock);
+            }
+        }
+        return locks;
     }
 
     public async Task<Lock> GetLock(string id)
@@ -74,27 +119,5 @@ public class LockDynamoDbCloudService : ILockCloudService
             Item = DynamoDbUtility.GetAttributesFromLock(theLock)
         });
         return theLock;
-    }
-
-    public async Task<Lock> GetLockByKey(string key)
-    {
-        var response = await this._amazonDynamoDb.QueryAsync(new QueryRequest
-        {
-            TableName = DynamoDbConstants.LockTableName,
-            IndexName = DynamoDbConstants.LockKeyIndexName,
-            KeyConditionExpression = $"{DynamoDbConstants.LockKeyColName} = :k_id",
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-            {
-                {
-                    ":k_id", new AttributeValue(key)
-                }
-            }
-        });
-        if (response.Items == null || response.Items.Count == 0)
-        {
-            throw new ResourceNotFoundException($"Lock with key {key} not found");
-        }
-
-        return DynamoDbUtility.GetLockFromAttributes(response.Items.First());
     }
 }

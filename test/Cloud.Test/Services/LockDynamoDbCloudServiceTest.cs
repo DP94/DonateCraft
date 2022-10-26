@@ -6,6 +6,7 @@ using Cloud.Services.Aws;
 using Cloud.Util;
 using Common.Models;
 using Common.Util;
+using FakeItEasy;
 using NUnit.Framework;
 
 namespace Cloud.Test.Services;
@@ -13,6 +14,7 @@ namespace Cloud.Test.Services;
 public class LockDynamoDbCloudServiceTest
 {
     private ILockCloudService _cloudService;
+    private IDonationCloudService _donationCloudService;
     private IAmazonDynamoDB _dynamoDb;
     private LocalDynamoDbSetup _localDynamoDbSetup;
 
@@ -23,7 +25,7 @@ public class LockDynamoDbCloudServiceTest
         await this._localDynamoDbSetup.SetupDynamoDb();
         await this._localDynamoDbSetup.CreateTables(null, DynamoDbConstants.LockTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
-        this._cloudService = new LockDynamoDbCloudService(this._dynamoDb);
+        this._cloudService = new LockDynamoDbCloudService(this._dynamoDb, A.Fake<IDonationCloudService>());
     }
     
     [Test]
@@ -54,7 +56,6 @@ public class LockDynamoDbCloudServiceTest
         await this._cloudService.Create(newLock);
         var retrievedLock = await GetLock(newLock.Id);
         Assert.AreEqual(newLock.Id, retrievedLock.Id);
-        Assert.AreEqual(newLock.Key, retrievedLock.Key);
         Assert.AreEqual(newLock.Unlocked, retrievedLock.Unlocked);
     }
     
@@ -65,7 +66,6 @@ public class LockDynamoDbCloudServiceTest
         await this._cloudService.Create(newLock);
         var retrievedLock = await this._cloudService.GetLock(newLock.Id);
         Assert.AreEqual(newLock.Id, retrievedLock.Id);
-        Assert.AreEqual(newLock.Key, retrievedLock.Key);
         Assert.AreEqual(newLock.Unlocked, retrievedLock.Unlocked);
     }
     
@@ -113,7 +113,6 @@ public class LockDynamoDbCloudServiceTest
         return new Lock
         {
             Id = Guid.NewGuid().ToString(),
-            Key = Guid.NewGuid().ToString(),
             Unlocked = false
         };
     }

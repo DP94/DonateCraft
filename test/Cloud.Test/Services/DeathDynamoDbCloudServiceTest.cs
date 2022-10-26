@@ -6,6 +6,7 @@ using Cloud.Services.Aws;
 using Cloud.Util;
 using Common.Models;
 using Common.Util;
+using FakeItEasy;
 using NUnit.Framework;
 
 namespace Cloud.Test.Services;
@@ -26,7 +27,7 @@ public class DeathDynamoDbCloudServiceTest
         await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.LockTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
         this._playerCloudService = new PlayerDynamoDbCloudService(this._dynamoDb);
-        this._lockCloudService = new LockDynamoDbCloudService(this._dynamoDb);
+        this._lockCloudService = new LockDynamoDbCloudService(this._dynamoDb, A.Fake<IDonationCloudService>());
         this._deathCloudService = new DeathDynamoDbStorageService(this._playerCloudService, this._lockCloudService);
     }
 
@@ -109,8 +110,8 @@ public class DeathDynamoDbCloudServiceTest
         var playerId = Guid.NewGuid().ToString();
         var deathId = Guid.NewGuid().ToString();
         await this.CreateDeathForPlayer(playerId, deathId);
-        var theLock = await this._lockCloudService.GetLockByKey(playerId);
-        Assert.AreEqual(playerId, theLock.Key);
+        var theLock = await this._lockCloudService.GetLock(playerId);
+        Assert.AreEqual(playerId, theLock.Id);
         Assert.False(theLock.Unlocked);
     }
     

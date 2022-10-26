@@ -32,8 +32,12 @@ public class LockController : ControllerBase
     [HttpGet]
     [SwaggerResponse(200, "Success", typeof(Lock))]
     [SwaggerOperation("Gets all locks")]
-    public async Task<IActionResult> GetLocks()
+    public async Task<IActionResult> GetLocks([FromQuery] List<string> playerIds)
     {
+        if (playerIds is { Count: > 0 })
+        {
+            return Ok(await this._lockService.GetLocksForPlayers(playerIds));
+        }
         return Ok(await this._lockService.GetLocks());
     }
     
