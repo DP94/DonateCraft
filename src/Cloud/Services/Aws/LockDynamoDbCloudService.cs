@@ -75,4 +75,26 @@ public class LockDynamoDbCloudService : ILockCloudService
         });
         return theLock;
     }
+
+    public async Task<Lock> GetLockByKey(string key)
+    {
+        var response = await this._amazonDynamoDb.QueryAsync(new QueryRequest
+        {
+            TableName = DynamoDbConstants.LockTableName,
+            IndexName = DynamoDbConstants.LockKeyIndexName,
+            KeyConditionExpression = $"{DynamoDbConstants.LockKeyColName} = :k_id",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                {
+                    ":k_id", new AttributeValue(key)
+                }
+            }
+        });
+        if (response.Items == null || response.Items.Count == 0)
+        {
+            throw new ResourceNotFoundException($"Lock with key {key} not found");
+        }
+
+        return DynamoDbUtility.GetLockFromAttributes(response.Items.First());
+    }
 }

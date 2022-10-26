@@ -9,4 +9,5 @@ public interface ILockCloudService
     Task<Lock> GetLock(string id);
     Task DeleteLock(string id);
     Task<Lock> UpdateLock(Lock theLock);
+    Task<Lock> GetLockByKey(string key);
 }

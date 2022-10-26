@@ -21,7 +21,9 @@ public static class DynamoDbConstants
     public const string LockTableName = "Lock";
     public const string LockIdColName = "id";
     public const string LockUnlockedColName = "unlocked";
-    public const string LockKeyColName = "key";
+    //'key' is reserved in DDB
+    public const string LockKeyColName = "lockKey";
+    public const string LockKeyIndexName = "key-index";
     #endregion
     
     #region Charity

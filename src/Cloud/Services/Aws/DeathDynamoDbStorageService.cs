@@ -9,10 +9,12 @@ namespace Cloud.Services.Aws;
 public class DeathDynamoDbStorageService : IDeathCloudService
 {
     private readonly IPlayerCloudService _playerCloudService;
+    private readonly ILockCloudService _lockCloudService;
     
-    public DeathDynamoDbStorageService(IPlayerCloudService playerCloudService)
+    public DeathDynamoDbStorageService(IPlayerCloudService playerCloudService, ILockCloudService lockCloudService)
     {
         this._playerCloudService = playerCloudService;
+        this._lockCloudService = lockCloudService;
     }
 
     public async Task<List<Death>> GetDeaths(string playerId)
@@ -36,6 +38,14 @@ public class DeathDynamoDbStorageService : IDeathCloudService
         var player = await this._playerCloudService.GetPlayerById(playerId);
         player.Deaths.Add(death);
         await this._playerCloudService.UpdatePlayer(player);
+
+        await this._lockCloudService.Create(new Lock
+        {
+            Id = Guid.NewGuid().ToString(),
+            Key = playerId,
+            Unlocked = false
+        });
+        
         return death;
     }
 
