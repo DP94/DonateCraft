@@ -19,9 +19,9 @@ public class CallbackController : ControllerBase
     private readonly string _apiKey;
     private readonly string _donateCraftUi;
 
-    public const int DONATION_ID = 0;
-    public const int PLAYER_ID = 1;
-    public const int DONOR_ID = 2;
+    private const int DONATION_ID = 0;
+    private const int PLAYER_ID = 1;
+    private const int DONOR_ID = 2;
 
     public CallbackController(HttpClient client, IDonationService donationService, ILockService lockService, IOptions<DonateCraftOptions> options)
     {
