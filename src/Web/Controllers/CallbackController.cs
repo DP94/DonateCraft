@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
+using Amazon.DynamoDBv2.Model;
 using Common.Models;
 using Core.Services;
 using Microsoft.AspNetCore.Cors;
@@ -18,6 +19,10 @@ public class CallbackController : ControllerBase
     private readonly string _apiKey;
     private readonly string _donateCraftUi;
 
+    private const int DONATION_ID = 0;
+    private const int PLAYER_ID = 1;
+    private const int DONOR_ID = 2;
+
     public CallbackController(HttpClient client, IDonationService donationService, ILockService lockService, IOptions<DonateCraftOptions> options)
     {
         this._client = client;
@@ -30,26 +35,28 @@ public class CallbackController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Callback([FromQuery] string data)
     {
-        var split = data.Split("|");
-        if (split.Length != 2)
+        var justGivingData = data.Split("|");
+        var donationId = justGivingData[DONATION_ID];
+        if (justGivingData.Length < 2)
         {
             return BadRequest("Invalid data returned from JustGiving!");
         }
-        var donationId = split[0];
-        var player = split[1];
+        var player = justGivingData[PLAYER_ID];
+        var paidForKey = justGivingData.Length > 2 ? justGivingData[DONOR_ID] : null;
         if (string.IsNullOrWhiteSpace(donationId) || string.IsNullOrWhiteSpace(player))
         {
             return BadRequest("Player or donation id is missing");
         }
 
-        this._client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        var justGivingDonation = await this.GetDonationData(donationId);
-        if (justGivingDonation is not { Status: "Accepted" or "Pending" })
+        Lock currentLock = null;
+        try
         {
-            //Send error back here
-            return Redirect(this._donateCraftUi);
+            currentLock = await this._lockService.GetLock(player);
         }
-        var currentLock = await this._lockService.GetLock(player);
+        catch (ResourceNotFoundException)
+        {
+            Console.WriteLine($"Lock with id {player} not found");
+        }
         if (currentLock == null)
         {
             //In the event of someone donating when no lock is present
@@ -61,6 +68,14 @@ public class CallbackController : ControllerBase
             return Redirect(this._donateCraftUi);
         }
 
+        this._client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        var justGivingDonation = await this.GetDonationData(donationId);
+        if (justGivingDonation is not { Status: "Accepted" or "Pending" })
+        {
+            //Send error back here
+            return Redirect(this._donateCraftUi);
+        }
+
         var charityData = await GetCharityData(justGivingDonation.CharityId);
         await this._donationService.Create(player, new Donation
         {
@@ -69,6 +84,7 @@ public class CallbackController : ControllerBase
             CharityId = justGivingDonation.CharityId,
             CharityName = charityData.Name,
             CreatedDate = DateTime.Now,
+            PaidForId = paidForKey ?? player
         });
 
         currentLock.DonationId = justGivingDonation.Id.ToString();

@@ -98,10 +98,7 @@ public class ControllerCallbackTest
             HttpStatusCode.OK));
         this._client.BaseAddress = new Uri("http://justgiving.com");
         this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options);
-        var theLock = new Lock()
-        {
-            Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747"
-        };
+        var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
         A.CallTo(() => this._lockService.GetLock(theLock.Id)).Returns(theLock);
 
         var result = await this._controller.Callback("1|5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
@@ -111,7 +108,8 @@ public class ControllerCallbackTest
                     donation.Amount == 1.7441 &&
                     donation.CharityName == "Test" &&
                     donation.CharityId == 2201 &&
-                    donation.Id == "1500333570")))
+                    donation.Id == "1500333570" &&
+                    donation.PaidForId == "5ba92742-af9d-4ad6-a5a7-c768dd9bc747")))
             .MustHaveHappenedOnceExactly();
         A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
             .MustHaveHappenedOnceExactly();

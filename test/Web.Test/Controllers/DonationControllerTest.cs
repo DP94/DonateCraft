@@ -25,8 +25,8 @@ public class DonationControllerTest
     {
         var donations = new List<Donation>
         {
-            new("abc", 1, DateTime.Now, 1, "def"),
-            new("abc", 2, DateTime.Now, 2, "def"),
+            new("abc", 1, DateTime.Now, 1, "def", Guid.NewGuid().ToString()),
+            new("abc", 2, DateTime.Now, 2, "def", Guid.NewGuid().ToString()),
         };
         A.CallTo(() => this._donationService.GetDonations("test")).Returns(donations);
         var result = await this._controller.GetDonations("test") as ObjectResult;
@@ -37,7 +37,7 @@ public class DonationControllerTest
     [Test]
     public async Task Get_ById_ReturnsPlayer()
     {
-        var donation = new Donation(Guid.NewGuid().ToString(), 1, DateTime.Now, 1, "def");
+        var donation = new Donation(Guid.NewGuid().ToString(), 1, DateTime.Now, 1, "def", Guid.NewGuid().ToString());
         A.CallTo(() => this._donationService.GetDonation("test", donation.Id)).Returns(donation);
         var result = await this._controller.GetDonation("test", donation.Id) as ObjectResult;
         Assert.AreEqual(donation, result.Value);
@@ -47,7 +47,7 @@ public class DonationControllerTest
     [Test]
     public async Task Post_CreatesDonation_Successfully()
     {
-        var donation = new Donation(Guid.NewGuid().ToString(), 1, DateTime.Now, 1, "def");
+        var donation = new Donation(Guid.NewGuid().ToString(), 1, DateTime.Now, 1, "def", Guid.NewGuid().ToString());
         A.CallTo(() => this._donationService.Create("test", donation)).Returns(donation);
         var result = await this._controller.CreateDonation("test", donation) as ObjectResult;
         Assert.AreEqual(donation, result.Value);
@@ -64,7 +64,7 @@ public class DonationControllerTest
     [Test]
     public async Task Put_UpdatesDonation_Successfully()
     {
-        var donation = new Donation(Guid.NewGuid().ToString(), 1, DateTime.Now, 1, "def");
+        var donation = new Donation(Guid.NewGuid().ToString(), 1, DateTime.Now, 1, "def", Guid.NewGuid().ToString());
         A.CallTo(() => this._donationService.UpdateDonation("test", donation)).Returns(donation);
         var result = await this._controller.UpdateDonation("test", donation) as ObjectResult;
         Assert.AreEqual(donation, result.Value);

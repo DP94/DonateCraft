@@ -55,7 +55,7 @@ public class Startup
 
         var client = new HttpClient { BaseAddress = new Uri(justGivingHost) };
         services.AddSingleton(client);
-        
+        services.AddMemoryCache();
         services.AddSwaggerGen(options => { options.EnableAnnotations(); });
         services.AddHttpContextAccessor();
         services.AddCors(options =>

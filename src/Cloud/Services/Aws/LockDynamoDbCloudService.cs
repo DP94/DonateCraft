@@ -3,19 +3,24 @@ using Amazon.DynamoDBv2.Model;
 using Cloud.Util;
 using Common.Models;
 using Common.Util;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Cloud.Services.Aws;
 
 public class LockDynamoDbCloudService : ILockCloudService
 {
 
-    private IAmazonDynamoDB _amazonDynamoDb;
-    private IDonationCloudService _donationCloudService;
+    private readonly IAmazonDynamoDB _amazonDynamoDb;
+    private readonly IDonationCloudService _donationCloudService;
+    private readonly IPlayerCloudService _playerCloudService;
+    private readonly IMemoryCache _cache;
 
-    public LockDynamoDbCloudService(IAmazonDynamoDB amazonDynamoDb, IDonationCloudService donationCloudService)
+    public LockDynamoDbCloudService(IAmazonDynamoDB amazonDynamoDb, IDonationCloudService donationCloudService, IPlayerCloudService playerCloudService, IMemoryCache cache)
     {
         this._amazonDynamoDb = amazonDynamoDb;
         this._donationCloudService = donationCloudService;
+        this._playerCloudService = playerCloudService;
+        this._cache = cache;
     }
 
     public async Task<Lock> Create(Lock newLock)
@@ -69,6 +74,8 @@ public class LockDynamoDbCloudService : ILockCloudService
                 if (!string.IsNullOrWhiteSpace(donationId))
                 {
                     var donation = await this._donationCloudService.GetDonation(newLock.Id, donationId);
+                    var paidBy = await this._cache.GetOrCreateAsync<Player>(donation.PaidForId, _ => this._playerCloudService.GetPlayerById(donation.PaidForId));
+                    donation.PaidForBy = paidBy;
                     newLock.Donation = donation;
                 }
                 locks.Add(newLock);

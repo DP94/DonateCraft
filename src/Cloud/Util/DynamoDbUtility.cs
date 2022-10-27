@@ -87,6 +87,7 @@ public static class DynamoDbUtility
         attributeValues.TryAdd(DynamoDbConstants.DonationCharityIdColName, new AttributeValue { N = donation.CharityId.ToString()});
         attributeValues.TryAdd(DynamoDbConstants.DonationCharityNameColName, new AttributeValue(donation.CharityName));
         attributeValues.TryAdd(DynamoDbConstants.DonationCreatedDateColName, new AttributeValue(donation.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")));
+        attributeValues.TryAdd(DynamoDbConstants.DonationPaidForByColName, new AttributeValue(donation.PaidForId));
         return attributeValues;
     }
 
@@ -183,13 +184,15 @@ public static class DynamoDbUtility
             attributeValues.TryGetValue(DynamoDbConstants.DonationCharityNameColName, out var charityName) &&
             attributeValues.TryGetValue(DynamoDbConstants.DonationCharityIdColName, out var charityId) &&
             attributeValues.TryGetValue(DynamoDbConstants.DonationAmountColName, out var amount) &&
-            attributeValues.TryGetValue(DynamoDbConstants.DonationCreatedDateColName, out var createdDate))
+            attributeValues.TryGetValue(DynamoDbConstants.DonationCreatedDateColName, out var createdDate) &&
+            attributeValues.TryGetValue(DynamoDbConstants.DonationPaidForByColName, out var paidForBy))
         {
             donation.Id = id.S;
             donation.CharityId = Convert.ToInt32(charityId.N);
             donation.CharityName = charityName.S;
             donation.Amount = Convert.ToDouble(amount.N);
             donation.CreatedDate = DateTime.ParseExact(createdDate.S, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            donation.PaidForId = paidForBy.S;
         }
             
         return donation;

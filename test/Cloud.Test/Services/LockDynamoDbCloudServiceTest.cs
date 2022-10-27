@@ -7,6 +7,7 @@ using Cloud.Util;
 using Common.Models;
 using Common.Util;
 using FakeItEasy;
+using Microsoft.Extensions.Caching.Memory;
 using NUnit.Framework;
 
 namespace Cloud.Test.Services;
@@ -25,7 +26,8 @@ public class LockDynamoDbCloudServiceTest
         await this._localDynamoDbSetup.SetupDynamoDb();
         await this._localDynamoDbSetup.CreateTables(null, DynamoDbConstants.LockTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
-        this._cloudService = new LockDynamoDbCloudService(this._dynamoDb, A.Fake<IDonationCloudService>());
+        this._cloudService = new LockDynamoDbCloudService(this._dynamoDb, A.Fake<IDonationCloudService>(),
+            A.Fake<IPlayerCloudService>(), A.Fake<IMemoryCache>());
     }
     
     [Test]
