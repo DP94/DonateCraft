@@ -91,7 +91,7 @@ public static class DynamoDbUtility
         return attributeValues;
     }
 
-    public static Player GetPlayerFromAttributes(Dictionary<string, AttributeValue> attributeValues)
+    public static Player GetPlayerFromAttributes(Dictionary<string, AttributeValue> attributeValues, DynamoAttributeMappingCriteria criteria)
     {
         var player = new Player();
 
@@ -102,7 +102,7 @@ public static class DynamoDbUtility
             player.Name = name.S;
         }
 
-        if (attributeValues.TryGetValue(DynamoDbConstants.PlayerDeathsColName, out var deaths))
+        if (criteria.WithDeaths && attributeValues.TryGetValue(DynamoDbConstants.PlayerDeathsColName, out var deaths))
         {
             foreach (var death in deaths.L.Select(deathAttributes => GetDeathFromAttributes(deathAttributes.M)))
             {
@@ -111,7 +111,7 @@ public static class DynamoDbUtility
             }
         }
         
-        if (attributeValues.TryGetValue(DynamoDbConstants.PlayerDonationsColName, out var donations))
+        if (criteria.WithDonations && attributeValues.TryGetValue(DynamoDbConstants.PlayerDonationsColName, out var donations))
         {
             foreach (var donation in donations.L.Select(deathAttributes => GetDonationFromAttributes(deathAttributes.M)))
             {

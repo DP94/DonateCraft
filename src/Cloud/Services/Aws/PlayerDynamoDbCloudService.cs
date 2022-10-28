@@ -17,14 +17,21 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
     {
         this._dynamoDb = dynamoDb;
     }
-    
+
     public async Task<List<Player>> GetPlayers()
     {
         var result = await this._dynamoDb.ScanAsync(new ScanRequest(DynamoDbConstants.PlayerTableName));
-        return result.Items.Select(DynamoDbUtility.GetPlayerFromAttributes).ToList();
+        var criteria = new DynamoAttributeMappingCriteria(true, true);
+        return result.Items.Select(item =>
+            DynamoDbUtility.GetPlayerFromAttributes(item, criteria)).ToList();
     }
 
     public async Task<Player> GetPlayerById(string id)
+    {
+        return await this.GetPlayerById(id, new DynamoAttributeMappingCriteria());
+    }
+    
+    public async Task<Player> GetPlayerById(string id, DynamoAttributeMappingCriteria criteria)
     {
         var response = await this._dynamoDb.GetItemAsync(new GetItemRequest
         {
@@ -41,7 +48,7 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
             throw new ResourceNotFoundException($"Player {id} not found");
         }
 
-        return DynamoDbUtility.GetPlayerFromAttributes(response.Item);
+        return DynamoDbUtility.GetPlayerFromAttributes(response.Item, criteria);
     }
 
     public async Task<Player> CreatePlayer(Player player)

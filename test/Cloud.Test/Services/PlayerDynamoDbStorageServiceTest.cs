@@ -161,7 +161,7 @@ public class PlayerDynamoDbStorageServiceTest
         {
             return null;
         }
-        return DynamoDbUtility.GetPlayerFromAttributes(response.Item);
+        return DynamoDbUtility.GetPlayerFromAttributes(response.Item, new DynamoAttributeMappingCriteria());
     }
 
     [OneTimeTearDown]
