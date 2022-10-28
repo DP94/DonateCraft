@@ -1,13 +1,14 @@
-﻿using System.Security.Cryptography;
-using Amazon.DynamoDBv2;
+﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Cloud.DynamoDbLocal;
 using Cloud.Services;
 using Cloud.Services.Aws;
 using Cloud.Util;
+using Common.Exceptions;
 using Common.Models;
 using Common.Util;
 using NUnit.Framework;
+using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
 namespace Cloud.Test.Services;
 
@@ -88,6 +89,19 @@ public class PlayerDynamoDbStorageServiceTest
         Assert.AreEqual(player.Id, retrievedPlayer.Id);
         Assert.AreEqual(player.Name,retrievedPlayer.Name);
     }
+    
+        
+    [Test]
+    public async Task CreatePlayer_ThatAlreadyExists_ThrowsResourceAlreadyExistsException()
+    {
+        var player = new Player
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = "Test"
+        };
+        await this._cloudService.CreatePlayer(player);
+        Assert.ThrowsAsync<ResourceExistsException>(() => this._cloudService.CreatePlayer(player));
+    }
 
     [Test]
     public async Task UpdatePlayer_SuccessfullyUpdatesPlayer()
@@ -104,6 +118,13 @@ public class PlayerDynamoDbStorageServiceTest
         var retrievedPlayer = await GetPlayer(player.Id);
         Assert.AreEqual(player.Id, retrievedPlayer.Id);
         Assert.AreEqual("Updated", retrievedPlayer.Name);
+    }
+
+    [Test]
+    public void UpdatePlayer_ThatDoesntExist_ThrowsResourceNotFoundException()
+    {
+        Assert.ThrowsAsync<ResourceNotFoundException>(() =>
+            this._cloudService.UpdatePlayer(new Player(Guid.NewGuid().ToString(), "DoesntExist")));
     }
     
     [Test]
