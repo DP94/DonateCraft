@@ -90,7 +90,7 @@ public class LockDynamoDbCloudService : ILockCloudService
                 if (!string.IsNullOrWhiteSpace(donationId))
                 {
                     var donation = await this._donationCloudService.GetDonation(newLock.Id, donationId);
-                    var paidBy = await this._cache.GetOrCreateAsync<Player>(donation.PaidForId, _ => this._playerCloudService.GetPlayerById(donation.PaidForId));
+                    var paidBy = await this._cache.GetOrCreateAsync(donation.PaidForId, _ => this._playerCloudService.GetPlayerById(donation.PaidForId, new DynamoAttributeMappingCriteria(false, false)));
                     donation.PaidForBy = paidBy;
                     newLock.Donation = donation;
                 }
