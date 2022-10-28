@@ -4,9 +4,11 @@ using Cloud.DynamoDbLocal;
 using Cloud.Services;
 using Cloud.Services.Aws;
 using Cloud.Util;
+using Common.Exceptions;
 using Common.Models;
 using Common.Util;
 using NUnit.Framework;
+using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
 namespace Cloud.Test.Services;
 
@@ -58,6 +60,14 @@ public class CharityDynamoDbCloudServiceTest
         Assert.AreEqual(charity.Name, retrievedCharity.Name);
         Assert.AreEqual(charity.Url, retrievedCharity.Url);
     }
+
+    [Test]
+    public async Task CreateCharity_ThatAlreadyExists_ThrowsResourceAlreadyExistsException()
+    {
+        var charity = CreateCharity();
+        await this._cloudService.CreateCharity(charity);
+        Assert.ThrowsAsync<ResourceExistsException>(() => this._cloudService.CreateCharity(charity));
+    }
     
     [Test]
     public async Task GetCharity_SuccessfullyGetsCharity()
@@ -75,6 +85,16 @@ public class CharityDynamoDbCloudServiceTest
     public void GetCharity_WhichDoesntExist_Throws_ResourceNotFoundException()
     {
         Assert.ThrowsAsync<ResourceNotFoundException>(() => this._cloudService.GetCharityById(Guid.NewGuid().ToString()));
+    }
+    
+    [Test]
+    public void UpdateCharity_ThatDoesntExist_ThrowsResourceNotFoundException()
+    {
+        Assert.ThrowsAsync<ResourceNotFoundException>(() =>
+            this._cloudService.UpdateCharity(new Charity
+            {
+                Id = Guid.NewGuid().ToString()
+            }));
     }
     
     [Test]

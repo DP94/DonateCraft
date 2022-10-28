@@ -19,16 +19,9 @@ public class PlayerService : IPlayerService
         return await this._playerCloudService.GetPlayers();
     }
 
-    public async Task<Player?> GetPlayerById(string id)
+    public async Task<Player> GetPlayerById(string id)
     {
-        try
-        {
-            return await this._playerCloudService.GetPlayerById(id);
-        }
-        catch (ResourceNotFoundException)
-        {
-            return null;
-        }
+        return await this._playerCloudService.GetPlayerById(id);
     }
 
     public async Task<Player> CreatePlayer(Player player)
@@ -41,8 +34,8 @@ public class PlayerService : IPlayerService
         await this._playerCloudService.DeletePlayer(id);
     }
 
-    public Task<Player> UpdatePlayer(Player player)
+    public async Task<Player> UpdatePlayer(Player player)
     {
-        throw new NotImplementedException();
+        return await this._playerCloudService.UpdatePlayer(player);
     }
 }
