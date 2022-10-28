@@ -1,8 +1,9 @@
 ﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
 using Cloud.DynamoDbLocal;
 using Cloud.Services;
 using Cloud.Services.Aws;
-using Common.Exceptions;
+using Cloud.Util;
 using Common.Models;
 using Common.Util;
 using FakeItEasy;
@@ -130,13 +131,6 @@ public class DeathDynamoDbCloudServiceTest
         death = player.Deaths.First();
         
         Assert.AreEqual("Updated reason", death.Reason);
-    }
-    
-    [Test]
-    public void UpdateDeath_ThatDoesntExist_ThrowsResourceNotFoundException()
-    {
-        Assert.ThrowsAsync<ResourceNotFoundException>(() =>
-            this._deathCloudService.UpdateDeath(Guid.NewGuid().ToString(), new Death()));
     }
     
     [Test]

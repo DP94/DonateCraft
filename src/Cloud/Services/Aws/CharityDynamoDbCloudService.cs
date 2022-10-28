@@ -1,10 +1,8 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Cloud.Util;
-using Common.Exceptions;
 using Common.Models;
 using Common.Util;
-using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
 namespace Cloud.Services.Aws;
 
@@ -59,26 +57,16 @@ public class CharityDynamoDbCloudService : ICharityCloudService
 
     public async Task<Charity> CreateCharity(Charity charity)
     {
-        try
+        await this._dynamoDb.PutItemAsync(new PutItemRequest
         {
-            await this._dynamoDb.PutItemAsync(new PutItemRequest
-            {
-                TableName = DynamoDbConstants.CharityTableName,
-                Item = DynamoDbUtility.GetAttributesFromCharity(charity),
-                ConditionExpression = $"attribute_not_exists({DynamoDbConstants.CharityIdColName})"
-            });
-        }
-        catch (ConditionalCheckFailedException e)
-        {
-            throw new ResourceExistsException($"Charity with id {charity.Id} already exists!");
-        }
-
+            TableName = DynamoDbConstants.CharityTableName,
+            Item = DynamoDbUtility.GetAttributesFromCharity(charity)
+        });
         return charity;
     }
 
     public async Task<Charity> UpdateCharity(Charity charity)
     {
-        await this.GetCharityById(charity.Id);
         await this._dynamoDb.PutItemAsync(new PutItemRequest
         {
             TableName = DynamoDbConstants.CharityTableName,

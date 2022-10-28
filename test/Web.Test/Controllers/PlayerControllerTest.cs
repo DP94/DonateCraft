@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Common.Exceptions;
 using Common.Models;
 using Core.Services;
 using FakeItEasy;
@@ -53,8 +52,9 @@ public class PlayerControllerTest
     [Test]
     public async Task Get_ById_Returns404_If_PlayerNull()
     {
-        A.CallTo(() => this._playerService.GetPlayerById("1")).Throws<ResourceNotFoundException>();
-        Assert.ThrowsAsync<ResourceNotFoundException>(() => this._controller.Get("1"));
+        A.CallTo(() => this._playerService.GetPlayerById("1")).Returns((Player) null);
+        var result = await this._controller.Get("1") as IStatusCodeActionResult;
+        Assert.AreEqual(404, result.StatusCode);
     }
 
     [Test]
@@ -69,15 +69,6 @@ public class PlayerControllerTest
         var result = await this._controller.Post(player) as ObjectResult;
         Assert.AreEqual(player, result.Value);
         Assert.AreEqual(201, result.StatusCode);
-    }
-
-    [Test]
-    public async Task Post_Returns400_WhenPlayerId_NotPresent()
-    {
-        A.CallTo(() => this._playerService.CreatePlayer(A<Player>.Ignored)).Throws<ResourceExistsException>();
-        var result = await this._controller.Post(new Player()) as ObjectResult;
-        Assert.AreEqual(400, result.StatusCode);
-        Assert.AreEqual("Player id must be supplied when creating a player", result.Value);
     }
     
     [Test]

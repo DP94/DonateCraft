@@ -1,10 +1,8 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Cloud.Util;
-using Common.Exceptions;
 using Common.Models;
 using Common.Util;
-using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
 namespace Cloud.Services.Aws;
 
@@ -46,20 +44,11 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
 
     public async Task<Player> CreatePlayer(Player player)
     {
-        try
+        await this._dynamoDb.PutItemAsync(new PutItemRequest
         {
-            await this._dynamoDb.PutItemAsync(new PutItemRequest
-            {
-                TableName = DynamoDbConstants.PlayerTableName,
-                Item = DynamoDbUtility.GetAttributesFromPlayer(player),
-                ConditionExpression = $"attribute_not_exists({DynamoDbConstants.PlayerIdColName})"
-            });
-        }
-        catch (ConditionalCheckFailedException e)
-        {
-            throw new ResourceExistsException($"Player with id {player.Id} already exists!");
-        }
-
+            TableName = DynamoDbConstants.PlayerTableName,
+            Item = DynamoDbUtility.GetAttributesFromPlayer(player)
+        });
         return player;
     }
 
@@ -79,7 +68,6 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
 
     public async Task<Player> UpdatePlayer(Player player)
     {
-        await this.GetPlayerById(player.Id);
         await this._dynamoDb.PutItemAsync(new PutItemRequest
         {
             TableName = DynamoDbConstants.PlayerTableName,

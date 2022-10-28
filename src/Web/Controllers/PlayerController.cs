@@ -31,11 +31,15 @@ public class PlayerController : ControllerBase
 
     [HttpGet("{id}")]
     [SwaggerResponse(200, "Success", typeof(Player))]
-    [SwaggerResponse(404, "Player not found")]
+    [SwaggerResponse(400, "Player not found")]
     [SwaggerOperation("Gets all player by id")]
     public async Task<IActionResult> Get(string id)
     {
         var player = await this._playerService.GetPlayerById(id);
+        if (player == null)
+        {
+            return NotFound();
+        }
         return Ok(player);
     }
 
@@ -44,11 +48,6 @@ public class PlayerController : ControllerBase
     [SwaggerResponse(201, "Player created successfully", typeof(Player))]
     public async Task<ActionResult> Post([FromBody] [SwaggerParameter("The book to create")] Player player)
     {
-        if (string.IsNullOrWhiteSpace(player.Id))
-        {
-            return BadRequest("Player id must be supplied when creating a player");
-        }
-        
         var createdPlayer = await this._playerService.CreatePlayer(player);
         return Created($"{this._httpContextAccessor.HttpContext?.Request.GetEncodedUrl()}/{player.Id}", createdPlayer);
     }

@@ -8,7 +8,6 @@ using Cloud.Services.Aws;
 using Common.Models;
 using Common.Util;
 using Core.Services;
-using Web.Filters;
 
 namespace Web;
 
@@ -67,10 +66,6 @@ public class Startup
                     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
                         .WithExposedHeaders("Authorization", "x-amzn-remapped-authorization");
                 });
-        });
-        services.AddMvc(options =>
-        {
-            options.Filters.Add(new ExceptionFilter());
         });
     }
 

@@ -1,8 +1,8 @@
 ﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
 using Cloud.DynamoDbLocal;
 using Cloud.Services;
 using Cloud.Services.Aws;
-using Common.Exceptions;
 using Common.Models;
 using Common.Util;
 using NUnit.Framework;
@@ -114,14 +114,6 @@ public class DonationDynamoDbCloudServiceTest
         donation = player.Donations.First();
 
         Assert.AreEqual(2, donation.Amount);
-    }
-    
-    
-    [Test]
-    public void UpdateDonation_ThatDoesntExist_ThrowsResourceNotFoundException()
-    {
-        Assert.ThrowsAsync<ResourceNotFoundException>(() =>
-            this._donationCloudService.UpdateDonation(Guid.NewGuid().ToString(), new Donation()));
     }
     
     [Test]

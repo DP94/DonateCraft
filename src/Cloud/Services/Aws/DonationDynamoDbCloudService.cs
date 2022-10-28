@@ -1,4 +1,4 @@
-﻿using Common.Exceptions;
+﻿using Amazon.DynamoDBv2.Model;
 using Common.Models;
 
 namespace Cloud.Services.Aws;
