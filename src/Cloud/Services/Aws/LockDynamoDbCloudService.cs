@@ -1,9 +1,11 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Cloud.Util;
+using Common.Exceptions;
 using Common.Models;
 using Common.Util;
 using Microsoft.Extensions.Caching.Memory;
+using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
 namespace Cloud.Services.Aws;
 
@@ -25,11 +27,20 @@ public class LockDynamoDbCloudService : ILockCloudService
 
     public async Task<Lock> Create(Lock newLock)
     {
-        await this._amazonDynamoDb.PutItemAsync(new PutItemRequest
+        try
         {
-            TableName = DynamoDbConstants.LockTableName,
-            Item = DynamoDbUtility.GetAttributesFromLock(newLock)
-        });
+            await this._amazonDynamoDb.PutItemAsync(new PutItemRequest
+            {
+                TableName = DynamoDbConstants.LockTableName,
+                Item = DynamoDbUtility.GetAttributesFromLock(newLock),
+                ConditionExpression = $"attribute_not_exists({DynamoDbConstants.LockIdColName})"
+            });
+        }
+        catch (ConditionalCheckFailedException e)
+        {
+            throw new ResourceExistsException($"Lock with id {newLock.Id} already exists!");    
+        }
+
         return newLock;
     }
 
@@ -41,6 +52,11 @@ public class LockDynamoDbCloudService : ILockCloudService
 
     public async Task<List<Lock>> GetLocksForPlayers(List<string> playerIds)
     {
+        if (playerIds is { Count: 0 })
+        {
+            return new List<Lock>();
+        }
+        
         var request = new BatchGetItemRequest
         {
             RequestItems = new Dictionary<string, KeysAndAttributes>
@@ -120,6 +136,7 @@ public class LockDynamoDbCloudService : ILockCloudService
 
     public async Task<Lock> UpdateLock(Lock theLock)
     {
+        await this.GetLock(theLock.Id);
         await this._amazonDynamoDb.PutItemAsync(new PutItemRequest
         {
             TableName = DynamoDbConstants.LockTableName,

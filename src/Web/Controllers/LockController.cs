@@ -57,6 +57,8 @@ public class LockController : ControllerBase
     [SwaggerOperation("Updates a lock")]
     public async Task<IActionResult> UpdateLock([FromBody] Lock aLock)
     {
+        //Retrieve lock to see if it exists; throws exception if not
+        await this.GetLock(aLock.Id);
         var newLock = await this._lockService.UpdateLock(aLock);
         return Ok(newLock);
     }
