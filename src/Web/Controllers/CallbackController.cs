@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
 using Amazon.DynamoDBv2.Model;
+using Amazon.Lambda.Core;
 using Common.Models;
 using Core.Services;
 using Microsoft.AspNetCore.Cors;
@@ -35,7 +36,12 @@ public class CallbackController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Callback([FromQuery] string data)
     {
-        var justGivingData = data.Split("|");
+        if (data == null)
+        {
+            return BadRequest("No data returned from JustGiving!");
+        }
+        LambdaLogger.Log($"Inside callback! data: {data}");
+        var justGivingData = data.Split("~");
         var donationId = justGivingData[DONATION_ID];
         if (justGivingData.Length < 2)
         {
