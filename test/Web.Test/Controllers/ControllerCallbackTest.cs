@@ -52,6 +52,14 @@ public class ControllerCallbackTest
     }
     
     [Test]
+    public async Task CallbackController_ReturnsBadRequest_WhenJustGiving_DataMissing()
+    {
+        var result = await this._controller.Callback(null) as ObjectResult;
+        Assert.AreEqual(400, result.StatusCode);
+        Assert.AreEqual("No data returned from JustGiving!", result.Value);
+    }
+    
+    [Test]
     public async Task CallbackController_ReturnsBadRequest_WhenJustGivingDoesntReturnDonationId()
     {
         var result = await this._controller.Callback("~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as ObjectResult;
