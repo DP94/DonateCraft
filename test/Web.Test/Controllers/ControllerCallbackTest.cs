@@ -46,7 +46,7 @@ public class ControllerCallbackTest
     [Test]
     public async Task CallbackController_ReturnsBadRequest_WhenJustGivingDoesntReturnPlayerId()
     {
-        var result = await this._controller.Callback("1500333570|") as ObjectResult;
+        var result = await this._controller.Callback("1500333570~") as ObjectResult;
         Assert.AreEqual(400, result.StatusCode);
         Assert.AreEqual("Player or donation id is missing", result.Value);
     }
@@ -54,7 +54,7 @@ public class ControllerCallbackTest
     [Test]
     public async Task CallbackController_ReturnsBadRequest_WhenJustGivingDoesntReturnDonationId()
     {
-        var result = await this._controller.Callback("|5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as ObjectResult;
+        var result = await this._controller.Callback("~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as ObjectResult;
         Assert.AreEqual(400, result.StatusCode);
         Assert.AreEqual("Player or donation id is missing", result.Value);
     }
@@ -65,7 +65,7 @@ public class ControllerCallbackTest
         this._client = new HttpClient(FakeHttpMessageHandler.GetHttpMessageHandler("{\"Status\": \"Failed\"}", HttpStatusCode.OK));
         this._client.BaseAddress = new Uri("http://justgiving.com");
         this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options);
-        var result = await this._controller.Callback("1|5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
+        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         Assert.AreEqual("test.com", result.Url);
     }
     
@@ -74,7 +74,7 @@ public class ControllerCallbackTest
     {
         //FakeItEasy returns a blank proxy (but not null!) when stubs are not specified...
         A.CallTo(() => this._lockService.GetLock(A<string>.Ignored)).Returns((Lock)null);
-        var result = await this._controller.Callback("1|5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
+        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         Assert.AreEqual("test.com", result.Url);
     }
     
@@ -86,7 +86,7 @@ public class ControllerCallbackTest
         {
             Unlocked = true
         });
-        var result = await this._controller.Callback("1|5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
+        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         Assert.AreEqual("test.com", result.Url);
     }
     
@@ -101,7 +101,7 @@ public class ControllerCallbackTest
         var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
         A.CallTo(() => this._lockService.GetLock(theLock.Id)).Returns(theLock);
 
-        var result = await this._controller.Callback("1|5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
+        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         
         A.CallTo(() => this._donationService.Create("5ba92742-af9d-4ad6-a5a7-c768dd9bc747",
                 A<Donation>.That.Matches(donation =>
@@ -128,7 +128,7 @@ public class ControllerCallbackTest
         var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
         A.CallTo(() => this._lockService.GetLock(theLock.Id)).Returns(theLock);
 
-        var result = await this._controller.Callback("1|5ba92742-af9d-4ad6-a5a7-c768dd9bc747|3a0c7a69-c12f-4f7f-9aaf-3345bb0f2e38") as RedirectResult;
+        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747~3a0c7a69-c12f-4f7f-9aaf-3345bb0f2e38") as RedirectResult;
         
         A.CallTo(() => this._donationService.Create("5ba92742-af9d-4ad6-a5a7-c768dd9bc747",
                 A<Donation>.That.Matches(donation =>
