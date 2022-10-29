@@ -116,4 +116,31 @@ public class ControllerCallbackTest
 
         Assert.AreEqual("test.com", result.Url);
     }
+    
+    [Test]
+    public async Task CallbackController_SuccessfullyCreatesDonation_PaidForByDifferentPlayer_AndUnlocksLock()
+    {
+        this._client = new HttpClient(FakeHttpMessageHandler.GetHttpMessageHandler(
+            "{\"amount\":\"1.7441\",\"donationRef\":\"115070563\",\"id\":1500333570,\"status\":\"Accepted\",\"charityId\":2201, \"name\":\"Test\"}",
+            HttpStatusCode.OK));
+        this._client.BaseAddress = new Uri("http://justgiving.com");
+        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options);
+        var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
+        A.CallTo(() => this._lockService.GetLock(theLock.Id)).Returns(theLock);
+
+        var result = await this._controller.Callback("1|5ba92742-af9d-4ad6-a5a7-c768dd9bc747|3a0c7a69-c12f-4f7f-9aaf-3345bb0f2e38") as RedirectResult;
+        
+        A.CallTo(() => this._donationService.Create("5ba92742-af9d-4ad6-a5a7-c768dd9bc747",
+                A<Donation>.That.Matches(donation =>
+                    donation.Amount == 1.7441 &&
+                    donation.CharityName == "Test" &&
+                    donation.CharityId == 2201 &&
+                    donation.Id == "1500333570" &&
+                    donation.PaidForId == "3a0c7a69-c12f-4f7f-9aaf-3345bb0f2e38")))
+            .MustHaveHappenedOnceExactly();
+        A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
+            .MustHaveHappenedOnceExactly();
+
+        Assert.AreEqual("test.com", result.Url);
+    }
 }

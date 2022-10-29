@@ -81,21 +81,25 @@ public class LockDynamoDbCloudService : ILockCloudService
         });
         var locks = new List<Lock>();
         var response = await this._amazonDynamoDb.BatchGetItemAsync(request);
-        if (response != null && response.Responses.TryGetValue(DynamoDbConstants.LockTableName, out var ddbLocks))
+        if (response == null || !response.Responses.TryGetValue(DynamoDbConstants.LockTableName, out var ddbLocks))
         {
-            foreach (var aLock in ddbLocks)
+            return locks;
+        }
+
+        foreach (var aLock in ddbLocks)
+        {
+            var newLock = DynamoDbUtility.GetLockFromAttributes(aLock);
+            var donationId = newLock.DonationId;
+            if (!string.IsNullOrWhiteSpace(donationId))
             {
-                var newLock = DynamoDbUtility.GetLockFromAttributes(aLock);
-                var donationId = newLock.DonationId;
-                if (!string.IsNullOrWhiteSpace(donationId))
-                {
-                    var donation = await this._donationCloudService.GetDonation(newLock.Id, donationId);
-                    var paidBy = await this._cache.GetOrCreateAsync(donation.PaidForId, _ => this._playerCloudService.GetPlayerById(donation.PaidForId, new DynamoAttributeMappingCriteria(false, false)));
-                    donation.PaidForBy = paidBy;
-                    newLock.Donation = donation;
-                }
-                locks.Add(newLock);
+                var donation = await this._donationCloudService.GetDonation(newLock.Id, donationId);
+                var paidBy = await this._cache.GetOrCreateAsync(donation.PaidForId,
+                    _ => this._playerCloudService.GetPlayerById(donation.PaidForId,
+                        new DynamoAttributeMappingCriteria(false, false)));
+                donation.PaidForBy = paidBy;
+                newLock.Donation = donation;
             }
+            locks.Add(newLock);
         }
         return locks;
     }
