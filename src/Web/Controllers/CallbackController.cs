@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
-using Amazon.DynamoDBv2.Model;
 using Amazon.Lambda.Core;
+using Common.Exceptions;
 using Common.Models;
 using Core.Services;
 using Microsoft.AspNetCore.Cors;
@@ -34,7 +34,7 @@ public class CallbackController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Callback([FromQuery] string data)
+    public async Task<IActionResult> Callback([FromQuery] string? data)
     {
         if (data == null)
         {
@@ -54,7 +54,7 @@ public class CallbackController : ControllerBase
             return BadRequest("Player or donation id is missing");
         }
 
-        Lock currentLock = null;
+        Lock? currentLock = null;
         try
         {
             currentLock = await this._lockService.GetLock(player);
