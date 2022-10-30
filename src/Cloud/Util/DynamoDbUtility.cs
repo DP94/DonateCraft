@@ -162,17 +162,14 @@ public static class DynamoDbUtility
     {
         var charity = new Charity();
 
-        if (attributeValues.TryGetValue(DynamoDbConstants.CharityIdColName, out var id) &&
-            attributeValues.TryGetValue(DynamoDbConstants.CharityNameColName, out var name) &&
-            attributeValues.TryGetValue(DynamoDbConstants.CharityDescriptionColName, out var description) &&
-            attributeValues.TryGetValue(DynamoDbConstants.CharityURLColName, out var url))
-        {
-            charity.Id = id.S;
-            charity.Description = description.S;
-            charity.Name = name.S;
-            charity.Url = url.S;
-        }
-            
+        attributeValues.TryGetValue(DynamoDbConstants.CharityIdColName, out var id);
+        attributeValues.TryGetValue(DynamoDbConstants.CharityNameColName, out var name);
+        attributeValues.TryGetValue(DynamoDbConstants.CharityDescriptionColName, out var description);
+        attributeValues.TryGetValue(DynamoDbConstants.CharityURLColName, out var url);
+        charity.Id = id?.S;
+        charity.Description = description?.S;
+        charity.Name = name?.S;
+        charity.Url = url?.S;
         return charity;
     }
     
