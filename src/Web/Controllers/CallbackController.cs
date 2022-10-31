@@ -38,20 +38,22 @@ public class CallbackController : ControllerBase
     {
         if (data == null)
         {
-            return BadRequest("No data returned from JustGiving!");
+            LambdaLogger.Log($"No data received from callback initiator {data}, error code 1");
+            return Redirect($"{this._donateCraftUi}?status=error&code=1");
         }
-        LambdaLogger.Log($"Inside callback! data: {data}");
         var justGivingData = data.Split("~");
         var donationId = justGivingData[DONATION_ID];
         if (justGivingData.Length < 2)
         {
-            return BadRequest("Invalid data returned from JustGiving!");
+            LambdaLogger.Log($"Data received is malformed {data}, error code 2");
+            return Redirect($"{this._donateCraftUi}?status=error&code=2");
         }
         var player = justGivingData[PLAYER_ID];
         var paidForKey = justGivingData.Length > 2 ? justGivingData[DONOR_ID] : null;
         if (string.IsNullOrWhiteSpace(donationId) || string.IsNullOrWhiteSpace(player))
         {
-            return BadRequest("Player or donation id is missing");
+            LambdaLogger.Log($"Donation id or player id are missing {data}, error code 3");
+            return Redirect($"{this._donateCraftUi}?status=error&code=3");
         }
 
         Lock? currentLock = null;
@@ -61,17 +63,17 @@ public class CallbackController : ControllerBase
         }
         catch (ResourceNotFoundException)
         {
-            Console.WriteLine($"Lock with id {player} not found");
+            LambdaLogger.Log($"Lock with id {player} not found, error code 4");
         }
         if (currentLock == null)
         {
             //In the event of someone donating when no lock is present
-            return Redirect(this._donateCraftUi);
+            return Redirect($"{this._donateCraftUi}?status=error&code=4");
         }
         if (currentLock.Unlocked)
         {
             //Send message here saying lock already unlocked
-            return Redirect(this._donateCraftUi);
+            return Redirect($"{this._donateCraftUi}?status=warning");
         }
 
         this._client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -79,7 +81,8 @@ public class CallbackController : ControllerBase
         if (justGivingDonation is not { Status: "Accepted" or "Pending" })
         {
             //Send error back here
-            return Redirect(this._donateCraftUi);
+            LambdaLogger.Log($"Donation was not successful! Status is {justGivingDonation?.Status}, error code 5");
+            return Redirect($"{this._donateCraftUi}?status=error&code=5");
         }
 
         var charityData = await GetCharityData(justGivingDonation.CharityId);
@@ -96,7 +99,7 @@ public class CallbackController : ControllerBase
         currentLock.DonationId = justGivingDonation.Id.ToString();
         currentLock.Unlocked = true;
         await this._lockService.UpdateLock(currentLock);
-        return Redirect(this._donateCraftUi);
+        return Redirect($"{this._donateCraftUi}?status=success");
     }
 
     private async Task<JustGivingDonation> GetDonationData(string donationId)
