@@ -38,33 +38,29 @@ public class ControllerCallbackTest
     [Test]
     public async Task CallbackController_ReturnsBadRequest_WhenJustGivingDoesntReturn_Exactly_2ValuesSeparatedBy_Delimiter()
     {
-        var result = await this._controller.Callback("1500333570") as ObjectResult;
-        Assert.AreEqual(400, result.StatusCode);
-        Assert.AreEqual("Invalid data returned from JustGiving!", result.Value);
+        var result = await this._controller.Callback("1500333570")  as RedirectResult;
+        Assert.AreEqual("test.com?status=error&code=2", result.Url);
     }
     
     [Test]
     public async Task CallbackController_ReturnsBadRequest_WhenJustGivingDoesntReturnPlayerId()
     {
-        var result = await this._controller.Callback("1500333570~") as ObjectResult;
-        Assert.AreEqual(400, result.StatusCode);
-        Assert.AreEqual("Player or donation id is missing", result.Value);
+        var result = await this._controller.Callback("1500333570~")  as RedirectResult;
+        Assert.AreEqual("test.com?status=error&code=3", result.Url);
     }
     
     [Test]
     public async Task CallbackController_ReturnsBadRequest_WhenJustGiving_DataMissing()
     {
-        var result = await this._controller.Callback(null) as ObjectResult;
-        Assert.AreEqual(400, result.StatusCode);
-        Assert.AreEqual("No data returned from JustGiving!", result.Value);
+        var result = await this._controller.Callback(null)  as RedirectResult;
+        Assert.AreEqual("test.com?status=error&code=1", result.Url);
     }
     
     [Test]
     public async Task CallbackController_ReturnsBadRequest_WhenJustGivingDoesntReturnDonationId()
     {
-        var result = await this._controller.Callback("~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as ObjectResult;
-        Assert.AreEqual(400, result.StatusCode);
-        Assert.AreEqual("Player or donation id is missing", result.Value);
+        var result = await this._controller.Callback("~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
+        Assert.AreEqual("test.com?status=error&code=3", result.Url);
     }
 
     [Test]
@@ -74,7 +70,7 @@ public class ControllerCallbackTest
         this._client.BaseAddress = new Uri("http://justgiving.com");
         this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options);
         var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
-        Assert.AreEqual("test.com", result.Url);
+        Assert.AreEqual("test.com?status=error&code=5", result.Url);
     }
     
     [Test]
@@ -83,7 +79,7 @@ public class ControllerCallbackTest
         //FakeItEasy returns a blank proxy (but not null!) when stubs are not specified...
         A.CallTo(() => this._lockService.GetLock(A<string>.Ignored)).Returns((Lock)null);
         var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
-        Assert.AreEqual("test.com", result.Url);
+        Assert.AreEqual("test.com?status=error&code=4", result.Url);
     }
     
         
@@ -95,7 +91,7 @@ public class ControllerCallbackTest
             Unlocked = true
         });
         var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
-        Assert.AreEqual("test.com", result.Url);
+        Assert.AreEqual("test.com?status=warning", result.Url);
     }
     
     [Test]
@@ -122,7 +118,7 @@ public class ControllerCallbackTest
         A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
             .MustHaveHappenedOnceExactly();
 
-        Assert.AreEqual("test.com", result.Url);
+        Assert.AreEqual("test.com?status=success", result.Url);
     }
     
     [Test]
@@ -149,6 +145,6 @@ public class ControllerCallbackTest
         A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
             .MustHaveHappenedOnceExactly();
 
-        Assert.AreEqual("test.com", result.Url);
+        Assert.AreEqual("test.com?status=success", result.Url);
     }
 }
