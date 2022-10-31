@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Cloud.Services;
 using Common.Exceptions;
 using Common.Models;
 using Core.Services;
@@ -13,13 +14,16 @@ namespace Web.Test.Controllers;
 public class PlayerControllerTest
 {
     private IPlayerService _playerService;
+    private ILockService _lockService;
     private PlayerController _controller;
 
     [SetUp]
     public void SetUp()
     {
         this._playerService = A.Fake<IPlayerService>();
-        this._controller = new PlayerController(this._playerService, A.Fake<HttpContextAccessor>());
+        this._lockService = A.Fake<ILockService>();
+        this._controller =
+            new PlayerController(this._playerService, A.Fake<HttpContextAccessor>(), this._lockService);
     }
 
     [Test]
@@ -34,6 +38,24 @@ public class PlayerControllerTest
         var result = await this._controller.Get() as ObjectResult;
         CollectionAssert.AreEqual(players, (IEnumerable)result.Value);
         Assert.AreEqual(200, result.StatusCode);
+    }
+
+    [Test]
+    public async Task Get_ReturnsPlayers_AndSetsIsDead()
+    {
+        var players = new List<Player>
+        {
+            new("abc", "def"),
+            new("ghi", "jkl")
+        };
+        A.CallTo(() => this._playerService.GetPlayers()).Returns(players);
+        A.CallTo(() => this._lockService.GetLock("abc")).Throws<ResourceNotFoundException>();
+        A.CallTo(() => this._lockService.GetLock("ghi")).Returns(new Lock());
+        
+        var result = await this._controller.Get() as ObjectResult;
+        var playersResult = result.Value as List<Player>;
+        Assert.IsFalse(playersResult[0].IsDead);
+        Assert.IsTrue(playersResult[1].IsDead);
     }
 
     [Test]

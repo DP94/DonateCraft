@@ -1,4 +1,6 @@
-﻿using Common.Models;
+﻿using Cloud.Services;
+using Common.Exceptions;
+using Common.Models;
 using Core.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -12,12 +14,14 @@ namespace Web.Controllers;
 public class PlayerController : ControllerBase
 {
     private readonly IPlayerService _playerService;
+    private readonly ILockService _lockService;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public PlayerController(IPlayerService playerService, IHttpContextAccessor httpContextAccessor)
+    public PlayerController(IPlayerService playerService, IHttpContextAccessor httpContextAccessor, ILockService lockService)
     {
         this._playerService = playerService;
         this._httpContextAccessor = httpContextAccessor;
+        this._lockService = lockService;
     }
 
     [HttpGet]
@@ -26,6 +30,10 @@ public class PlayerController : ControllerBase
     public async Task<IActionResult> Get()
     {
         var players = await this._playerService.GetPlayers();
+        foreach (var player in players)
+        {
+            await this.SetPlayersDeathStatus(player);
+        }
         return Ok(players);
     }
 
@@ -36,6 +44,7 @@ public class PlayerController : ControllerBase
     public async Task<IActionResult> Get(string id)
     {
         var player = await this._playerService.GetPlayerById(id);
+        await this.SetPlayersDeathStatus(player);
         return Ok(player);
     }
 
@@ -69,5 +78,18 @@ public class PlayerController : ControllerBase
     {
         await this._playerService.DeletePlayer(id);
         return NoContent();
+    }
+
+    private async Task SetPlayersDeathStatus(Player player)
+    {
+        try
+        {
+            await this._lockService.GetLock(player.Id);
+            player.IsDead = true;
+        }
+        catch (ResourceNotFoundException)
+        {
+            player.IsDead = false;
+        }
     }
 }
