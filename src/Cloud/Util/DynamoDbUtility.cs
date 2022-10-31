@@ -37,6 +37,10 @@ public static class DynamoDbUtility
             };
             foreach (var donation in player.Donations)
             {
+                if (string.IsNullOrWhiteSpace(donation.PaidForId))
+                {
+                    donation.PaidForId = player.Id;
+                }
                 donationList.L.Add(new AttributeValue
                 {
                     M = GetAttributesFromDonation(donation)
