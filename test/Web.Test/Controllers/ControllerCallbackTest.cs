@@ -118,7 +118,7 @@ public class ControllerCallbackTest
         A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
             .MustHaveHappenedOnceExactly();
 
-        Assert.AreEqual("test.com?status=success", result.Url);
+        Assert.AreEqual("test.com/players?status=success", result.Url);
     }
     
     [Test]
@@ -145,6 +145,6 @@ public class ControllerCallbackTest
         A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
             .MustHaveHappenedOnceExactly();
 
-        Assert.AreEqual("test.com?status=success", result.Url);
+        Assert.AreEqual("test.com/players?status=success", result.Url);
     }
 }
