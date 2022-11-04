@@ -39,5 +39,6 @@ public static class DynamoDbConstants
     public const string DonationCharityNameColName = "charityName";
     public const string DonationCreatedDateColName = "createdDate";
     public const string DonationPaidForByColName = "paidForById";
+    public const string DonationPrivateColName = "private";
     #endregion
 }
