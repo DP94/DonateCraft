@@ -11,12 +11,14 @@ public class Donation
     public string PaidForId { get; set; }
     
     public Player PaidForBy { get; set; }
+    
+    public bool Private { get; set; }
 
     public Donation()
     {
     }
 
-    public Donation(string id, double amount, DateTime created, int charityId, string charityName, string paidForId)
+    public Donation(string id, double amount, DateTime created, int charityId, string charityName, string paidForId, bool Private)
     {
         Id = id;
         Amount = amount;
@@ -24,5 +26,6 @@ public class Donation
         CharityId = charityId;
         CharityName = charityName;
         PaidForId = paidForId;
+        this.Private = Private;
     }
 }

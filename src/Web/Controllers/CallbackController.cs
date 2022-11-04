@@ -93,13 +93,14 @@ public class CallbackController : ControllerBase
             CharityId = justGivingDonation.CharityId,
             CharityName = charityData.Name,
             CreatedDate = DateTime.Now,
-            PaidForId = paidForKey ?? player
+            PaidForId = paidForKey ?? player,
+            Private = string.IsNullOrWhiteSpace(justGivingDonation.Amount)
         });
 
         currentLock.DonationId = justGivingDonation.Id.ToString();
         currentLock.Unlocked = true;
         await this._lockService.UpdateLock(currentLock);
-        return Redirect($"{this._donateCraftUi}?status=success");
+        return Redirect($"{this._donateCraftUi}/players?status=success");
     }
 
     private async Task<JustGivingDonation> GetDonationData(string donationId)

@@ -6,6 +6,8 @@ public class Player
     
     public string Name { get; set; }
     
+    public bool IsDead { get; set; }
+    
     public List<Death> Deaths { get; set; }
     
     public List<Donation> Donations { get; set; }
@@ -22,5 +24,6 @@ public class Player
         Name = name;
         Deaths = new List<Death>();
         Donations = new List<Donation>();
+        IsDead = false;
     }
 }
