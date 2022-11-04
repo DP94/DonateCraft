@@ -1,4 +1,5 @@
-﻿using Common.Exceptions;
+﻿using Amazon.Lambda.Core;
+using Common.Exceptions;
 using Common.Models;
 
 namespace Cloud.Services.Aws;
@@ -33,14 +34,17 @@ public class DeathDynamoDbStorageService : IDeathCloudService
     public async Task<Death> CreateDeath(string playerId, Death death)
     {
         var player = await this._playerCloudService.GetPlayerById(playerId);
+        LambdaLogger.Log($"Player: {player.ToString()}");
         player.Deaths.Add(death);
         await this._playerCloudService.UpdatePlayer(player);
+        LambdaLogger.Log("Updated player");
 
         await this._lockCloudService.Create(new Lock
         {
             Id = playerId,
             Unlocked = false
         });
+        LambdaLogger.Log("Created lock");
         
         return death;
     }
