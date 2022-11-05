@@ -49,9 +49,11 @@ public class PlayerControllerTest
             new("ghi", "jkl")
         };
         A.CallTo(() => this._playerService.GetPlayers()).Returns(players);
-        A.CallTo(() => this._lockService.GetLock("abc")).Throws<ResourceNotFoundException>();
-        A.CallTo(() => this._lockService.GetLock("ghi")).Returns(new Lock());
-        
+        A.CallTo(() => this._lockService.GetLocks()).Returns(new List<Lock>()
+        {
+            new("ghi", true)
+        });
+
         var result = await this._controller.Get() as ObjectResult;
         var playersResult = result.Value as List<Player>;
         Assert.IsFalse(playersResult[0].IsDead);
