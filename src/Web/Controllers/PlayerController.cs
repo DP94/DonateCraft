@@ -30,9 +30,10 @@ public class PlayerController : ControllerBase
     public async Task<IActionResult> Get()
     {
         var players = await this._playerService.GetPlayers();
-        foreach (var player in players)
+        var locks = await this._lockService.GetLocks();
+        foreach (var player in locks.SelectMany(aLock => players.Where(player => aLock.Id == player.Id)))
         {
-            await this.SetPlayersDeathStatus(player);
+            player.IsDead = true;
         }
         return Ok(players);
     }
