@@ -29,12 +29,26 @@ public class PlayerController : ControllerBase
     [SwaggerOperation("Gets all players")]
     public async Task<IActionResult> Get()
     {
+
         var players = await this._playerService.GetPlayers();
         var locks = await this._lockService.GetLocks();
         foreach (var player in locks.SelectMany(aLock => players.Where(player => aLock.Id == player.Id)))
         {
             player.IsDead = true;
         }
+        var query = this._httpContextAccessor.HttpContext?.Request.Query;
+        if (query != null && query.TryGetValue("sortBy", out var sortBy))
+        {
+            switch (sortBy.First()?.ToLower())
+            {
+                case "deaths":
+                    players.Sort((player, player1) => player1.Deaths.Count.CompareTo(player.Deaths.Count));
+                    break;
+                default:
+                    break;
+            }
+        }
+        
         return Ok(players);
     }
 
