@@ -1,6 +1,7 @@
 ﻿using Cloud.Services;
 using Common.Exceptions;
 using Common.Models;
+using Common.Models.Sort;
 using Core.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -39,13 +40,16 @@ public class PlayerController : ControllerBase
         var query = this._httpContextAccessor.HttpContext?.Request.Query;
         if (query != null && query.TryGetValue("sortBy", out var sortBy))
         {
-            switch (sortBy.First()?.ToLower())
+            var defaultSortOrder = "asc";
+            if (query.TryGetValue("sortOrder", out var sortOrder) && !string.IsNullOrWhiteSpace(sortOrder))
             {
-                case "deaths":
-                    players.Sort((player, player1) => player1.Deaths.Count.CompareTo(player.Deaths.Count));
-                    break;
-                default:
-                    break;
+                defaultSortOrder = sortOrder;
+            }
+            var sortCriteria = new PlayerSortCriteria
+                { AscendingSort = defaultSortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase) };
+            foreach (var sortColumn in sortBy.Select(sortQuery => sortCriteria.GetSortColumnByName(sortQuery)))
+            {
+                sortCriteria.DoSort(sortColumn, players);
             }
         }
         
