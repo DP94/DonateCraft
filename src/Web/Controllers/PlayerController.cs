@@ -12,16 +12,14 @@ namespace Web.Controllers;
 
 [Route("v1/[controller]")]
 [EnableCors]
-public class PlayerController : ControllerBase
+public class PlayerController : DonateCraftBaseController<Player>
 {
     private readonly IPlayerService _playerService;
     private readonly ILockService _lockService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public PlayerController(IPlayerService playerService, IHttpContextAccessor httpContextAccessor, ILockService lockService)
+    public PlayerController(IPlayerService playerService, ILockService lockService)
     {
         this._playerService = playerService;
-        this._httpContextAccessor = httpContextAccessor;
         this._lockService = lockService;
     }
 
@@ -37,22 +35,8 @@ public class PlayerController : ControllerBase
         {
             player.IsDead = true;
         }
-        var query = this._httpContextAccessor.HttpContext?.Request.Query;
-        if (query != null && query.TryGetValue("sortBy", out var sortBy))
-        {
-            var defaultSortOrder = "asc";
-            if (query.TryGetValue("sortOrder", out var sortOrder) && !string.IsNullOrWhiteSpace(sortOrder))
-            {
-                defaultSortOrder = sortOrder;
-            }
-            var sortCriteria = new PlayerSortCriteria
-                { AscendingSort = defaultSortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase) };
-            foreach (var sortColumn in sortBy.Select(sortQuery => sortCriteria.GetSortColumnByName(sortQuery)))
-            {
-                sortCriteria.DoSort(sortColumn, players);
-            }
-        }
-        
+        ProcessSorting(players);
+
         return Ok(players);
     }
 
@@ -78,7 +62,7 @@ public class PlayerController : ControllerBase
         }
         
         var createdPlayer = await this._playerService.CreatePlayer(player);
-        return Created($"{this._httpContextAccessor.HttpContext?.Request.GetEncodedUrl()}/{player.Id}", createdPlayer);
+        return Created($"{this.HttpContext.Request.GetEncodedUrl()}/{player.Id}", createdPlayer);
     }
 
     [SwaggerOperation("Updates a player")]
@@ -110,5 +94,10 @@ public class PlayerController : ControllerBase
         {
             player.IsDead = false;
         }
+    }
+
+    public override SortCriteriaBase<Player> CreateSortCriteria()
+    {
+        return new PlayerSortCriteria();
     }
 }

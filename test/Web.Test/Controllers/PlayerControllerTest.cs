@@ -5,7 +5,7 @@ using Common.Models;
 using Core.Services;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
 using Web.Controllers;
 
@@ -22,8 +22,7 @@ public class PlayerControllerTest
     {
         this._playerService = A.Fake<IPlayerService>();
         this._lockService = A.Fake<ILockService>();
-        this._controller =
-            new PlayerController(this._playerService, A.Fake<HttpContextAccessor>(), this._lockService);
+        this._controller = new PlayerController(this._playerService, this._lockService);
     }
 
     [Test]
