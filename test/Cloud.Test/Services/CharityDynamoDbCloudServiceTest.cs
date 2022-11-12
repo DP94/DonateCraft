@@ -56,9 +56,7 @@ public class CharityDynamoDbCloudServiceTest
         await this._cloudService.CreateCharity(charity);
         var retrievedCharity = await GetCharity(charity.Id);
         Assert.AreEqual(charity.Id, retrievedCharity.Id);
-        Assert.AreEqual(charity.Description, retrievedCharity.Description);
-        Assert.AreEqual(charity.Name, retrievedCharity.Name);
-        Assert.AreEqual(charity.Url, retrievedCharity.Url);
+        Assert.AreEqual(charity.DonationCount, retrievedCharity.DonationCount);
     }
 
     [Test]
@@ -76,9 +74,7 @@ public class CharityDynamoDbCloudServiceTest
         await this._cloudService.CreateCharity(charity);
         var retrievedCharity = await this._cloudService.GetCharityById(charity.Id);
         Assert.AreEqual(charity.Id, retrievedCharity.Id);
-        Assert.AreEqual(charity.Description, retrievedCharity.Description);
-        Assert.AreEqual(charity.Name, retrievedCharity.Name);
-        Assert.AreEqual(charity.Url, retrievedCharity.Url);
+        Assert.AreEqual(charity.DonationCount, retrievedCharity.DonationCount);
     }
     
     [Test]
@@ -135,9 +131,7 @@ public class CharityDynamoDbCloudServiceTest
         return new Charity
         {
             Id = Guid.NewGuid().ToString(),
-            Name = "Test charity",
-            Description = "Test description",
-            Url = "Test url"
+            DonationCount = 1
         };
     }
 

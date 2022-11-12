@@ -2,10 +2,10 @@
 
 public class PlayerSortCriteria : SortCriteriaBase<Player>
 {
-    private readonly static SortColumn IdSortColumn = new SortColumn(1, "id");
-    private readonly static SortColumn NameSortColumn = new SortColumn(2, "name");
-    private readonly static SortColumn DeathSortColumn = new SortColumn(3, "deaths");
-    private readonly static SortColumn DonationsSortColumn = new SortColumn(4, "donations");
+    private readonly static SortColumn IdSortColumn = new(1, "id");
+    private readonly static SortColumn NameSortColumn = new(2, "name");
+    private readonly static SortColumn DeathSortColumn = new(3, "deaths");
+    private readonly static SortColumn DonationsSortColumn = new(4, "donations");
 
     public PlayerSortCriteria()
     {
