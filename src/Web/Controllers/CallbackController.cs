@@ -17,6 +17,7 @@ public class CallbackController : ControllerBase
     private readonly HttpClient _client;
     private readonly IDonationService _donationService;
     private readonly ILockService _lockService;
+    private readonly ICharityService _charityService;
     private readonly string _apiKey;
     private readonly string _donateCraftUi;
 
@@ -24,11 +25,12 @@ public class CallbackController : ControllerBase
     private const int PLAYER_ID = 1;
     private const int DONOR_ID = 2;
 
-    public CallbackController(HttpClient client, IDonationService donationService, ILockService lockService, IOptions<DonateCraftOptions> options)
+    public CallbackController(HttpClient client, IDonationService donationService, ILockService lockService, IOptions<DonateCraftOptions> options, ICharityService charityService)
     {
         this._client = client;
         this._donationService = donationService;
         this._lockService = lockService;
+        this._charityService = charityService;
         this._apiKey = options.Value.JustGivingApiKey;
         this._donateCraftUi = options.Value.DonateCraftUiUrl;
     }
@@ -96,6 +98,9 @@ public class CallbackController : ControllerBase
             PaidForId = paidForKey ?? player,
             Private = string.IsNullOrWhiteSpace(justGivingDonation.Amount)
         });
+        var charity = await this._charityService.GetCharityById(justGivingDonation.CharityId.ToString());
+        charity.DonationCount++;
+        await this._charityService.UpdateCharity(charity);
 
         currentLock.DonationId = justGivingDonation.Id.ToString();
         currentLock.Unlocked = true;

@@ -77,9 +77,7 @@ public static class DynamoDbUtility
     {
         var attributeValues = new Dictionary<string, AttributeValue>();
         attributeValues.TryAdd(DynamoDbConstants.CharityIdColName, new AttributeValue(charity.Id));
-        attributeValues.TryAdd(DynamoDbConstants.CharityNameColName, new AttributeValue(charity.Name));
-        attributeValues.TryAdd(DynamoDbConstants.CharityDescriptionColName, new AttributeValue(charity.Description));
-        attributeValues.TryAdd(DynamoDbConstants.CharityURLColName, new AttributeValue(charity.Url));
+        attributeValues.TryAdd(DynamoDbConstants.CharityDonationCountIdColName, new AttributeValue{ N = charity.DonationCount.ToString()});
         return attributeValues;
     }
     
@@ -168,13 +166,9 @@ public static class DynamoDbUtility
         var charity = new Charity();
 
         attributeValues.TryGetValue(DynamoDbConstants.CharityIdColName, out var id);
-        attributeValues.TryGetValue(DynamoDbConstants.CharityNameColName, out var name);
-        attributeValues.TryGetValue(DynamoDbConstants.CharityDescriptionColName, out var description);
-        attributeValues.TryGetValue(DynamoDbConstants.CharityURLColName, out var url);
+        attributeValues.TryGetValue(DynamoDbConstants.CharityDonationCountIdColName, out var donationCount);
         charity.Id = id?.S;
-        charity.Description = description?.S;
-        charity.Name = name?.S;
-        charity.Url = url?.S;
+        charity.DonationCount = Convert.ToInt32(donationCount?.N);
         return charity;
     }
     
