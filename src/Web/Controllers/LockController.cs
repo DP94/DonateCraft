@@ -1,4 +1,5 @@
 ﻿using Common.Models;
+using Common.Models.Sort;
 using Core.Services;
 using Core.Services.Lock;
 using Microsoft.AspNetCore.Cors;
@@ -10,22 +11,20 @@ namespace Web.Controllers;
 
 [Route("v1/[controller]")]
 [EnableCors]
-public class LockController : ControllerBase
+public class LockController : DonateCraftBaseController<Lock>
 {
     private readonly ILockService _lockService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public LockController(ILockService lockService, IHttpContextAccessor httpContextAccessor)
+    public LockController(ILockService lockService)
     {
         this._lockService = lockService;
-        this._httpContextAccessor = httpContextAccessor;
     }
     
     
     [HttpGet("{id}")]
     [SwaggerResponse(200, "Success", typeof(Lock))]
     [SwaggerOperation("Gets a lock by id")]
-    public async Task<IActionResult> GetLock(string id)
+    public async override Task<IActionResult> GetById(string id)
     {
         return Ok(await this._lockService.GetById(id));
     }
@@ -33,33 +32,40 @@ public class LockController : ControllerBase
     [HttpGet]
     [SwaggerResponse(200, "Success", typeof(Lock))]
     [SwaggerOperation("Gets all locks")]
-    public async Task<IActionResult> GetLocks([FromQuery] List<string> playerIds)
+    public async override Task<IActionResult> GetAll()
     {
+        var playerIds = this.HttpContext.Request.Query["playerIds"];
+        var locks = new List<Lock>();
         if (playerIds is { Count: > 0 })
         {
-            return Ok(await this._lockService.GetLocksForPlayers(playerIds));
+            locks = await this._lockService.GetLocksForPlayers(playerIds.ToList());
         }
-        return Ok(await this._lockService.GetAll());
+        else
+        {
+            locks = await this._lockService.GetAll();
+        }
+        ProcessSorting(locks);
+        return Ok(locks);
     }
     
     [HttpPost]
     [SwaggerResponse(201, "Success", typeof(Lock))]
     [SwaggerOperation("Creates a lock")]
-    public async Task<IActionResult> CreateLock([FromBody] [SwaggerRequestBody("The lock to create - sets the ID and Unlocked value automatically")] Lock aLock)
+    public async override Task<IActionResult> Create([FromBody] [SwaggerRequestBody("The lock to create - sets the ID and Unlocked value automatically")] Lock aLock)
     {
         aLock.Id = Guid.NewGuid().ToString();
         aLock.Unlocked = false;
         var newLock = await this._lockService.Create(aLock);
-        return Created($"{this._httpContextAccessor.HttpContext?.Request.GetEncodedUrl()}/{aLock.Id}", newLock);
+        return Created($"{this.HttpContext?.Request.GetEncodedUrl()}/{aLock.Id}", newLock);
     }
     
     [HttpPut]
     [SwaggerResponse(200, "Success", typeof(Lock))]
     [SwaggerOperation("Updates a lock")]
-    public async Task<IActionResult> UpdateLock([FromBody] Lock aLock)
+    public async override Task<IActionResult> Update([FromBody] Lock aLock)
     {
         //Retrieve lock to see if it exists; throws exception if not
-        await this.GetLock(aLock.Id);
+        await this.GetById(aLock.Id);
         var newLock = await this._lockService.Update(aLock);
         return Ok(newLock);
     }
@@ -68,9 +74,14 @@ public class LockController : ControllerBase
     [HttpDelete("{id}")]
     [SwaggerResponse(204, "Success", typeof(Lock))]
     [SwaggerOperation("Deletes a lock")]
-    public async Task<IActionResult> DeleteLock(string id)
+    public async override Task<IActionResult> Delete(string id)
     {
         await this._lockService.Delete(id);
         return NoContent();
+    }
+
+    public override SortCriteriaBase<Lock> CreateSortCriteria()
+    {
+        return new LockSortCriteria();
     }
 }
