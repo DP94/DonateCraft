@@ -1,4 +1,5 @@
 ﻿using Common.Models;
+using Common.Models.Sort;
 using Core.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -9,15 +10,13 @@ namespace Web.Controllers;
 
 [Route("v1/[controller]")]
 [EnableCors]
-public class CharityController : ControllerBase
+public class CharityController : DonateCraftBaseController<Charity>
 {
     private readonly ICharityService _charityService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CharityController(ICharityService charityService, IHttpContextAccessor httpContextAccessor)
+    public CharityController(ICharityService charityService)
     {
         this._charityService = charityService;
-        this._httpContextAccessor = httpContextAccessor;
     }
     
     [HttpGet("{id}")]
@@ -42,7 +41,7 @@ public class CharityController : ControllerBase
     public async Task<IActionResult> CreateCharity([FromBody] Charity charity)
     {
         var newCharity = await this._charityService.CreateCharity(charity);
-        return Created($"{this._httpContextAccessor.HttpContext?.Request.GetEncodedUrl()}/{newCharity.Id}", newCharity);
+        return Created($"{this.HttpContext?.Request.GetEncodedUrl()}/{newCharity.Id}", newCharity);
     }
     
     [HttpPut]
@@ -62,5 +61,10 @@ public class CharityController : ControllerBase
     {
         await this._charityService.DeleteCharity(id);
         return NoContent();
+    }
+
+    public override SortCriteriaBase<Charity> CreateSortCriteria()
+    {
+        return new CharitySortCriteria();
     }
 }
