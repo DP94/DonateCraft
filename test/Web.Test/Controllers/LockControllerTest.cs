@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Common.Models;
 using Core.Services;
+using Core.Services.Lock;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;

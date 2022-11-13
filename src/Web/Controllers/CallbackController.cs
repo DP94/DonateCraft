@@ -4,6 +4,9 @@ using Amazon.Lambda.Core;
 using Common.Exceptions;
 using Common.Models;
 using Core.Services;
+using Core.Services.Charity;
+using Core.Services.Donation;
+using Core.Services.Lock;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -98,9 +101,9 @@ public class CallbackController : ControllerBase
             PaidForId = paidForKey ?? player,
             Private = string.IsNullOrWhiteSpace(justGivingDonation.Amount)
         });
-        var charity = await this._charityService.GetCharityById(justGivingDonation.CharityId.ToString());
+        var charity = await this._charityService.GetById(justGivingDonation.CharityId.ToString());
         charity.DonationCount++;
-        await this._charityService.UpdateCharity(charity);
+        await this._charityService.Update(charity);
 
         currentLock.DonationId = justGivingDonation.Id.ToString();
         currentLock.Unlocked = true;

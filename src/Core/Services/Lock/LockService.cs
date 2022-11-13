@@ -1,7 +1,6 @@
 ﻿using Cloud.Services;
-using Common.Models;
 
-namespace Core.Services;
+namespace Core.Services.Lock;
 
 public class LockService : ILockService
 {
@@ -12,22 +11,22 @@ public class LockService : ILockService
         this._lockCloudService = lockCloudService;
     }
 
-    public async Task<Lock> Create(Lock newLock)
+    public async Task<Common.Models.Lock> Create(Common.Models.Lock newLock)
     {
         return await this._lockCloudService.Create(newLock);
     }
 
-    public async Task<List<Lock>> GetLocks()
+    public async Task<List<Common.Models.Lock>> GetLocks()
     {
         return await this._lockCloudService.GetLocks();
     }
 
-    public async Task<List<Lock>> GetLocksForPlayers(List<string> playerIds)
+    public async Task<List<Common.Models.Lock>> GetLocksForPlayers(List<string> playerIds)
     {
         return await this._lockCloudService.GetLocksForPlayers(playerIds);
     }
 
-    public async Task<Lock> GetLock(string id)
+    public async Task<Common.Models.Lock> GetLock(string id)
     {
         return await this._lockCloudService.GetLock(id);
     }
@@ -37,7 +36,7 @@ public class LockService : ILockService
         await this._lockCloudService.DeleteLock(id);
     }
 
-    public async Task<Lock> UpdateLock(Lock theLock)
+    public async Task<Common.Models.Lock> UpdateLock(Common.Models.Lock theLock)
     {
         return await this._lockCloudService.UpdateLock(theLock);
     }

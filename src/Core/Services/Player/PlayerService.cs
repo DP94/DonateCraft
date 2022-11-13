@@ -1,8 +1,6 @@
-﻿using Amazon.DynamoDBv2.Model;
-using Cloud.Services;
-using Common.Models;
+﻿using Cloud.Services;
 
-namespace Core.Services;
+namespace Core.Services.Player;
 
 public class PlayerService : IPlayerService
 {
@@ -14,27 +12,27 @@ public class PlayerService : IPlayerService
         this._playerCloudService = playerCloudService;
     }
 
-    public async Task<List<Player>> GetPlayers()
+    public async Task<List<Common.Models.Player>> GetAll()
     {
         return await this._playerCloudService.GetPlayers();
     }
 
-    public async Task<Player> GetPlayerById(string id)
+    public async Task<Common.Models.Player> GetById(string id)
     {
         return await this._playerCloudService.GetPlayerById(id);
     }
 
-    public async Task<Player> CreatePlayer(Player player)
+    public async Task<Common.Models.Player> Create(Common.Models.Player player)
     {
         return await this._playerCloudService.CreatePlayer(player);
     }
 
-    public async Task DeletePlayer(string id)
+    public async Task Delete(string id)
     {
         await this._playerCloudService.DeletePlayer(id);
     }
 
-    public async Task<Player> UpdatePlayer(Player player)
+    public async Task<Common.Models.Player> Update(Common.Models.Player player)
     {
         return await this._playerCloudService.UpdatePlayer(player);
     }

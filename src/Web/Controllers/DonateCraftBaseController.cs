@@ -6,6 +6,14 @@ namespace Web.Controllers;
 
 public abstract class DonateCraftBaseController<T> : ControllerBase
 {
+
+    public abstract Task<IActionResult> GetById(string id);
+    public abstract Task<IActionResult> GetAll();
+    public abstract Task<IActionResult> Create(T t);
+    public abstract Task<IActionResult> Update(T t);
+    public abstract Task<IActionResult> Delete(string id);
+    
+    
     public void ProcessSorting(List<T> items)
     {
         var query = this.HttpContext.Request.Query;
@@ -23,6 +31,10 @@ public abstract class DonateCraftBaseController<T> : ControllerBase
         foreach (var sortColumn in sortBy.Select(sortQuery => sortCriteria.GetSortColumnByName(sortQuery)))
         {
             sortCriteria.DoSort(sortColumn, items);
+        }
+        if (!sortCriteria.AscendingSort)
+        {
+            items.Reverse();
         }
     }
 

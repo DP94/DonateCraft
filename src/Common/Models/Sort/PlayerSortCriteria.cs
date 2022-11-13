@@ -34,9 +34,5 @@ public class PlayerSortCriteria : SortCriteriaBase<Player>
         {
             players.Sort((player, player1) => player.Donations.Count.CompareTo(player1.Deaths.Count));
         }
-        if (!AscendingSort)
-        {
-            players.Reverse();
-        }
     }
 }

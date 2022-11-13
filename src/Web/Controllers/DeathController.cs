@@ -1,5 +1,6 @@
 ﻿using Common.Models;
 using Core.Services;
+using Core.Services.Death;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;

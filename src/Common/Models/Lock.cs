@@ -1,8 +1,7 @@
 ﻿namespace Common.Models;
 
-public class Lock
+public class Lock : WithId
 {
-    public string Id { get; set; }
     public bool Unlocked { get; set; }
     
     public string DonationId { get; set; }

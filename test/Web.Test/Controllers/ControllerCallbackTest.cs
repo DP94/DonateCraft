@@ -2,11 +2,15 @@
 using System.Text;
 using Common.Models;
 using Core.Services;
+using Core.Services.Charity;
+using Core.Services.Donation;
+using Core.Services.Lock;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using Web.Controllers;
+using Web.Test.Controllers.Fakes;
 
 namespace Web.Test.Controllers;
 

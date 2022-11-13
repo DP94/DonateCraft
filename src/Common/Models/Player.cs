@@ -1,9 +1,7 @@
 ﻿namespace Common.Models;
 
-public class Player
+public class Player : WithId
 {
-    public string Id { get; set; }
-    
     public string Name { get; set; }
     
     public bool IsDead { get; set; }
