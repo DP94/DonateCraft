@@ -29,10 +29,10 @@ public class LockControllerTest
             new(Guid.NewGuid().ToString(), false),
             new(Guid.NewGuid().ToString(), false)
         };
-        A.CallTo(() => this._lockService.GetLocks()).Returns(locks);
+        A.CallTo(() => this._lockService.GetAll()).Returns(locks);
         var result = await this._controller.GetLocks(null) as ObjectResult;
         
-        A.CallTo(() => this._lockService.GetLocks()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => this._lockService.GetAll()).MustHaveHappenedOnceExactly();
         CollectionAssert.AreEqual(locks, (IEnumerable)result.Value);
         Assert.AreEqual(200, result.StatusCode);
     }
@@ -42,9 +42,9 @@ public class LockControllerTest
     {
         var id = Guid.NewGuid().ToString();
         var newLock = new Lock(id, false);
-        A.CallTo(() => this._lockService.GetLock(id)).Returns(newLock);
+        A.CallTo(() => this._lockService.GetById(id)).Returns(newLock);
         var result = await this._controller.GetLock(id) as ObjectResult;
-        A.CallTo(() => this._lockService.GetLock(id)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => this._lockService.GetById(id)).MustHaveHappenedOnceExactly();
         Assert.AreEqual(newLock, result.Value);
         Assert.AreEqual(200, result.StatusCode);
     }
@@ -65,10 +65,10 @@ public class LockControllerTest
     {
         var newLock = new Lock(Guid.NewGuid().ToString(), false);
         var existingLock = new Lock(Guid.NewGuid().ToString(), false);
-        A.CallTo(() => this._lockService.UpdateLock(newLock)).Returns(newLock);
-        A.CallTo(() => this._lockService.GetLock(existingLock.Id)).Returns(existingLock);
+        A.CallTo(() => this._lockService.Update(newLock)).Returns(newLock);
+        A.CallTo(() => this._lockService.GetById(existingLock.Id)).Returns(existingLock);
         var result = await this._controller.UpdateLock(newLock) as ObjectResult;
-        A.CallTo(() => this._lockService.UpdateLock(newLock)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => this._lockService.Update(newLock)).MustHaveHappenedOnceExactly();
         Assert.AreEqual(newLock, result.Value);
         Assert.AreEqual(200, result.StatusCode);
     }

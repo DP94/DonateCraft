@@ -16,7 +16,7 @@ public class LockService : ILockService
         return await this._lockCloudService.Create(newLock);
     }
 
-    public async Task<List<Common.Models.Lock>> GetLocks()
+    public async Task<List<Common.Models.Lock>> GetAll()
     {
         return await this._lockCloudService.GetLocks();
     }
@@ -26,17 +26,17 @@ public class LockService : ILockService
         return await this._lockCloudService.GetLocksForPlayers(playerIds);
     }
 
-    public async Task<Common.Models.Lock> GetLock(string id)
+    public async Task<Common.Models.Lock> GetById(string id)
     {
         return await this._lockCloudService.GetLock(id);
     }
 
-    public async Task DeleteLock(string id)
+    public async Task Delete(string id)
     {
         await this._lockCloudService.DeleteLock(id);
     }
 
-    public async Task<Common.Models.Lock> UpdateLock(Common.Models.Lock theLock)
+    public async Task<Common.Models.Lock> Update(Common.Models.Lock theLock)
     {
         return await this._lockCloudService.UpdateLock(theLock);
     }

@@ -32,7 +32,7 @@ public class PlayerController : DonateCraftBaseController<Player>
     {
 
         var players = await this._playerService.GetAll();
-        var locks = await this._lockService.GetLocks();
+        var locks = await this._lockService.GetAll();
         foreach (var player in locks.SelectMany(aLock => players.Where(player => aLock.Id == player.Id)))
         {
             player.IsDead = true;
@@ -89,7 +89,7 @@ public class PlayerController : DonateCraftBaseController<Player>
     {
         try
         {
-            await this._lockService.GetLock(player.Id);
+            await this._lockService.GetById(player.Id);
             player.IsDead = true;
         }
         catch (ResourceNotFoundException)

@@ -64,7 +64,7 @@ public class CallbackController : ControllerBase
         Lock? currentLock = null;
         try
         {
-            currentLock = await this._lockService.GetLock(player);
+            currentLock = await this._lockService.GetById(player);
         }
         catch (ResourceNotFoundException)
         {
@@ -107,7 +107,7 @@ public class CallbackController : ControllerBase
 
         currentLock.DonationId = justGivingDonation.Id.ToString();
         currentLock.Unlocked = true;
-        await this._lockService.UpdateLock(currentLock);
+        await this._lockService.Update(currentLock);
         return Redirect($"{this._donateCraftUi}/players?status=success");
     }
 

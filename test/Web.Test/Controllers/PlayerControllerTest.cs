@@ -54,7 +54,7 @@ public class PlayerControllerTest
             new("ghi", "jkl")
         };
         A.CallTo(() => this._playerService.GetAll()).Returns(players);
-        A.CallTo(() => this._lockService.GetLocks()).Returns(new List<Lock>()
+        A.CallTo(() => this._lockService.GetAll()).Returns(new List<Lock>()
         {
             new("ghi", true)
         });

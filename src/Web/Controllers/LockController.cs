@@ -27,7 +27,7 @@ public class LockController : ControllerBase
     [SwaggerOperation("Gets a lock by id")]
     public async Task<IActionResult> GetLock(string id)
     {
-        return Ok(await this._lockService.GetLock(id));
+        return Ok(await this._lockService.GetById(id));
     }
     
     [HttpGet]
@@ -39,7 +39,7 @@ public class LockController : ControllerBase
         {
             return Ok(await this._lockService.GetLocksForPlayers(playerIds));
         }
-        return Ok(await this._lockService.GetLocks());
+        return Ok(await this._lockService.GetAll());
     }
     
     [HttpPost]
@@ -60,7 +60,7 @@ public class LockController : ControllerBase
     {
         //Retrieve lock to see if it exists; throws exception if not
         await this.GetLock(aLock.Id);
-        var newLock = await this._lockService.UpdateLock(aLock);
+        var newLock = await this._lockService.Update(aLock);
         return Ok(newLock);
     }
     
@@ -70,7 +70,7 @@ public class LockController : ControllerBase
     [SwaggerOperation("Deletes a lock")]
     public async Task<IActionResult> DeleteLock(string id)
     {
-        await this._lockService.DeleteLock(id);
+        await this._lockService.Delete(id);
         return NoContent();
     }
 }
