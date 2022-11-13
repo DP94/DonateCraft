@@ -1,8 +1,7 @@
 ﻿namespace Common.Models;
 
-public class Donation
+public class Donation : WithId
 {
-    public string Id { get; set; }
     public double Amount { get; set; }
     public DateTime CreatedDate { get; set; }
     public int CharityId { get; set; }

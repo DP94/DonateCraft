@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Web.Test.Controllers;
+namespace Web.Test.Controllers.Fakes;
 
 public class FakeHttpMessageHandler : HttpMessageHandler
 {

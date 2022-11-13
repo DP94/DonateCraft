@@ -2,11 +2,15 @@
 using System.Text;
 using Common.Models;
 using Core.Services;
+using Core.Services.Charity;
+using Core.Services.Donation;
+using Core.Services.Lock;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using Web.Controllers;
+using Web.Test.Controllers.Fakes;
 
 namespace Web.Test.Controllers;
 
@@ -79,7 +83,7 @@ public class ControllerCallbackTest
     public async Task CallbackController_RedirectsToUi_WhenLockNotFound()
     {
         //FakeItEasy returns a blank proxy (but not null!) when stubs are not specified...
-        A.CallTo(() => this._lockService.GetLock(A<string>.Ignored)).Returns((Lock)null);
+        A.CallTo(() => this._lockService.GetById(A<string>.Ignored)).Returns((Lock)null);
         var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         Assert.AreEqual("test.com?status=error&code=4", result.Url);
     }
@@ -88,7 +92,7 @@ public class ControllerCallbackTest
     [Test]
     public async Task CallbackController_RedirectsToUi_WhenLock_AlreadyUnlocked()
     {
-        A.CallTo(() => this._lockService.GetLock(A<string>.Ignored)).Returns(new Lock()
+        A.CallTo(() => this._lockService.GetById(A<string>.Ignored)).Returns(new Lock()
         {
             Unlocked = true
         });
@@ -105,7 +109,7 @@ public class ControllerCallbackTest
         this._client.BaseAddress = new Uri("http://justgiving.com");
         this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService);
         var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
-        A.CallTo(() => this._lockService.GetLock(theLock.Id)).Returns(theLock);
+        A.CallTo(() => this._lockService.GetById(theLock.Id)).Returns(theLock);
 
         var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         
@@ -117,10 +121,10 @@ public class ControllerCallbackTest
                     donation.Id == "1500333570" &&
                     donation.PaidForId == "5ba92742-af9d-4ad6-a5a7-c768dd9bc747")))
             .MustHaveHappenedOnceExactly();
-        A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
+        A.CallTo(() => this._lockService.Update(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
             .MustHaveHappenedOnceExactly();
 
-        Assert.AreEqual("test.com/players?status=success", result.Url);
+        Assert.AreEqual("test.com/players?status=success",result.Url);
     }
     
     [Test]
@@ -132,7 +136,7 @@ public class ControllerCallbackTest
         this._client.BaseAddress = new Uri("http://justgiving.com");
         this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService);
         var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
-        A.CallTo(() => this._lockService.GetLock(theLock.Id)).Returns(theLock);
+        A.CallTo(() => this._lockService.GetById(theLock.Id)).Returns(theLock);
 
         var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747~3a0c7a69-c12f-4f7f-9aaf-3345bb0f2e38") as RedirectResult;
         
@@ -144,7 +148,7 @@ public class ControllerCallbackTest
                     donation.Id == "1500333570" &&
                     donation.PaidForId == "3a0c7a69-c12f-4f7f-9aaf-3345bb0f2e38")))
             .MustHaveHappenedOnceExactly();
-        A.CallTo(() => this._lockService.UpdateLock(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
+        A.CallTo(() => this._lockService.Update(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
             .MustHaveHappenedOnceExactly();
 
         Assert.AreEqual("test.com/players?status=success", result.Url);

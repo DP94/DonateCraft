@@ -1,7 +1,6 @@
 ﻿using Cloud.Services;
-using Common.Models;
 
-namespace Core.Services;
+namespace Core.Services.Death;
 
 public class DeathService : IDeathService
 {
@@ -13,17 +12,17 @@ public class DeathService : IDeathService
         this._deathCloudService = deathCloudService;
     }
 
-    public async Task<List<Death>> GetDeaths(string playerId)
+    public async Task<List<Common.Models.Death>> GetDeaths(string playerId)
     {
         return await this._deathCloudService.GetDeaths(playerId);
     }
 
-    public async Task<Death> GetDeathById(string playerId, string id)
+    public async Task<Common.Models.Death> GetDeathById(string playerId, string id)
     {
         return await this._deathCloudService.GetDeathById(playerId, id);;
     }
 
-    public async Task<Death> CreateDeath(string playerId, Death death)
+    public async Task<Common.Models.Death> CreateDeath(string playerId, Common.Models.Death death)
     {
         return await this._deathCloudService.CreateDeath(playerId, death);
     }
@@ -33,7 +32,7 @@ public class DeathService : IDeathService
         await this._deathCloudService.DeleteDeath(playerId, id);
     }
 
-    public async Task<Death> UpdateDeath(string playerId, Death death)
+    public async Task<Common.Models.Death> UpdateDeath(string playerId, Common.Models.Death death)
     {
         return await this._deathCloudService.UpdateDeath(playerId, death);
     }

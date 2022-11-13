@@ -3,6 +3,8 @@ using Common.Exceptions;
 using Common.Models;
 using Common.Models.Sort;
 using Core.Services;
+using Core.Services.Lock;
+using Core.Services.Player;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -26,11 +28,11 @@ public class PlayerController : DonateCraftBaseController<Player>
     [HttpGet]
     [SwaggerResponse(200, "Success", typeof(Player))]
     [SwaggerOperation("Gets all players")]
-    public async Task<IActionResult> Get()
+    public async override Task<IActionResult> GetAll()
     {
 
-        var players = await this._playerService.GetPlayers();
-        var locks = await this._lockService.GetLocks();
+        var players = await this._playerService.GetAll();
+        var locks = await this._lockService.GetAll();
         foreach (var player in locks.SelectMany(aLock => players.Where(player => aLock.Id == player.Id)))
         {
             player.IsDead = true;
@@ -44,9 +46,9 @@ public class PlayerController : DonateCraftBaseController<Player>
     [SwaggerResponse(200, "Success", typeof(Player))]
     [SwaggerResponse(404, "Player not found")]
     [SwaggerOperation("Gets all player by id")]
-    public async Task<IActionResult> Get(string id)
+    public async override Task<IActionResult> GetById(string id)
     {
-        var player = await this._playerService.GetPlayerById(id);
+        var player = await this._playerService.GetById(id);
         await this.SetPlayersDeathStatus(player);
         return Ok(player);
     }
@@ -54,32 +56,32 @@ public class PlayerController : DonateCraftBaseController<Player>
     [HttpPost]
     [SwaggerOperation("Creates a new player")]
     [SwaggerResponse(201, "Player created successfully", typeof(Player))]
-    public async Task<ActionResult> Post([FromBody] [SwaggerParameter("The book to create")] Player player)
+    public async override Task<IActionResult> Create([FromBody] [SwaggerParameter("The book to create")] Player player)
     {
         if (string.IsNullOrWhiteSpace(player.Id))
         {
             return BadRequest("Player id must be supplied when creating a player");
         }
         
-        var createdPlayer = await this._playerService.CreatePlayer(player);
+        var createdPlayer = await this._playerService.Create(player);
         return Created($"{this.HttpContext.Request.GetEncodedUrl()}/{player.Id}", createdPlayer);
     }
 
     [SwaggerOperation("Updates a player")]
     [SwaggerResponse(200, "Player updated", typeof(Player))]
     [HttpPut]
-    public async Task<IActionResult> Put([FromBody] Player player)
+    public async override Task<IActionResult> Update([FromBody] Player player)
     {
-        var updatedPlayer = await this._playerService.UpdatePlayer(player);
+        var updatedPlayer = await this._playerService.Update(player);
         return Ok(updatedPlayer);
     }
 
     [HttpDelete("{id}")]
     [SwaggerResponse(204, "Player deleted")]
     [SwaggerOperation("Deletes a player")]
-    public async Task<IActionResult> Delete([SwaggerParameter("ID of the book to player")] string id)
+    public async override Task<IActionResult> Delete([SwaggerParameter("ID of the book to player")] string id)
     {
-        await this._playerService.DeletePlayer(id);
+        await this._playerService.Delete(id);
         return NoContent();
     }
 
@@ -87,7 +89,7 @@ public class PlayerController : DonateCraftBaseController<Player>
     {
         try
         {
-            await this._lockService.GetLock(player.Id);
+            await this._lockService.GetById(player.Id);
             player.IsDead = true;
         }
         catch (ResourceNotFoundException)

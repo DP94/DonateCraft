@@ -3,6 +3,8 @@ using Cloud.Services;
 using Common.Exceptions;
 using Common.Models;
 using Core.Services;
+using Core.Services.Lock;
+using Core.Services.Player;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
@@ -31,34 +33,33 @@ public class PlayerControllerTest
     }
 
     [Test]
-    public async Task Get_ReturnsPlayers()
+    public async Task GetAll_ReturnsPlayers()
     {
         var players = new List<Player>
         {
             new("abc", "def"),
             new("ghi", "jkl")
         };
-        A.CallTo(() => this._playerService.GetPlayers()).Returns(players);
-        var result = await this._controller.Get() as ObjectResult;
+        A.CallTo(() => this._playerService.GetAll()).Returns(players);
+        var result = await this._controller.GetAll() as ObjectResult;
         CollectionAssert.AreEqual(players, (IEnumerable)result.Value);
         Assert.AreEqual(200, result.StatusCode);
     }
 
-    [Test]
-    public async Task Get_ReturnsPlayers_AndSetsIsDead()
+    [Test] public async Task GetAll_ReturnsPlayers_AndSetsIsDead()
     {
         var players = new List<Player>
         {
             new("abc", "def"),
             new("ghi", "jkl")
         };
-        A.CallTo(() => this._playerService.GetPlayers()).Returns(players);
-        A.CallTo(() => this._lockService.GetLocks()).Returns(new List<Lock>()
+        A.CallTo(() => this._playerService.GetAll()).Returns(players);
+        A.CallTo(() => this._lockService.GetAll()).Returns(new List<Lock>()
         {
             new("ghi", true)
         });
 
-        var result = await this._controller.Get() as ObjectResult;
+        var result = await this._controller.GetAll() as ObjectResult;
         var playersResult = result.Value as List<Player>;
         Assert.IsFalse(playersResult[0].IsDead);
         Assert.IsTrue(playersResult[1].IsDead);
@@ -72,8 +73,8 @@ public class PlayerControllerTest
             Id = "abc",
             Name = "def"
         };
-        A.CallTo(() => this._playerService.GetPlayerById("abc")).Returns(player);
-        var result = await this._controller.Get("abc") as ObjectResult;
+        A.CallTo(() => this._playerService.GetById("abc")).Returns(player);
+        var result = await this._controller.GetById("abc") as ObjectResult;
         Assert.AreEqual(player, result.Value);
         Assert.AreEqual(200, result.StatusCode);
     }
@@ -81,29 +82,29 @@ public class PlayerControllerTest
     [Test]
     public async Task Get_ById_Returns404_If_PlayerNull()
     {
-        A.CallTo(() => this._playerService.GetPlayerById("1")).Throws<ResourceNotFoundException>();
-        Assert.ThrowsAsync<ResourceNotFoundException>(() => this._controller.Get("1"));
+        A.CallTo(() => this._playerService.GetById("1")).Throws<ResourceNotFoundException>();
+        Assert.ThrowsAsync<ResourceNotFoundException>(() => this._controller.GetById("1"));
     }
 
     [Test]
-    public async Task Post_CreatesPlayer_Successfully()
+    public async Task Create_CreatesPlayer_Successfully()
     {
         var player = new Player
         {
             Id = "abc",
             Name = "def"
         };
-        A.CallTo(() => this._playerService.CreatePlayer(player)).Returns(player);
-        var result = await this._controller.Post(player) as ObjectResult;
+        A.CallTo(() => this._playerService.Create(player)).Returns(player);
+        var result = await this._controller.Create(player) as ObjectResult;
         Assert.AreEqual(player, result.Value);
         Assert.AreEqual(201, result.StatusCode);
     }
 
     [Test]
-    public async Task Post_Returns400_WhenPlayerId_NotPresent()
+    public async Task Create_Returns400_WhenPlayerId_NotPresent()
     {
-        A.CallTo(() => this._playerService.CreatePlayer(A<Player>.Ignored)).Throws<ResourceExistsException>();
-        var result = await this._controller.Post(new Player()) as ObjectResult;
+        A.CallTo(() => this._playerService.Create(A<Player>.Ignored)).Throws<ResourceExistsException>();
+        var result = await this._controller.Create(new Player()) as ObjectResult;
         Assert.AreEqual(400, result.StatusCode);
         Assert.AreEqual("Player id must be supplied when creating a player", result.Value);
     }
@@ -116,15 +117,15 @@ public class PlayerControllerTest
     }
     
     [Test]
-    public async Task Put_UpdatesPlayer_Successfully()
+    public async Task Update_UpdatesPlayer_Successfully()
     {
         var player = new Player
         {
             Id = "abc",
             Name = "def"
         };
-        A.CallTo(() => this._playerService.UpdatePlayer(player)).Returns(player);
-        var result = await this._controller.Put(player) as ObjectResult;
+        A.CallTo(() => this._playerService.Update(player)).Returns(player);
+        var result = await this._controller.Update(player) as ObjectResult;
         Assert.AreEqual(player, result.Value);
         Assert.AreEqual(200, result.StatusCode);
     }

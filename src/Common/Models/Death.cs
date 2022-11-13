@@ -1,8 +1,7 @@
 ﻿namespace Common.Models;
 
-public class Death
+public class Death : WithId
 {
-    public string Id { get; set; }
     public string Reason { get; set; }
     
     public string PlayerId { get; set; }

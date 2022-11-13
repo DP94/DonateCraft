@@ -1,5 +1,6 @@
 ﻿using Common.Models;
 using Core.Services;
+using Core.Services.Charity;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -8,75 +9,43 @@ using Web.Controllers;
 
 namespace Web.Test.Controllers.Sorting;
 
-public class CharityControllerSortingTest : AbstractControllerSortingTest<Charity, CharityController>
+public class CharityControllerSortingTest : AbstractControllerSortingTest<Charity, CharityController, ICharityService>
 {
     private ICharityService _charityService;
-    
-    [Test]
-    public async Task GetAll_Charities_SortsByIdAsc_Successfully()
-    {
-        var charities = CreateCharities();
-        A.CallTo(() => this._charityService.GetCharities()).Returns(charities);
-        SetQueryParams(new Dictionary<string, StringValues>
-        {
-            { "sortBy", new StringValues("id")},
-            { "sortOrder", new StringValues("asc")}
-        });
-        var result = await this._controller.GetCharities() as ObjectResult;
-        var newCharities = result.Value as List<Charity>;
-        Assert.AreEqual("abc", newCharities[0].Id);
-        Assert.AreEqual("ghi", newCharities[1].Id);
-    }
-    
-    [Test]
-    public async Task GetAll_Charities_SortsByIdDesc_Successfully()
-    {
-        var charities = CreateCharities();
-        A.CallTo(() => this._charityService.GetCharities()).Returns(charities);
-        SetQueryParams(new Dictionary<string, StringValues>
-        {
-            { "sortBy", new StringValues("id")},
-            { "sortOrder", new StringValues("desc")}
-        });
-        var result = await this._controller.GetCharities() as ObjectResult;
-        var newCharities = result.Value as List<Charity>;
-        Assert.AreEqual("ghi", newCharities[1].Id);
-        Assert.AreEqual("abc", newCharities[0].Id);
-    }
-    
+
     [Test]
     public async Task GetAll_Charities_SortsByDonationCountAsc_Successfully()
     {
-        var charities = CreateCharities();
-        A.CallTo(() => this._charityService.GetCharities()).Returns(charities);
+        var charities = CreateData();
+        A.CallTo(() => this._charityService.GetAll()).Returns(charities);
         SetQueryParams(new Dictionary<string, StringValues>
         {
-            { "sortBy", new StringValues("donationCount")},
-            { "sortOrder", new StringValues("asc")}
+            { "sortBy", new StringValues("donationCount") },
+            { "sortOrder", new StringValues("asc") }
         });
-        var result = await this._controller.GetCharities() as ObjectResult;
+        var result = await this._controller.GetAll() as ObjectResult;
         var newCharities = result.Value as List<Charity>;
         Assert.AreEqual("abc", newCharities[0].Id);
         Assert.AreEqual("ghi", newCharities[1].Id);
     }
-    
+
     [Test]
     public async Task GetAll_Charities_SortsByDonationCountDesc_Successfully()
     {
-        var charities = CreateCharities();
-        A.CallTo(() => this._charityService.GetCharities()).Returns(charities);
+        var charities = CreateData();
+        A.CallTo(() => this._charityService.GetAll()).Returns(charities);
         SetQueryParams(new Dictionary<string, StringValues>
         {
-            { "sortBy", new StringValues("donationCount")},
-            { "sortOrder", new StringValues("desc")}
+            { "sortBy", new StringValues("donationCount") },
+            { "sortOrder", new StringValues("desc") }
         });
-        var result = await this._controller.GetCharities() as ObjectResult;
+        var result = await this._controller.GetAll() as ObjectResult;
         var newCharities = result.Value as List<Charity>;
-        Assert.AreEqual("ghi", newCharities[1].Id);
-        Assert.AreEqual("abc", newCharities[0].Id);
+        Assert.AreEqual("ghi", newCharities[0].Id);
+        Assert.AreEqual("abc", newCharities[1].Id);
     }
-    
-    private static List<Charity> CreateCharities()
+
+    protected override List<Charity> CreateData()
     {
         return new List<Charity>
         {
@@ -84,10 +53,15 @@ public class CharityControllerSortingTest : AbstractControllerSortingTest<Charit
             new("ghi", 2)
         };
     }
-    
-    protected override CharityController CreateController()
+
+    protected override CharityController CreateController(ICharityService charityService)
+    {
+        return new CharityController(charityService);
+    }
+
+    protected override ICharityService CreateServiceFake()
     {
         this._charityService = A.Fake<ICharityService>();
-        return new CharityController(this._charityService);
+        return this._charityService;
     }
 }

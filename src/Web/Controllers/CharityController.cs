@@ -1,6 +1,6 @@
 ﻿using Common.Models;
 using Common.Models.Sort;
-using Core.Services;
+using Core.Services.Charity;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -22,34 +22,36 @@ public class CharityController : DonateCraftBaseController<Charity>
     [HttpGet("{id}")]
     [SwaggerResponse(200, "Success", typeof(Charity))]
     [SwaggerOperation("Gets a charity by id")]
-    public async Task<IActionResult> GetCharity(string id)
+    public async override Task<IActionResult> GetById(string id)
     {
-        return Ok(await this._charityService.GetCharityById(id));
+        return Ok(await this._charityService.GetById(id));
     }
     
     [HttpGet]
     [SwaggerResponse(200, "Success", typeof(Charity))]
     [SwaggerOperation("Gets all charities")]
-    public async Task<IActionResult> GetCharities()
+    public async override Task<IActionResult> GetAll()
     {
-        return Ok(await this._charityService.GetCharities());
+        var charities = await this._charityService.GetAll();
+        ProcessSorting(charities);
+        return Ok(charities);
     }
     
     [HttpPost]
     [SwaggerResponse(201, "Success", typeof(Charity))]
     [SwaggerOperation("Creates a charity")]
-    public async Task<IActionResult> CreateCharity([FromBody] Charity charity)
+    public async override Task<IActionResult> Create([FromBody] Charity charity)
     {
-        var newCharity = await this._charityService.CreateCharity(charity);
+        var newCharity = await this._charityService.Create(charity);
         return Created($"{this.HttpContext?.Request.GetEncodedUrl()}/{newCharity.Id}", newCharity);
     }
     
     [HttpPut]
     [SwaggerResponse(200, "Success", typeof(Charity))]
     [SwaggerOperation("Updates a charity")]
-    public async Task<IActionResult> UpdateCharity([FromBody] Charity charity)
+    public async override Task<IActionResult> Update([FromBody] Charity charity)
     {
-        var updateCharity = await this._charityService.UpdateCharity(charity);
+        var updateCharity = await this._charityService.Update(charity);
         return Ok(updateCharity);
     }
     
@@ -57,9 +59,9 @@ public class CharityController : DonateCraftBaseController<Charity>
     [HttpDelete("{id}")]
     [SwaggerResponse(204, "Success", typeof(Charity))]
     [SwaggerOperation("Deletes a charity")]
-    public async Task<IActionResult> DeleteCharity(string id)
+    public async override Task<IActionResult> Delete(string id)
     {
-        await this._charityService.DeleteCharity(id);
+        await this._charityService.Delete(id);
         return NoContent();
     }
 

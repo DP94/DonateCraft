@@ -1,9 +1,8 @@
 ﻿namespace Common.Models;
 
-public class Charity
+public class Charity : WithId
 {
-    public string Id { get; set; }
-    
+
     public int DonationCount { get; set; }
 
     public Charity()
