@@ -1,10 +1,11 @@
-﻿using Common.Models.Sort;
+﻿using Common.Models;
+using Common.Models.Sort;
 using Common.Util;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers;
 
-public abstract class DonateCraftBaseController<T> : ControllerBase
+public abstract class DonateCraftBaseController<T> : ControllerBase where T : WithId
 {
 
     public abstract Task<IActionResult> GetById(string id);

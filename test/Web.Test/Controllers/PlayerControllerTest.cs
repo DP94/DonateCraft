@@ -12,48 +12,19 @@ using Web.Controllers;
 
 namespace Web.Test.Controllers;
 
-public class PlayerControllerTest
+public class PlayerControllerTest : AbstractControllerTest<PlayerController, Player, IPlayerService>
 {
-    private IPlayerService _playerService;
     private ILockService _lockService;
-    private PlayerController _controller;
-
-    [SetUp]
-    public void SetUp()
-    {
-        this._playerService = A.Fake<IPlayerService>();
-        this._lockService = A.Fake<ILockService>();
-        this._controller = new PlayerController(this._playerService, this._lockService)
-        {
-            ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext()
-            }
-        };
-    }
-
-    [Test]
-    public async Task GetAll_ReturnsPlayers()
+    
+    [Test] 
+    public async Task GetAll_ReturnsPlayers_AndSetsIsDead()
     {
         var players = new List<Player>
         {
             new("abc", "def"),
             new("ghi", "jkl")
         };
-        A.CallTo(() => this._playerService.GetAll()).Returns(players);
-        var result = await this._controller.GetAll() as ObjectResult;
-        CollectionAssert.AreEqual(players, (IEnumerable)result.Value);
-        Assert.AreEqual(200, result.StatusCode);
-    }
-
-    [Test] public async Task GetAll_ReturnsPlayers_AndSetsIsDead()
-    {
-        var players = new List<Player>
-        {
-            new("abc", "def"),
-            new("ghi", "jkl")
-        };
-        A.CallTo(() => this._playerService.GetAll()).Returns(players);
+        A.CallTo(() => this._service.GetAll()).Returns(players);
         A.CallTo(() => this._lockService.GetAll()).Returns(new List<Lock>()
         {
             new("ghi", true)
@@ -66,67 +37,28 @@ public class PlayerControllerTest
     }
 
     [Test]
-    public async Task Get_ById_ReturnsPlayer()
-    {
-        var player = new Player
-        {
-            Id = "abc",
-            Name = "def"
-        };
-        A.CallTo(() => this._playerService.GetById("abc")).Returns(player);
-        var result = await this._controller.GetById("abc") as ObjectResult;
-        Assert.AreEqual(player, result.Value);
-        Assert.AreEqual(200, result.StatusCode);
-    }
-
-    [Test]
-    public async Task Get_ById_Returns404_If_PlayerNull()
-    {
-        A.CallTo(() => this._playerService.GetById("1")).Throws<ResourceNotFoundException>();
-        Assert.ThrowsAsync<ResourceNotFoundException>(() => this._controller.GetById("1"));
-    }
-
-    [Test]
-    public async Task Create_CreatesPlayer_Successfully()
-    {
-        var player = new Player
-        {
-            Id = "abc",
-            Name = "def"
-        };
-        A.CallTo(() => this._playerService.Create(player)).Returns(player);
-        var result = await this._controller.Create(player) as ObjectResult;
-        Assert.AreEqual(player, result.Value);
-        Assert.AreEqual(201, result.StatusCode);
-    }
-
-    [Test]
     public async Task Create_Returns400_WhenPlayerId_NotPresent()
     {
-        A.CallTo(() => this._playerService.Create(A<Player>.Ignored)).Throws<ResourceExistsException>();
+        A.CallTo(() => this._service.Create(A<Player>.Ignored)).Throws<ResourceExistsException>();
         var result = await this._controller.Create(new Player()) as ObjectResult;
         Assert.AreEqual(400, result.StatusCode);
         Assert.AreEqual("Player id must be supplied when creating a player", result.Value);
     }
-    
-    [Test]
-    public async Task Delete_DeletesPlayer_Successfully()
+
+    protected override IPlayerService CreateServiceFake()
     {
-        var result = await this._controller.Delete("abc") as StatusCodeResult;
-        Assert.AreEqual(204, result.StatusCode);
+        this._service = A.Fake<IPlayerService>();
+        return this._service;
     }
-    
-    [Test]
-    public async Task Update_UpdatesPlayer_Successfully()
+
+    protected override PlayerController CreateController(IPlayerService service)
     {
-        var player = new Player
-        {
-            Id = "abc",
-            Name = "def"
-        };
-        A.CallTo(() => this._playerService.Update(player)).Returns(player);
-        var result = await this._controller.Update(player) as ObjectResult;
-        Assert.AreEqual(player, result.Value);
-        Assert.AreEqual(200, result.StatusCode);
+        this._lockService = A.Fake<ILockService>();
+        return new PlayerController(service, this._lockService);
+    }
+
+    protected override Player CreateData()
+    {
+        return new Player(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
     }
 }
