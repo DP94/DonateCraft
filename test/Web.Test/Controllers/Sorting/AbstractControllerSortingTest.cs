@@ -8,7 +8,7 @@ using Web.Controllers;
 
 namespace Web.Test.Controllers.Sorting;
 
-public abstract class AbstractControllerSortingTest<T, C, S> where C : DonateCraftBaseController<T> where S : WithIdService<T> where T : WithId
+public abstract class AbstractControllerSortingTest<T, C, S> where C : WithIdController<T> where S : WithIdService<T> where T : WithId
 {
     
     protected C _controller;

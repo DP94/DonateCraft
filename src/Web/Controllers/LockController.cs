@@ -11,7 +11,7 @@ namespace Web.Controllers;
 
 [Route("v1/[controller]")]
 [EnableCors]
-public class LockController : DonateCraftBaseController<Lock>
+public class LockController : WithIdController<Lock>
 {
     private readonly ILockService _lockService;
 

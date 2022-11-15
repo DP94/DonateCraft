@@ -14,7 +14,7 @@ namespace Web.Controllers;
 
 [Route("v1/[controller]")]
 [EnableCors]
-public class PlayerController : DonateCraftBaseController<Player>
+public class PlayerController : WithIdController<Player>
 {
     private readonly IPlayerService _playerService;
     private readonly ILockService _lockService;
