@@ -10,7 +10,7 @@ namespace Web.Controllers;
 
 [Route("v1/[controller]")]
 [EnableCors]
-public class CharityController : DonateCraftBaseController<Charity>
+public class CharityController : WithIdController<Charity>
 {
     private readonly ICharityService _charityService;
 

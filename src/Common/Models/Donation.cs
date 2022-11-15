@@ -1,6 +1,6 @@
 ﻿namespace Common.Models;
 
-public class Donation : WithId
+public class Donation : WithPlayerId
 {
     public double Amount { get; set; }
     public DateTime CreatedDate { get; set; }

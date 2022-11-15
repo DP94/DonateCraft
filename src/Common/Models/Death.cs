@@ -1,11 +1,9 @@
 ﻿namespace Common.Models;
 
-public class Death : WithId
+public class Death : WithPlayerId
 {
     public string Reason { get; set; }
-    
-    public string PlayerId { get; set; }
-    
+
     public DateTime CreatedDate { get; set; }
 
     public Death()

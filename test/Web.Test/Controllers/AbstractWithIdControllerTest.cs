@@ -9,24 +9,8 @@ using Web.Controllers;
 
 namespace Web.Test.Controllers;
 
-public abstract class AbstractWithIdControllerTest<C, T, S> where C : DonateCraftBaseController<T> where T : WithId where S : WithIdService<T>
+public abstract class AbstractWithIdControllerTest<C, T, S> : AbstractControllerTest<C, T, S> where C : WithIdController<T> where T : WithId where S : WithIdService<T>
 {
-
-    protected C _controller;
-    protected S _service;
-
-    [SetUp]
-    public void SetUp()
-    {
-        this._service = this.CreateServiceFake();
-        this._controller = this.CreateController(this._service);
-        this._controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext()
-        };
-    }
-    
-
     [Test]
     public void Get_ById_Returns404_If_Null()
     {
@@ -86,10 +70,4 @@ public abstract class AbstractWithIdControllerTest<C, T, S> where C : DonateCraf
         CollectionAssert.AreEqual(values, (IEnumerable) result.Value);
         Assert.AreEqual(200, result.StatusCode);
     }
-
-    protected abstract S CreateServiceFake();
-    
-    protected abstract C CreateController(S service);
-
-    protected abstract T CreateData();
 }
