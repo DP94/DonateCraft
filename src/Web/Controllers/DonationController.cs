@@ -13,12 +13,10 @@ namespace Web.Controllers;
 public class DonationController : ControllerBase
 {
     private readonly IDonationService _donationService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public DonationController(IDonationService donationService, IHttpContextAccessor httpContextAccessor)
+    public DonationController(IDonationService donationService)
     {
         this._donationService = donationService;
-        this._httpContextAccessor = httpContextAccessor;
     }
     
     [HttpGet("{id}")]
@@ -46,7 +44,7 @@ public class DonationController : ControllerBase
         donation.Id = Guid.NewGuid().ToString();
         donation.CreatedDate = DateTime.UtcNow;
         var createdDonation = await this._donationService.Create(playerId, donation);
-        return Created($"{this._httpContextAccessor.HttpContext?.Request.GetEncodedUrl()}/{donation.Id}", createdDonation);
+        return Created($"{this.HttpContext?.Request.GetEncodedUrl()}/{donation.Id}", createdDonation);
     }
     
     [HttpPut("{id}")]

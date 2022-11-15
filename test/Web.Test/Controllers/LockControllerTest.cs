@@ -5,7 +5,7 @@ using Web.Controllers;
 
 namespace Web.Test.Controllers;
 
-public class LockControllerTest : AbstractControllerTest<LockController, Lock, ILockService>
+public class LockWithIdControllerTest : AbstractWithIdControllerTest<LockController, Lock, ILockService>
 {
     protected override ILockService CreateServiceFake()
     {

@@ -9,7 +9,7 @@ using Web.Controllers;
 
 namespace Web.Test.Controllers;
 
-public abstract class AbstractControllerTest<C, T, S> where C : DonateCraftBaseController<T> where T : WithId where S : WithIdService<T>
+public abstract class AbstractWithIdControllerTest<C, T, S> where C : DonateCraftBaseController<T> where T : WithId where S : WithIdService<T>
 {
 
     protected C _controller;

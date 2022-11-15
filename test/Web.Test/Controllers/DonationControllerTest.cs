@@ -18,7 +18,7 @@ public class DonationControllerTest
     public void SetUp()
     {
         this._donationService = A.Fake<IDonationService>();
-        this._controller = new DonationController(this._donationService, A.Fake<HttpContextAccessor>());
+        this._controller = new DonationController(this._donationService);
     }
 
     [Test]

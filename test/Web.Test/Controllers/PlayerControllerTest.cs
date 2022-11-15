@@ -12,7 +12,7 @@ using Web.Controllers;
 
 namespace Web.Test.Controllers;
 
-public class PlayerControllerTest : AbstractControllerTest<PlayerController, Player, IPlayerService>
+public class PlayerWithIdControllerTest : AbstractWithIdControllerTest<PlayerController, Player, IPlayerService>
 {
     private ILockService _lockService;
     
