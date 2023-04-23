@@ -29,6 +29,9 @@ jobs:
   terraform:
     needs: build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./src/Cloud/Terraform"
     steps:
     - uses: actions/checkout@v3
     - name: Configure AWS credentials
