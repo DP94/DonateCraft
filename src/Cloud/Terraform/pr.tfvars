@@ -1,3 +1,2 @@
-﻿aws_region = "eu-west-2"
-bucket = ""
+﻿region = "eu-west-2"
 key = "pr-${var.donate_craft_version}.tfstate"
