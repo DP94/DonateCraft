@@ -9,9 +9,11 @@
   
   backend "s3" {
     bucket = "donatecraft-terraform"
+    key = "donatecraft.tfstate"
+    region = "eu-west-2"
   }
 }
 
 provider "aws" {
-  region = var.region
+  region = var.aws_region
 }
