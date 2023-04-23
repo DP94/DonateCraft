@@ -54,3 +54,7 @@ jobs:
     - name: Terraform plan
       id: plan
       run: terraform plan -var donate_craft_version=pr-${{ github.event.number }} -var-file="pr.tfvars"
+      
+    - name: Terraform apply
+      id: apply
+      run: terraform apply -var donate_craft_version=pr-${{ github.event.number }} -var-file="pr.tfvars" -auto-approve
