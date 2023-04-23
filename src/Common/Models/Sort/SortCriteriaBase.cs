@@ -5,7 +5,7 @@ public abstract class SortCriteriaBase<T>
     protected SortColumn[] columns;
     public bool AscendingSort { get; set; }
 
-    public SortColumn? GetSortColumnByName(string name)
+    public SortColumn GetSortColumnByName(string name)
     {
         if (this.columns == null)
         {

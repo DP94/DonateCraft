@@ -21,7 +21,7 @@ public class DeathDynamoDbStorageService : IDeathCloudService
         return result.Deaths;
     }
 
-    public async Task<Death?> GetDeathById(string playerId, string id)
+    public async Task<Death> GetDeathById(string playerId, string id)
     {
         var player = await this._playerCloudService.GetPlayerById(playerId);
         foreach (var death in player.Deaths.Where(death => death.Id == id))
