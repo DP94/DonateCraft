@@ -50,9 +50,7 @@ jobs:
     - name: Terraform init
       id: init
       run: terraform init
-      working-directory: "/src/Cloud/Terraform/"
 
     - name: Terraform plan
       id: plan
       run: terraform plan
-      working-directory: "/src/Cloud/Terraform/"
