@@ -6,7 +6,6 @@ on:
 
 jobs:
   terraform:
-    needs: build
     runs-on: ubuntu-latest
     defaults:
       run:
