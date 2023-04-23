@@ -49,7 +49,7 @@ jobs:
         
     - name: Terraform init
       id: init
-      run: terraform init -var donate_craft_version=pr-${{ github.event.number }} -var-file="pr.tfvars"
+      run: terraform init -var donate_craft_version=pr-${{ github.event.number }} -var-file="pr.tfvars" -backend-conf=backend.tfvars
 
     - name: Terraform plan
       id: plan
