@@ -49,8 +49,8 @@ jobs:
         
     - name: Terraform init
       id: init
-      run: terraform init
+      run: terraform init -backend-config=backend.conf
 
     - name: Terraform plan
       id: plan
-      run: terraform plan
+      run: terraform plan -backend-config=backend.conf
