@@ -7,7 +7,9 @@
   }
   required_version = ">= 1.1.0"
   
-  backend "s3" {}
+  backend "s3" {
+    bucket = "donatecraft-terraform"
+  }
 }
 
 provider "aws" {

@@ -3,5 +3,4 @@
 }
 
 variable "donate_craft_version" {
-  
 }
