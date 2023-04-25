@@ -78,6 +78,7 @@ public static class DynamoDbUtility
         var attributeValues = new Dictionary<string, AttributeValue>();
         attributeValues.TryAdd(DynamoDbConstants.CharityIdColName, new AttributeValue(charity.Id));
         attributeValues.TryAdd(DynamoDbConstants.CharityDonationCountIdColName, new AttributeValue{ N = charity.DonationCount.ToString()});
+        attributeValues.TryAdd(DynamoDbConstants.CharityIsFundRaiserColName, new AttributeValue { BOOL = charity.IsFundRaiser });
         return attributeValues;
     }
     
@@ -167,8 +168,10 @@ public static class DynamoDbUtility
 
         attributeValues.TryGetValue(DynamoDbConstants.CharityIdColName, out var id);
         attributeValues.TryGetValue(DynamoDbConstants.CharityDonationCountIdColName, out var donationCount);
+        attributeValues.TryGetValue(DynamoDbConstants.CharityIsFundRaiserColName, out var fundRaiser);
         charity.Id = id?.S;
         charity.DonationCount = Convert.ToInt32(donationCount?.N);
+        charity.IsFundRaiser = fundRaiser is { BOOL: true };
         return charity;
     }
     

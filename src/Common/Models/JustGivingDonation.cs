@@ -15,4 +15,5 @@ public class JustGivingDonation
     public string Source { get; set; }
     public string Status { get; set; }
     public int CharityId { get; set; }
+    public string PageShortName { get; set; }
 }

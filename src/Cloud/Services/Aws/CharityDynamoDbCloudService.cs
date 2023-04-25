@@ -31,7 +31,7 @@ public class CharityDynamoDbCloudService : ICharityCloudService
         });
         if (response.Item == null || response.Item.Count == 0)
         {
-            throw new ResourceNotFoundException($"Death {id} not found");
+            throw new ResourceNotFoundException($"Charity {id} not found");
         }
 
         return DynamoDbUtility.GetCharityFromAttributes(response.Item);
