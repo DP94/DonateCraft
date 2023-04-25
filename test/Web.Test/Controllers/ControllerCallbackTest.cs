@@ -1,7 +1,5 @@
 ﻿using System.Net;
-using System.Text;
 using Common.Models;
-using Core.Services;
 using Core.Services.Charity;
 using Core.Services.Donation;
 using Core.Services.Lock;

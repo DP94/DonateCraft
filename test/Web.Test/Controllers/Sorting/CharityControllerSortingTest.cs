@@ -49,8 +49,8 @@ public class CharityControllerSortingTest : AbstractControllerSortingTest<Charit
     {
         return new List<Charity>
         {
-            new("abc", 1),
-            new("ghi", 2)
+            new("abc", 1, false),
+            new("ghi", 2, false)
         };
     }
 
