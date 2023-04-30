@@ -74,12 +74,12 @@ jobs:
         
     - name: Terraform init
       id: init
-      run: terraform init -var=donate_craft_version=pr-${{ github.event.number }} -var=just_giving_api_key=${{ JUST_GIVING_API_KEY }} -var-file="pr.tfvars"
+      run: terraform init -var=donate_craft_version=pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -var-file="pr.tfvars"
 
     - name: Terraform plan
       id: plan
-      run: terraform plan -var=donate_craft_version=pr-${{ github.event.number }} -var=just_giving_api_key=${{ JUST_GIVING_API_KEY }} -var-file="pr.tfvars"
+      run: terraform plan -var=donate_craft_version=pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -var-file="pr.tfvars"
       
     - name: Terraform apply
       id: apply
-      run: terraform apply -var=donate_craft_version=pr-${{ github.event.number }} -var=just_giving_api_key=${{ JUST_GIVING_API_KEY }} -var-file="pr.tfvars" -auto-approve
+      run: terraform apply -var=donate_craft_version=pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -var-file="pr.tfvars" -auto-approve
