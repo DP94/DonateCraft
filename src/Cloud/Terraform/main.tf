@@ -19,7 +19,7 @@ provider "aws" {
 }
 
 resource "aws_dynamodb_table" "players" {
-  name           = "Player"
+  name           = "Player${var.donate_craft_version}"
   billing_mode   = "PROVISIONED"
   read_capacity  = 20
   write_capacity = 20
