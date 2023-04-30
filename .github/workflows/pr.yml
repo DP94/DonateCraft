@@ -38,7 +38,7 @@ jobs:
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: 'zip'
-        directory: src/Web/
+        directory: src/Web/bin/Release/net6.0/publish/
         filename: 'donatecraft_api_pr-${{ github.event.number }}.zip'
 
   terraform:
