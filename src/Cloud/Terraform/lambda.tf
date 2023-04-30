@@ -8,6 +8,14 @@
   runtime = "dotnet6"
 
   role = "${aws_iam_role.lambda_exec.arn}"
+
+  environment {
+    variables = {
+      DonateCraft__DonateCraftUiUrl = var.donate_craft_ui
+      DonateCraft__JustGivingApiKey = var.just_giving_api_key
+      DonateCraft__JustGivingApiUrl = var.just_giving_api_url
+    }
+  }
 }
 
 resource "aws_iam_role" "lambda_exec" {
