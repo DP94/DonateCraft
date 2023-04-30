@@ -19,7 +19,7 @@
     }
   })
 
-  name = "example"
+  name = "donatecraft${var.donate_craft_version}"
 
   endpoint_configuration {
     types = ["REGIONAL"]
