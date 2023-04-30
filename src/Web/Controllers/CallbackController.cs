@@ -90,18 +90,33 @@ public class CallbackController : ControllerBase
             return Redirect($"{this._donateCraftUi}?status=error&code=5");
         }
 
-        var charityData = await GetCharityData(justGivingDonation.CharityId);
+        string name;
+        int id;
+        if (!string.IsNullOrEmpty(justGivingDonation.PageShortName))
+        {
+            var fundraiserData = await GetFundraiserData(justGivingDonation.PageShortName);
+            name = fundraiserData.EventName;
+            id = int.Parse(fundraiserData.PageId);
+        }
+        else
+        {
+            var charityData = await GetCharityData(justGivingDonation.CharityId);
+            name = charityData.Name;
+            id = justGivingDonation.CharityId;
+        }
+        
+        
         await this._donationService.Create(player, new Donation
         {
             Amount = Convert.ToDouble(justGivingDonation.Amount),
             Id = justGivingDonation.Id.ToString(),
-            CharityId = justGivingDonation.CharityId,
-            CharityName = charityData.Name,
+            CharityId = id,
+            CharityName = name,
             CreatedDate = DateTime.Now,
             PaidForId = paidForKey ?? player,
             Private = string.IsNullOrWhiteSpace(justGivingDonation.Amount)
         });
-        var charity = await this._charityService.GetById(justGivingDonation.CharityId.ToString());
+        var charity = await this._charityService.GetById(id.ToString());
         charity.DonationCount++;
         await this._charityService.Update(charity);
 
@@ -140,5 +155,20 @@ public class CallbackController : ControllerBase
             throw new BadHttpRequestException($"Could not find a charity with id of {charityId}");
         }
         return charityData;
+    }
+
+    private async Task<JustGivingFundraiser> GetFundraiserData(string pageShortName)
+    {
+        var fundraiserResponse = await this._client.GetAsync($"{this._apiKey}/v1/fundraising/pages/{pageShortName}");
+        var fundraiserData = JsonSerializer.Deserialize<JustGivingFundraiser>(await fundraiserResponse.Content.ReadAsStringAsync(),
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        if (!fundraiserResponse.IsSuccessStatusCode || fundraiserData == null)
+        {
+            throw new BadHttpRequestException($"Could not find a charity with id of {pageShortName}");
+        }
+        return fundraiserData;
     }
 }

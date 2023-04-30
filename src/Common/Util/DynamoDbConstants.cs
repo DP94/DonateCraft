@@ -28,6 +28,7 @@ public static class DynamoDbConstants
     public const string CharityTableName = "Charity";
     public const string CharityIdColName = "id";
     public const string CharityDonationCountIdColName = "donationCount";
+    public const string CharityIsFundRaiserColName = "isFundRaiser";
     #endregion
     
     #region Donation
