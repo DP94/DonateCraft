@@ -9,4 +9,10 @@ public class DonateCraftOptions
     public string JustGivingApiUrl { get; set; }
 
     public string DonateCraftUiUrl { get; set; }
+    
+    public string PlayerTableName { get; set; }
+    
+    public string LockTableName { get; set; }
+    
+    public string CharityTableName { get; set; }
 }

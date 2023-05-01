@@ -5,6 +5,7 @@ using Common.Exceptions;
 using Common.Models;
 using Common.Util;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
 namespace Cloud.Services.Aws;
@@ -16,13 +17,15 @@ public class LockDynamoDbCloudService : ILockCloudService
     private readonly IDonationCloudService _donationCloudService;
     private readonly IPlayerCloudService _playerCloudService;
     private readonly IMemoryCache _cache;
+    private readonly DonateCraftOptions _options;
 
-    public LockDynamoDbCloudService(IAmazonDynamoDB amazonDynamoDb, IDonationCloudService donationCloudService, IPlayerCloudService playerCloudService, IMemoryCache cache)
+    public LockDynamoDbCloudService(IAmazonDynamoDB amazonDynamoDb, IDonationCloudService donationCloudService, IPlayerCloudService playerCloudService, IMemoryCache cache, IOptions<DonateCraftOptions> options)
     {
         this._amazonDynamoDb = amazonDynamoDb;
         this._donationCloudService = donationCloudService;
         this._playerCloudService = playerCloudService;
         this._cache = cache;
+        this._options = options.Value;
     }
 
     public async Task<Lock> Create(Lock newLock)
@@ -31,7 +34,7 @@ public class LockDynamoDbCloudService : ILockCloudService
         {
             await this._amazonDynamoDb.PutItemAsync(new PutItemRequest
             {
-                TableName = DynamoDbConstants.LockTableName,
+                TableName = this._options.LockTableName,
                 Item = DynamoDbUtility.GetAttributesFromLock(newLock),
                 ConditionExpression = $"attribute_not_exists({DynamoDbConstants.LockIdColName})"
             });
@@ -46,7 +49,7 @@ public class LockDynamoDbCloudService : ILockCloudService
 
     public async Task<List<Lock>> GetLocks()
     {
-        var result = await this._amazonDynamoDb.ScanAsync(new ScanRequest(DynamoDbConstants.LockTableName));
+        var result = await this._amazonDynamoDb.ScanAsync(new ScanRequest(this._options.LockTableName));
         return result.Items.Select(DynamoDbUtility.GetLockFromAttributes).ToList();
     }
 
@@ -62,7 +65,7 @@ public class LockDynamoDbCloudService : ILockCloudService
             RequestItems = new Dictionary<string, KeysAndAttributes>
             {
                 {
-                    DynamoDbConstants.LockTableName,
+                    this._options.LockTableName,
                     new KeysAndAttributes
                     {
                         Keys = new List<Dictionary<string, AttributeValue>>()
@@ -72,7 +75,7 @@ public class LockDynamoDbCloudService : ILockCloudService
         };
         playerIds.ForEach(id =>
         {
-            request.RequestItems[DynamoDbConstants.LockTableName].Keys.Add(new Dictionary<string, AttributeValue>
+            request.RequestItems[this._options.LockTableName].Keys.Add(new Dictionary<string, AttributeValue>
             {
                 {
                     DynamoDbConstants.LockIdColName, new AttributeValue(id)
@@ -81,7 +84,7 @@ public class LockDynamoDbCloudService : ILockCloudService
         });
         var locks = new List<Lock>();
         var response = await this._amazonDynamoDb.BatchGetItemAsync(request);
-        if (response == null || !response.Responses.TryGetValue(DynamoDbConstants.LockTableName, out var ddbLocks))
+        if (response == null || !response.Responses.TryGetValue(this._options.LockTableName, out var ddbLocks))
         {
             return locks;
         }
@@ -108,7 +111,7 @@ public class LockDynamoDbCloudService : ILockCloudService
     {
         var response = await this._amazonDynamoDb.GetItemAsync(new GetItemRequest
         {
-            TableName = DynamoDbConstants.LockTableName,
+            TableName = this._options.LockTableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 {
@@ -128,7 +131,7 @@ public class LockDynamoDbCloudService : ILockCloudService
     {
         await this._amazonDynamoDb.DeleteItemAsync(new DeleteItemRequest
         {
-            TableName = DynamoDbConstants.LockTableName,
+            TableName = this._options.LockTableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 {
@@ -143,7 +146,7 @@ public class LockDynamoDbCloudService : ILockCloudService
         await this.GetLock(theLock.Id);
         await this._amazonDynamoDb.PutItemAsync(new PutItemRequest
         {
-            TableName = DynamoDbConstants.LockTableName,
+            TableName = this._options.LockTableName,
             Item = DynamoDbUtility.GetAttributesFromLock(theLock)
         });
         return theLock;

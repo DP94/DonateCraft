@@ -4,6 +4,7 @@ using Cloud.Util;
 using Common.Exceptions;
 using Common.Models;
 using Common.Util;
+using Microsoft.Extensions.Options;
 using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
 namespace Cloud.Services.Aws;
@@ -12,15 +13,17 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
 {
     
     private readonly IAmazonDynamoDB _dynamoDb;
+    private readonly DonateCraftOptions _options;
     
-    public PlayerDynamoDbCloudService(IAmazonDynamoDB dynamoDb)
+    public PlayerDynamoDbCloudService(IAmazonDynamoDB dynamoDb, IOptions<DonateCraftOptions> options)
     {
         this._dynamoDb = dynamoDb;
+        this._options = options.Value;
     }
 
     public async Task<List<Player>> GetPlayers()
     {
-        var result = await this._dynamoDb.ScanAsync(new ScanRequest(DynamoDbConstants.PlayerTableName));
+        var result = await this._dynamoDb.ScanAsync(new ScanRequest(this._options.PlayerTableName));
         var criteria = new DynamoAttributeMappingCriteria(true, true);
         return result.Items.Select(item =>
             DynamoDbUtility.GetPlayerFromAttributes(item, criteria)).ToList();
@@ -35,7 +38,7 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
     {
         var response = await this._dynamoDb.GetItemAsync(new GetItemRequest
         {
-            TableName = DynamoDbConstants.PlayerTableName,
+            TableName = this._options.PlayerTableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 {
@@ -57,7 +60,7 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
         {
             await this._dynamoDb.PutItemAsync(new PutItemRequest
             {
-                TableName = DynamoDbConstants.PlayerTableName,
+                TableName = this._options.PlayerTableName,
                 Item = DynamoDbUtility.GetAttributesFromPlayer(player),
                 ConditionExpression = $"attribute_not_exists({DynamoDbConstants.PlayerIdColName})"
             });
@@ -74,7 +77,7 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
     {
         await this._dynamoDb.DeleteItemAsync(new DeleteItemRequest
         {
-            TableName = DynamoDbConstants.PlayerTableName,
+            TableName = this._options.PlayerTableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 {
@@ -89,7 +92,7 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
         await this.GetPlayerById(player.Id);
         await this._dynamoDb.PutItemAsync(new PutItemRequest
         {
-            TableName = DynamoDbConstants.PlayerTableName,
+            TableName = this._options.PlayerTableName,
             Item = DynamoDbUtility.GetAttributesFromPlayer(player)
         });
         return player;
