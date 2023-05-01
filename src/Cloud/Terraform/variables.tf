@@ -3,6 +3,7 @@ variable "aws_region" {
 }
 
 variable "donate_craft_version" {
+  description = "The version of the DonateCraft API - version used in all resources such as DDB, Lambda etc. E.g. pr-, prod-, dev-, qa-"
 }
 
 variable "donate_craft_ui" {

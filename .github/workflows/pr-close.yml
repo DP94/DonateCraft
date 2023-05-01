@@ -1,0 +1,35 @@
+name: Pull request close cleanup
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    
+jobs:
+  cleanup-aws:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./src/Cloud/Terraform"
+    steps:
+      - uses: actions/checkout@v3
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.1.9
+          terraform_wrapper: false
+
+      - name: Terraform init
+        id: init
+        run: terraform init -var=donate_craft_version=pr-${{ github.event.number }}
+
+      - name: Terraform destroy
+        id: destroy
+        run: terraform destroy -var=donate_craft_version=pr-${{ github.event.number }}
