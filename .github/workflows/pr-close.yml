@@ -2,7 +2,7 @@ name: Pull request close cleanup
 
 on:
   pull_request:
-    branches: [ "main" ]
+    types: [closed]
     
 jobs:
   cleanup-aws:
