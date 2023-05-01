@@ -9,7 +9,6 @@ terraform {
 
   backend "s3" {
     bucket = "donatecraft-terraform"
-    key    = "donatecraft.tfstate"
     region = "eu-west-2"
   }
 }
