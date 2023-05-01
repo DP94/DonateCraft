@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Amazon.Lambda.Core;
 using Cloud.Util;
 using Common.Exceptions;
 using Common.Models;
@@ -19,6 +20,7 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
     {
         this._dynamoDb = dynamoDb;
         this._options = options.Value;
+        LambdaLogger.Log($"Options: {options.Value}");
     }
 
     public async Task<List<Player>> GetPlayers()
