@@ -20,7 +20,6 @@ public class PlayerDynamoDbCloudService : IPlayerCloudService
     {
         this._dynamoDb = dynamoDb;
         this._options = options.Value;
-        LambdaLogger.Log($"Options: {options.Value}");
     }
 
     public async Task<List<Player>> GetPlayers()
