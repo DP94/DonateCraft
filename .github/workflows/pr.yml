@@ -32,7 +32,7 @@ jobs:
       run: dotnet test -c Release --no-build --verbosity normal
       
     - name: Publish
-      run: dotnet publish src/Web/Web.csproj -c Release 
+      run: dotnet publish --no-build src/Web/Web.csproj -c Release 
       
     - name: Zip Lambda
       uses: thedoctor0/zip-release@0.7.1
@@ -49,7 +49,7 @@ jobs:
         aws-region: eu-west-2
         
     - name: Upload Donatecraft lambda to S3
-      run: aws s3 cp src/Web/bin/Release/net6.0/publish/donatecraft_api_pr-${{ github.event.number }}-{{github.run_number}}.zip s3://donatecraft/donatecraft_api_pr-${{ github.event.number }}--{{github.run_number}}.zip --content-type application/zip
+      run: aws s3 cp src/Web/bin/Release/net6.0/publish/donatecraft_api_pr-${{ github.event.number }}-${{github.run_number}}.zip s3://donatecraft/donatecraft_api_pr-${{ github.event.number }}--{{github.run_number}}.zip --content-type application/zip
 
   terraform:
     needs: build
@@ -74,12 +74,12 @@ jobs:
         
     - name: Terraform init
       id: init
-      run: terraform init -var=donate_craft_version=pr-${{ github.event.number }}-{{ github.run_number }} -var=donate_craft_environment=pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -backend-config="key=pr-${{ github.event.number }}donatecraft.tfstate"
+      run: terraform init -var=donate_craft_version=pr-${{ github.event.number }}-${{ github.run_number }} -var=donate_craft_environment=pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -backend-config="key=pr-${{ github.event.number }}donatecraft.tfstate"
 
     - name: Terraform plan
       id: plan
-      run: terraform plan -var=donate_craft_version=pr-${{ github.event.number }}-{{ github.run_number }} -var=donate_craft_environment=pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }}
+      run: terraform plan -var=donate_craft_version=pr-${{ github.event.number }}-${{ github.run_number }} -var=donate_craft_environment=pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }}
       
     - name: Terraform apply
       id: apply
-      run: terraform apply -var=donate_craft_version=pr-${{ github.event.number }}-{{ github.run_number }} -var=donate_craft_environment=pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -auto-approve
+      run: terraform apply -var=donate_craft_version=pr-${{ github.event.number }}-${{ github.run_number }} -var=donate_craft_environment=pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -auto-approve
