@@ -7,6 +7,8 @@ using Cloud.Util;
 using Common.Exceptions;
 using Common.Models;
 using Common.Util;
+using FakeItEasy;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
@@ -25,7 +27,13 @@ public class CharityDynamoDbCloudServiceTest
         await this._localDynamoDbSetup.SetupDynamoDb();
         await this._localDynamoDbSetup.CreateTables(null, null, DynamoDbConstants.CharityTableName);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
-        this._cloudService = new CharityDynamoDbCloudService(this._dynamoDb);
+        this._cloudService = new CharityDynamoDbCloudService(this._dynamoDb, Options.Create(new DonateCraftOptions
+        {
+            DonateCraftUiUrl = "test.com",
+            JustGivingApiKey = "123",
+            JustGivingApiUrl = "justgiving.com",
+            CharityTableName = "Charity"
+        }));
     }
     
     [Test]

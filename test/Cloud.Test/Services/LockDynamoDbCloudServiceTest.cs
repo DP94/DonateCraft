@@ -9,6 +9,7 @@ using Common.Models;
 using Common.Util;
 using FakeItEasy;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
@@ -29,9 +30,17 @@ public class LockDynamoDbCloudServiceTest
         await this._localDynamoDbSetup.SetupDynamoDb();
         await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.LockTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
-        this._playerCloudService = new PlayerDynamoDbCloudService(this._dynamoDb);
+        var options = Options.Create(new DonateCraftOptions
+        {
+            DonateCraftUiUrl = "test.com",
+            JustGivingApiKey = "123",
+            JustGivingApiUrl = "justgiving.com",
+            PlayerTableName = "Player",
+            LockTableName = "Lock"
+        });
+        this._playerCloudService = new PlayerDynamoDbCloudService(this._dynamoDb, options);
         this._donationCloudService = new DonationDynamoDbCloudService(this._playerCloudService);
-        this._cloudService = new LockDynamoDbCloudService(this._dynamoDb, this._donationCloudService, this._playerCloudService, A.Fake<IMemoryCache>());
+        this._cloudService = new LockDynamoDbCloudService(this._dynamoDb, this._donationCloudService, this._playerCloudService, A.Fake<IMemoryCache>(), options);
     }
     
     [Test]

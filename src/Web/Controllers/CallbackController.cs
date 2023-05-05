@@ -39,7 +39,7 @@ public class CallbackController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Callback([FromQuery] string? data)
+    public async Task<IActionResult> Callback([FromQuery] string data)
     {
         if (data == null)
         {
@@ -61,7 +61,7 @@ public class CallbackController : ControllerBase
             return Redirect($"{this._donateCraftUi}?status=error&code=3");
         }
 
-        Lock? currentLock = null;
+        Lock currentLock = null;
         try
         {
             currentLock = await this._lockService.GetById(player);

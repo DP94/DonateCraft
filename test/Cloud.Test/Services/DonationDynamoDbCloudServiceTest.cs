@@ -5,6 +5,7 @@ using Cloud.Services.Aws;
 using Common.Exceptions;
 using Common.Models;
 using Common.Util;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 
 namespace Cloud.Test.Services;
@@ -23,7 +24,13 @@ public class DonationDynamoDbCloudServiceTest
         await this._localDynamoDbSetup.SetupDynamoDb();
         await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, null, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
-        this._playerCloudService = new PlayerDynamoDbCloudService(this._dynamoDb);
+        this._playerCloudService = new PlayerDynamoDbCloudService(this._dynamoDb, Options.Create(new DonateCraftOptions
+        {
+            DonateCraftUiUrl = "test.com",
+            JustGivingApiKey = "123",
+            JustGivingApiUrl = "justgiving.com",
+            PlayerTableName = "Player"
+        }));
         this._donationCloudService = new DonationDynamoDbCloudService(this._playerCloudService);
     }
 

@@ -7,6 +7,7 @@ using Common.Models;
 using Common.Util;
 using FakeItEasy;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 
 namespace Cloud.Test.Services;
@@ -26,8 +27,17 @@ public class DeathDynamoDbCloudServiceTest
         await this._localDynamoDbSetup.SetupDynamoDb();
         await this._localDynamoDbSetup.CreateTables(DynamoDbConstants.PlayerTableName, DynamoDbConstants.LockTableName, null);
         this._dynamoDb = this._localDynamoDbSetup.GetClient();
-        this._playerCloudService = new PlayerDynamoDbCloudService(this._dynamoDb);
-        this._lockCloudService = new LockDynamoDbCloudService(this._dynamoDb, A.Fake<IDonationCloudService>(), A.Fake<IPlayerCloudService>(), A.Fake<IMemoryCache>());
+        var options = Options.Create(new DonateCraftOptions
+        {
+            DonateCraftUiUrl = "test.com",
+            JustGivingApiKey = "123",
+            JustGivingApiUrl = "justgiving.com",
+            PlayerTableName = "Player",
+            LockTableName = "Lock",
+            CharityTableName = "Charity"
+        });
+        this._playerCloudService = new PlayerDynamoDbCloudService(this._dynamoDb, options);
+        this._lockCloudService = new LockDynamoDbCloudService(this._dynamoDb, A.Fake<IDonationCloudService>(), A.Fake<IPlayerCloudService>(), A.Fake<IMemoryCache>(), options);
         this._deathCloudService = new DeathDynamoDbStorageService(this._playerCloudService, this._lockCloudService);
     }
 

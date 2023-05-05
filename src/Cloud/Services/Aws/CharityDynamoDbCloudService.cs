@@ -4,6 +4,7 @@ using Cloud.Util;
 using Common.Exceptions;
 using Common.Models;
 using Common.Util;
+using Microsoft.Extensions.Options;
 using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
 namespace Cloud.Services.Aws;
@@ -11,17 +12,19 @@ namespace Cloud.Services.Aws;
 public class CharityDynamoDbCloudService : ICharityCloudService
 {
     private readonly IAmazonDynamoDB _dynamoDb;
+    private readonly DonateCraftOptions _options;
 
-    public CharityDynamoDbCloudService(IAmazonDynamoDB dynamoDb)
+    public CharityDynamoDbCloudService(IAmazonDynamoDB dynamoDb, IOptions<DonateCraftOptions> options)
     {
         this._dynamoDb = dynamoDb;
+        this._options = options.Value;
     }
 
     public async Task<Charity> GetCharityById(string id)
     {
         var response = await this._dynamoDb.GetItemAsync(new GetItemRequest
         {
-            TableName = DynamoDbConstants.CharityTableName,
+            TableName = this._options.CharityTableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 {
@@ -39,7 +42,7 @@ public class CharityDynamoDbCloudService : ICharityCloudService
 
     public async Task<List<Charity>> GetCharities()
     {
-        var result = await this._dynamoDb.ScanAsync(new ScanRequest(DynamoDbConstants.CharityTableName));
+        var result = await this._dynamoDb.ScanAsync(new ScanRequest(this._options.CharityTableName));
         return result.Items.Select(DynamoDbUtility.GetCharityFromAttributes).ToList();
     }
 
@@ -47,7 +50,7 @@ public class CharityDynamoDbCloudService : ICharityCloudService
     {
         await this._dynamoDb.DeleteItemAsync(new DeleteItemRequest
         {
-            TableName = DynamoDbConstants.CharityTableName,
+            TableName = this._options.CharityTableName,
             Key = new Dictionary<string, AttributeValue>
             {
                 {
@@ -63,7 +66,7 @@ public class CharityDynamoDbCloudService : ICharityCloudService
         {
             await this._dynamoDb.PutItemAsync(new PutItemRequest
             {
-                TableName = DynamoDbConstants.CharityTableName,
+                TableName = this._options.CharityTableName,
                 Item = DynamoDbUtility.GetAttributesFromCharity(charity),
                 ConditionExpression = $"attribute_not_exists({DynamoDbConstants.CharityIdColName})"
             });
@@ -81,7 +84,7 @@ public class CharityDynamoDbCloudService : ICharityCloudService
         await this.GetCharityById(charity.Id);
         await this._dynamoDb.PutItemAsync(new PutItemRequest
         {
-            TableName = DynamoDbConstants.CharityTableName,
+            TableName = this._options.CharityTableName,
             Item = DynamoDbUtility.GetAttributesFromCharity(charity)
         });
         return charity;
