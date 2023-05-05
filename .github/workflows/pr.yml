@@ -39,7 +39,7 @@ jobs:
       with:
         type: 'zip'
         directory: src/Web/bin/Release/net6.0/publish/
-        filename: 'donatecraft_api_pr-${{ github.event.number }}-${{github.run_number}}.zip'
+        filename: 'donatecraft_api-pr-${{ github.event.number }}-${{github.run_number}}.zip'
         
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
