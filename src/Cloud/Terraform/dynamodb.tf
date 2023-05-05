@@ -1,8 +1,8 @@
 ﻿resource "aws_dynamodb_table" "player" {
   name           = "Player${var.donate_craft_environment}"
   billing_mode   = "PROVISIONED"
-  read_capacity  = 20
-  write_capacity = 20
+  read_capacity  = 100
+  write_capacity = 100
   hash_key       = "id"
 
   attribute {
@@ -14,8 +14,8 @@
 resource "aws_dynamodb_table" "lock" {
   name           = "Lock${var.donate_craft_environment}"
   billing_mode   = "PROVISIONED"
-  read_capacity  = 20
-  write_capacity = 20
+  read_capacity  = 100
+  write_capacity = 100
   hash_key       = "id"
 
   attribute {
@@ -27,8 +27,8 @@ resource "aws_dynamodb_table" "lock" {
 resource "aws_dynamodb_table" "charity" {
   name           = "Charity${var.donate_craft_environment}"
   billing_mode   = "PROVISIONED"
-  read_capacity  = 20
-  write_capacity = 20
+  read_capacity  = 100
+  write_capacity = 100
   hash_key       = "id"
 
   attribute {
