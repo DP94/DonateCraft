@@ -2,7 +2,7 @@
   function_name = "donatecraft${var.donate_craft_version}"
   
   s3_bucket = "donatecraft"
-  s3_key    = "donatecraft_api_${var.donate_craft_version}.zip"
+  s3_key    = "donatecraft_api${var.donate_craft_version}.zip"
   
   handler = "Web::Web.LambdaEntryPoint::FunctionHandlerAsync"
   runtime = "dotnet6"
