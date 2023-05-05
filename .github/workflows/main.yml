@@ -44,7 +44,7 @@ jobs:
         with:
           type: 'zip'
           directory: src/Web/bin/Release/net6.0/publish/
-          filename: 'donatecraft_api_dev-${{ github.event.number }}.zip'
+          filename: 'donatecraft_api-dev.zip'
           
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -54,7 +54,7 @@ jobs:
           aws-region: eu-west-2
 
       - name: Upload Donatecraft lambda to S3
-        run: aws s3 cp src/Web/bin/Release/net6.0/publish/donatecraft_api_dev-${{ github.event.number }}.zip s3://donatecraft/donatecraft_api_dev-${{ github.event.number }}.zip --content-type application/zip
+        run: aws s3 cp src/Web/bin/Release/net6.0/publish/donatecraft_api-dev.zip s3://donatecraft/donatecraft_api-dev.zip --content-type application/zip
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -86,12 +86,12 @@ jobs:
 
       - name: Terraform init
         id: init
-        run: terraform init -var=donate_craft_version=dev -var=donate_craft_environment=dev -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -backend-config="key=dev-donatecraft.tfstate"
+        run: terraform init -var=donate_craft_version=-dev -var=donate_craft_environment=dev -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -backend-config="key=dev-donatecraft.tfstate"
 
       - name: Terraform plan
         id: plan
-        run: terraform plan -var=donate_craft_version=dev -var=donate_craft_environment=dev -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }}
+        run: terraform plan -var=donate_craft_version=-dev -var=donate_craft_environment=dev -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }}
 
       - name: Terraform apply
         id: apply
-        run: terraform apply -var=donate_craft_version=dev -var=donate_craft_environment=dev -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -auto-approve
+        run: terraform apply -var=donate_craft_version=-dev -var=donate_craft_environment=dev -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -auto-approve
