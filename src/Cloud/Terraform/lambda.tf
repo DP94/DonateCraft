@@ -10,6 +10,7 @@
   role = "arn:aws:iam::043470831800:role/donatecraft-AspNetCoreFunctionRole-JZ3T6L7H5ZXQ"
   
   timeout = 30
+  memory_size = 512
 
   environment {
     variables = {
