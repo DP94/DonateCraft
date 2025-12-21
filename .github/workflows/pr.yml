@@ -38,7 +38,7 @@ jobs:
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: 'zip'
-        directory: src/Web/bin/Release/net6.0/publish/
+        directory: src/Web/bin/Release/net8.0/publish/
         filename: 'donatecraft_api-pr-${{ github.event.number }}-${{github.run_number}}.zip'
         
     - name: Configure AWS credentials
@@ -49,7 +49,7 @@ jobs:
         aws-region: eu-west-2
         
     - name: Upload Donatecraft lambda to S3
-      run: aws s3 cp src/Web/bin/Release/net6.0/publish/donatecraft_api-pr-${{ github.event.number }}-${{github.run_number}}.zip s3://donatecraft/donatecraft_api-pr-${{ github.event.number }}-${{github.run_number}}.zip --content-type application/zip
+      run: aws s3 cp src/Web/bin/Release/net8.0/publish/donatecraft_api-pr-${{ github.event.number }}-${{github.run_number}}.zip s3://donatecraft/donatecraft_api-pr-${{ github.event.number }}-${{github.run_number}}.zip --content-type application/zip
 
   terraform:
     needs: build
