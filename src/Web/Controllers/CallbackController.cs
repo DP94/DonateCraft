@@ -90,20 +90,9 @@ public class CallbackController : ControllerBase
             return Redirect($"{this._donateCraftUi}?status=error&code=5");
         }
 
-        string name;
-        int id;
-        if (!string.IsNullOrEmpty(justGivingDonation.PageShortName))
-        {
-            var fundraiserData = await GetFundraiserData(justGivingDonation.PageShortName);
-            name = fundraiserData.EventName;
-            id = int.Parse(fundraiserData.PageId);
-        }
-        else
-        {
-            var charityData = await GetCharityData(justGivingDonation.CharityId);
-            name = charityData.Name;
-            id = justGivingDonation.CharityId;
-        }
+        var charityData = await GetCharityData(justGivingDonation.CharityId);
+        var name = charityData.Name;
+        var id = justGivingDonation.CharityId;
         
         
         await this._donationService.Create(player, new Donation
