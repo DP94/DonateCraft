@@ -84,7 +84,7 @@ jobs:
 
       - name: Terraform plan
         id: plan
-        run: terraform plan-var=donate_craft_environment=prod -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }}
+        run: terraform plan -var=donate_craft_environment=prod -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }}
 
       - name: Terraform apply
         id: apply
