@@ -16,10 +16,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{A140A63B-F855-475F-B0B2-DE6A3070C22D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		Dockerfile = Dockerfile
 		.github\workflows\main.yml = .github\workflows\main.yml
 		.github\workflows\pr.yml = .github\workflows\pr.yml
-		serverless.template = serverless.template
 		README.md = README.md
 		.github\workflows\pr-close.yml = .github\workflows\pr-close.yml
 		.github\workflows\deploy.yml = .github\workflows\deploy.yml
