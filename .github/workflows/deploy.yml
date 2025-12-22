@@ -80,12 +80,12 @@ jobs:
 
       - name: Terraform init
         id: init
-        run: terraform init -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -backend-config="key=donatecraft.tfstate"
+        run: terraform init -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -var=just_giving_api_url=${{ secrets.JUST_GIVING_API_URL_PROD }} -backend-config="key=donatecraft.tfstate"
 
       - name: Terraform plan
         id: plan
-        run: terraform plan -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }}
+        run: terraform plan -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -var=just_giving_api_url=${{ secrets.JUST_GIVING_API_URL_PROD }}
 
       - name: Terraform apply
         id: apply
-        run: terraform apply -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -auto-approve
+        run: terraform apply -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -var=just_giving_api_url=${{ secrets.JUST_GIVING_API_URL_PROD }} -auto-approve
