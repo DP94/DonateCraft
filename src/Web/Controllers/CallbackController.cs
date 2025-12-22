@@ -125,7 +125,7 @@ public class CallbackController : ControllerBase
             var donationData = await this._client.GetAsync($"{this._apiKey}/v1/donation/{donationId}");
             if (!donationData.IsSuccessStatusCode)
             {
-                this._logger.LogWarning("Get donation data did not succeed {DonationDataStatusCode}", donationData.StatusCode);
+                this._logger.LogWarning("Get donation {DonationId} data did not succeed {DonationDataStatusCode}", donationId, donationData.StatusCode);
                 await Task.Delay(TimeSpan.FromMilliseconds(500) * i);
                 continue;
             }
