@@ -147,19 +147,4 @@ public class CallbackController : ControllerBase
         }
         return charityData;
     }
-
-    private async Task<JustGivingFundraiser> GetFundraiserData(string pageShortName)
-    {
-        var fundraiserResponse = await this._client.GetAsync($"{this._apiKey}/v1/fundraising/pages/{pageShortName}");
-        var fundraiserData = JsonSerializer.Deserialize<JustGivingFundraiser>(await fundraiserResponse.Content.ReadAsStringAsync(),
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-        if (!fundraiserResponse.IsSuccessStatusCode || fundraiserData == null)
-        {
-            throw new BadHttpRequestException($"Could not find a charity with id of {pageShortName}");
-        }
-        return fundraiserData;
-    }
 }
