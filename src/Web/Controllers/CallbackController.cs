@@ -119,18 +119,29 @@ public class CallbackController : ControllerBase
 
     private async Task<JustGivingDonation> GetDonationData(string donationId)
     {
-        var donationData = await this._client.GetAsync($"{this._apiKey}/v1/donation/{donationId}");
-        donationData.EnsureSuccessStatusCode();
-        var responseBody = await donationData.Content.ReadAsStringAsync();
-        var justGivingDonation = JsonSerializer.Deserialize<JustGivingDonation>(responseBody, new JsonSerializerOptions
+        JustGivingDonation donation = null;
+        for (var i = 0; i < 10; i++)
         {
-            PropertyNameCaseInsensitive = true
-        });
-        if (!donationData.IsSuccessStatusCode || justGivingDonation == null)
-        {
-            throw new BadHttpRequestException($"Could not find a donation with id of {donationId}");
+            var donationData = await this._client.GetAsync($"{this._apiKey}/v1/donation/{donationId}");
+            if (!donationData.IsSuccessStatusCode)
+            {
+                this._logger.LogWarning("Get donation data did not succeed {DonationDataStatusCode}", donationData.StatusCode);
+                await Task.Delay(TimeSpan.FromMilliseconds(500) * i);
+                continue;
+            }
+            donationData.EnsureSuccessStatusCode();
+            var responseBody = await donationData.Content.ReadAsStringAsync();
+            var justGivingDonation = JsonSerializer.Deserialize<JustGivingDonation>(responseBody, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+            if (!donationData.IsSuccessStatusCode || justGivingDonation == null)
+            {
+                throw new BadHttpRequestException($"Could not find a donation with id of {donationId}");
+            }
+            donation = justGivingDonation;
         }
-        return justGivingDonation;
+        return donation;
     }
 
     private async Task<JustGivingCharity> GetCharityData(int charityId)
