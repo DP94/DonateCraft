@@ -152,7 +152,7 @@ public static class DynamoDbUtility
             attributeValues.TryGetValue(DynamoDbConstants.LockUnlockedColName, out var unlocked))
         {
             newLock.Id = id.S;
-            newLock.Unlocked = unlocked.BOOL;
+            newLock.Unlocked = unlocked.BOOL ?? false;
             if (attributeValues.TryGetValue(DynamoDbConstants.LockDonationIdColName, out var donationId))
             {
                 newLock.DonationId = donationId.S;
@@ -193,7 +193,7 @@ public static class DynamoDbUtility
             donation.Amount = Convert.ToDouble(amount.N);
             donation.CreatedDate = DateTime.ParseExact(createdDate.S, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             donation.PaidForId = paidForBy.S;
-            donation.Private = isPrivate.BOOL;
+            donation.Private = isPrivate.BOOL ?? false;
         }
             
         return donation;

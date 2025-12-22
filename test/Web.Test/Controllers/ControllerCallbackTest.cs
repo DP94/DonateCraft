@@ -21,6 +21,7 @@ public class ControllerCallbackTest
     private ICharityService _charityService;
     private CallbackController _controller;
     private IOptions<DonateCraftOptions> _options;
+    private ILogger<CallbackController>  _logger;
 
     [SetUp]
     public async Task SetUp()
@@ -30,13 +31,14 @@ public class ControllerCallbackTest
         this._donationService = A.Fake<IDonationService>();
         this._charityService = A.Fake<ICharityService>();
         this._lockService = A.Fake<ILockService>();
+        this._logger = A.Fake<ILogger<CallbackController>>();
         this._options = Options.Create(new DonateCraftOptions
         {
             DonateCraftUiUrl = "test.com",
             JustGivingApiKey = "123",
             JustGivingApiUrl = "justgiving.com"
         });
-        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService);
+        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService, this._logger);
     }
 
     [Test]
@@ -72,7 +74,7 @@ public class ControllerCallbackTest
     {
         this._client = new HttpClient(FakeHttpMessageHandler.GetHttpMessageHandler("{\"Status\": \"Failed\"}", HttpStatusCode.OK));
         this._client.BaseAddress = new Uri("http://justgiving.com");
-        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService);
+        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService, this._logger);
         var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         Assert.AreEqual("test.com?status=error&code=5", result.Url);
     }
@@ -105,7 +107,7 @@ public class ControllerCallbackTest
             "{\"amount\":\"1.7441\",\"donationRef\":\"115070563\",\"id\":1500333570,\"status\":\"Accepted\",\"charityId\":2201, \"name\":\"Test\"}",
             HttpStatusCode.OK));
         this._client.BaseAddress = new Uri("http://justgiving.com");
-        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService);
+        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService, this._logger);
         var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
         A.CallTo(() => this._lockService.GetById(theLock.Id)).Returns(theLock);
 
@@ -132,7 +134,7 @@ public class ControllerCallbackTest
             "{\"amount\":\"1.7441\",\"donationRef\":\"115070563\",\"id\":1500333570,\"status\":\"Accepted\",\"charityId\":2201, \"name\":\"Test\"}",
             HttpStatusCode.OK));
         this._client.BaseAddress = new Uri("http://justgiving.com");
-        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService);
+        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService, this._logger);
         var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
         A.CallTo(() => this._lockService.GetById(theLock.Id)).Returns(theLock);
 
