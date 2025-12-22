@@ -5,7 +5,7 @@
   s3_key    = "donatecraft_api${var.donate_craft_version}.zip"
   
   handler = "Web::Web.LambdaEntryPoint::FunctionHandlerAsync"
-  runtime = "dotnet6"
+  runtime = "dotnet8"
 
   role = "arn:aws:iam::043470831800:role/donatecraft-AspNetCoreFunctionRole-JZ3T6L7H5ZXQ"
   
