@@ -139,9 +139,9 @@ public class CallbackController : ControllerBase
             {
                 throw new BadHttpRequestException($"Could not find a donation with id of {donationId}");
             }
-            donation = justGivingDonation;
+            return justGivingDonation;
         }
-        return donation;
+        throw new InvalidOperationException("Donation not found");
     }
 
     private async Task<JustGivingCharity> GetCharityData(int charityId)
