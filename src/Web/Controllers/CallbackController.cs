@@ -23,17 +23,19 @@ public class CallbackController : ControllerBase
     private readonly ICharityService _charityService;
     private readonly string _apiKey;
     private readonly string _donateCraftUi;
+    private readonly ILogger<CallbackController> _logger;
 
     private const int DONATION_ID = 0;
     private const int PLAYER_ID = 1;
     private const int DONOR_ID = 2;
 
-    public CallbackController(HttpClient client, IDonationService donationService, ILockService lockService, IOptions<DonateCraftOptions> options, ICharityService charityService)
+    public CallbackController(HttpClient client, IDonationService donationService, ILockService lockService, IOptions<DonateCraftOptions> options, ICharityService charityService, ILogger<CallbackController> logger)
     {
         this._client = client;
         this._donationService = donationService;
         this._lockService = lockService;
         this._charityService = charityService;
+        this._logger = logger;
         this._apiKey = options.Value.JustGivingApiKey;
         this._donateCraftUi = options.Value.DonateCraftUiUrl;
     }
@@ -43,21 +45,21 @@ public class CallbackController : ControllerBase
     {
         if (data == null)
         {
-            LambdaLogger.Log($"No data received from callback initiator {data}, error code 1");
+            this._logger.LogWarning("No data received from callback initiator {Data}, error code 1", data);
             return Redirect($"{this._donateCraftUi}?status=error&code=1");
         }
         var justGivingData = data.Split("~");
         var donationId = justGivingData[DONATION_ID];
         if (justGivingData.Length < 2)
         {
-            LambdaLogger.Log($"Data received is malformed {data}, error code 2");
+            this._logger.LogWarning("Data received is malformed {Data}, error code 2", data);
             return Redirect($"{this._donateCraftUi}?status=error&code=2");
         }
         var player = justGivingData[PLAYER_ID];
         var paidForKey = justGivingData.Length > 2 ? justGivingData[DONOR_ID] : null;
         if (string.IsNullOrWhiteSpace(donationId) || string.IsNullOrWhiteSpace(player))
         {
-            LambdaLogger.Log($"Donation id or player id are missing {data}, error code 3");
+            this._logger.LogWarning("Donation id or player id are missing {Data}, error code 3", data);
             return Redirect($"{this._donateCraftUi}?status=error&code=3");
         }
 
@@ -68,7 +70,7 @@ public class CallbackController : ControllerBase
         }
         catch (ResourceNotFoundException)
         {
-            LambdaLogger.Log($"Lock with id {player} not found, error code 4");
+            this._logger.LogWarning("Lock with id {Player} not found, error code 4", player);
         }
         if (currentLock == null)
         {
@@ -86,7 +88,7 @@ public class CallbackController : ControllerBase
         if (justGivingDonation is not { Status: "Accepted" or "Pending" })
         {
             //Send error back here
-            LambdaLogger.Log($"Donation was not successful! Status is {justGivingDonation?.Status}, error code 5");
+            this._logger.LogInformation("Donation was not successful! Status is {Status}, error code 5", justGivingDonation?.Status);
             return Redirect($"{this._donateCraftUi}?status=error&code=5");
         }
 

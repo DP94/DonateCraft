@@ -122,5 +122,6 @@ public class Startup
         services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
         services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
         services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
+        services.AddLogging();
     }
 }
