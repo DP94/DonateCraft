@@ -9,6 +9,7 @@ variable "donate_craft_version" {
 
 variable "donate_craft_environment" {
   description = "The environment DonateCraft is running on - used for DDB tables to keep them consistent across PR builds"
+  default = ""
 }
 
 variable "donate_craft_ui" {
