@@ -6,26 +6,6 @@
 DonateCraft is the C# REST API responsible for managing the state of the [DonateCraft plugin](https://github.com/DP94/DonateCraftPlugin).
 It is built on .NET 6 ASP.NET and currently targeted to run on AWS, using Lambda and DynamoDB.
 
-# Meet the team
-<p align="center">
-    <img src="https://avatars.githubusercontent.com/u/14276637" width="100" height="100"/>
-</p> 
-<p align="center">
-    <b>Dan</b> - Lead API engineer and team lead
-</p>
-<p align="center">
-    <img src="https://avatars.githubusercontent.com/u/14300505" width="100" height="100"/>
-</p>
-<p align="center">
-    <b>Veronica</b> - Lead UI engineer
-</p>
-<p align="center">
-    <img src="https://avatars.githubusercontent.com/u/575136" width="100" height="100"/>
-<p>
-<p align="center">
-    <b>Sam</b> - Lead Minecraft plugin engineer and advisor of all things AWS
-</p>
-
 # Building & running
 DonateCraft was developed using JetBrains Rider and it is recommended to use that as the IDE of preference. Running the API is simple and just requires the following run configuration:
 ![image](https://user-images.githubusercontent.com/14276637/198834693-f62266a3-32df-4286-8f5d-ebd2d112dc5c.png)
