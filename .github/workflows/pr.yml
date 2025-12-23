@@ -2,79 +2,22 @@ name: Pull request build
 
 on:
   pull_request:
-    branches: [ "main" ]
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-        
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build -c Release --no-restore
-      
-    - name: Setup DynamoDB Local
-      uses: rrainn/dynamodb-action@v2.0.1
-      with:
-        sharedDb: true
-        port: 8000
-        cors: '*'
-        
-    - name: Test
-      run: dotnet test -c Release --no-build --verbosity normal
-      
-    - name: Publish
-      run: dotnet publish --no-build src/Web/Web.csproj -c Release 
-      
-    - name: Zip Lambda
-      uses: thedoctor0/zip-release@0.7.1
-      with:
-        type: 'zip'
-        directory: src/Web/bin/Release/net8.0/publish/
-        filename: 'donatecraft_api-pr-${{ github.event.number }}-${{github.run_number}}.zip'
-        
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
-        
-    - name: Upload Donatecraft lambda to S3
-      run: aws s3 cp src/Web/bin/Release/net8.0/publish/donatecraft_api-pr-${{ github.event.number }}-${{github.run_number}}.zip s3://donatecraft/donatecraft_api-pr-${{ github.event.number }}-${{github.run_number}}.zip --content-type application/zip
-
-  terraform:
+    uses: ./.github/workflows/build-publish.yml
+    with:
+      version-suffix: '-pr-${{ github.event.number }}-${{github.run_number}}'
+    secrets: inherit
+    
+  deploy:
     needs: build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: "./src/Cloud/Terraform"
-    steps:
-    - uses: actions/checkout@v3
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
-
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.1.9
-        terraform_wrapper: false
-        
-    - name: Terraform init
-      id: init
-      run: terraform init -var=donate_craft_version=-pr-${{ github.event.number }}-${{ github.run_number }} -var=donate_craft_environment=-pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -backend-config="key=pr-${{ github.event.number }}donatecraft.tfstate"
-
-    - name: Terraform plan
-      id: plan
-      run: terraform plan -var=donate_craft_version=-pr-${{ github.event.number }}-${{ github.run_number }} -var=donate_craft_environment=-pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }}
-      
-    - name: Terraform apply
-      id: apply
-      run: terraform apply -var=donate_craft_version=-pr-${{ github.event.number }}-${{ github.run_number }} -var=donate_craft_environment=-pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -auto-approve
+    uses: ./.github/workflows/deploy.yml
+    with:
+      version: '-pr-${{ github.event.number }}-${{github.run_number}}'
+      environment: '-pr-${{ github.event.number }}'
+    secrets: inherit
