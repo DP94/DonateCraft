@@ -15,6 +15,6 @@ jobs:
     needs: build
     uses: ./.github/workflows/deploy.yml
     with:
-      version: 'dev'
-      environment: 'dev'
+      version: '-dev'
+      environment: '-dev'
     secrets: inherit
