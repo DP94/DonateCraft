@@ -1,5 +1,4 @@
 ﻿using Common.Models;
-using Core.Services;
 using Core.Services.Lock;
 using Core.Services.Player;
 using FakeItEasy;

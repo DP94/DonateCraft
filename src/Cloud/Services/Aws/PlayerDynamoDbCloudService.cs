@@ -1,6 +1,5 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using Amazon.Lambda.Core;
 using Cloud.Util;
 using Common.Exceptions;
 using Common.Models;

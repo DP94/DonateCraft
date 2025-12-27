@@ -1,15 +1,14 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
-using Amazon.Lambda.Core;
 using Common.Exceptions;
 using Common.Models;
-using Core.Services;
 using Core.Services.Charity;
 using Core.Services.Donation;
 using Core.Services.Lock;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Lock = Common.Models.Lock;
 
 namespace Web.Controllers;
 

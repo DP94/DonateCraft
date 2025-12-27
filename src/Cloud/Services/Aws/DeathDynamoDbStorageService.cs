@@ -1,6 +1,7 @@
 ﻿using Amazon.Lambda.Core;
 using Common.Exceptions;
 using Common.Models;
+using Lock = Common.Models.Lock;
 
 namespace Cloud.Services.Aws;
 

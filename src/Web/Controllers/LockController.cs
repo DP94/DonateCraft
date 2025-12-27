@@ -1,11 +1,10 @@
-﻿using Common.Models;
-using Common.Models.Sort;
-using Core.Services;
+﻿using Common.Models.Sort;
 using Core.Services.Lock;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Lock = Common.Models.Lock;
 
 namespace Web.Controllers;
 
