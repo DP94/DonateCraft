@@ -4,7 +4,7 @@
 
 # About
 DonateCraft is the C# REST API responsible for managing the state of the [DonateCraft plugin](https://github.com/DP94/DonateCraftPlugin).
-It is built on .NET 8 ASP.NET and currently targeted to run on AWS, using Lambda and DynamoDB.
+It is built on .NET 10 ASP.NET and currently targeted to run on AWS, using Lambda and DynamoDB.
 
 # Building & running
 DonateCraft was developed using JetBrains Rider and it is recommended to use that as the IDE of preference. Running the API is simple and just requires the following run configuration:
