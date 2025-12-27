@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
-using System.Security.Cryptography;
 using Amazon.DynamoDBv2.Model;
 using Common.Models;
 using Common.Util;
+using Lock = Common.Models.Lock;
 
 namespace Cloud.Util;
 

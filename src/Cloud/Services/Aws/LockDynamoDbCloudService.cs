@@ -6,6 +6,7 @@ using Common.Models;
 using Common.Util;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using Lock = Common.Models.Lock;
 using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;
 
 namespace Cloud.Services.Aws;

@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using Cloud.Services;
-using Common.Exceptions;
+﻿using Common.Exceptions;
 using Common.Models;
-using Core.Services;
 using Core.Services.Lock;
 using Core.Services.Player;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using Web.Controllers;
+using Lock = Common.Models.Lock;
 
 namespace Web.Test.Controllers;
 

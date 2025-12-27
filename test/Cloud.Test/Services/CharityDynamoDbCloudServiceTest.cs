@@ -7,7 +7,6 @@ using Cloud.Util;
 using Common.Exceptions;
 using Common.Models;
 using Common.Util;
-using FakeItEasy;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using ResourceNotFoundException = Common.Exceptions.ResourceNotFoundException;

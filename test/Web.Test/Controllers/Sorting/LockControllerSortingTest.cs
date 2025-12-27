@@ -1,7 +1,7 @@
-﻿using Common.Models;
-using Core.Services.Lock;
+﻿using Core.Services.Lock;
 using FakeItEasy;
 using Web.Controllers;
+using Lock = Common.Models.Lock;
 
 namespace Web.Test.Controllers.Sorting;
 

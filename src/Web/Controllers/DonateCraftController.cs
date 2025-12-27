@@ -1,5 +1,4 @@
-﻿using Common.Models;
-using Common.Models.Sort;
+﻿using Common.Models.Sort;
 using Common.Util;
 using Microsoft.AspNetCore.Mvc;
 

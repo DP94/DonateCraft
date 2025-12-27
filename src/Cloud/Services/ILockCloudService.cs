@@ -1,4 +1,5 @@
 ﻿using Common.Models;
+using Lock = Common.Models.Lock;
 
 namespace Cloud.Services;
 

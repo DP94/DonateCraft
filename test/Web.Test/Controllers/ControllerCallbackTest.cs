@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using Web.Controllers;
 using Web.Test.Controllers.Fakes;
+using Lock = Common.Models.Lock;
 
 namespace Web.Test.Controllers;
 
