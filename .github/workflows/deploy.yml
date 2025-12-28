@@ -30,7 +30,7 @@ jobs:
 
       - name: Terraform init
         id: init
-        run: terraform init -var=donate_craft_version=${{ inputs.version }} -var=donate_craft_environment=${{ inputs.environment }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -backend-config="key=donatecraft${{ inputs.version }}.tfstate"
+        run: terraform init -var=donate_craft_version=${{ inputs.version }} -var=donate_craft_environment=${{ inputs.environment }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -backend-config="key=donatecraft${{ inputs.environment }}.tfstate"
 
       - name: Terraform plan
         id: plan
