@@ -39,8 +39,8 @@ public abstract class AbstractControllerSortingTest<T, C, S> where C : WithIdCon
         });
         var result = await this._controller.GetAll() as ObjectResult;
         var values = result.Value as List<T>;
-        Assert.AreEqual("ghi", values[0].Id);
-        Assert.AreEqual("abc", values[1].Id);
+        Assert.That("ghi", Is.EqualTo(values[0].Id));
+        Assert.That("abc", Is.EqualTo(values[1].Id));
     }
     
     [Test]
@@ -55,8 +55,8 @@ public abstract class AbstractControllerSortingTest<T, C, S> where C : WithIdCon
         });
         var result = await this._controller.GetAll() as ObjectResult;
         var values = result.Value as List<T>;
-        Assert.AreEqual("abc", values[0].Id);
-        Assert.AreEqual("ghi", values[1].Id);
+        Assert.That("abc", Is.EqualTo(values[0].Id));
+        Assert.That("ghi", Is.EqualTo(values[1].Id));
     }
     
     

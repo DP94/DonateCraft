@@ -26,8 +26,8 @@ public class PlayerControllerSortingTest : AbstractControllerSortingTest<Player,
         });
         var result = await this._controller.GetAll() as ObjectResult;
         var newPlayers = result.Value as List<Player>;
-        Assert.AreEqual("jkl", newPlayers[0].Name);
-        Assert.AreEqual("def", newPlayers[1].Name);
+        Assert.That("jkl", Is.EqualTo(newPlayers[0].Name));
+        Assert.That("def", Is.EqualTo(newPlayers[1].Name));
     }
     
     [Test]
@@ -51,8 +51,8 @@ public class PlayerControllerSortingTest : AbstractControllerSortingTest<Player,
         });
         var result = await this._controller.GetAll() as ObjectResult;
         var newPlayers = result.Value as List<Player>;
-        Assert.AreEqual("ghi", newPlayers[0].Id);
-        Assert.AreEqual("abc", newPlayers[1].Id);
+        Assert.That("ghi", Is.EqualTo(newPlayers[0].Id));
+        Assert.That("abc", Is.EqualTo(newPlayers[1].Id));
     }
     
     [Test]
@@ -76,8 +76,8 @@ public class PlayerControllerSortingTest : AbstractControllerSortingTest<Player,
         });
         var result = await this._controller.GetAll() as ObjectResult;
         var newPlayers = result.Value as List<Player>;
-        Assert.AreEqual("abc", newPlayers[0].Id);
-        Assert.AreEqual("ghi", newPlayers[1].Id);
+        Assert.That("abc", Is.EqualTo(newPlayers[0].Id));
+        Assert.That("ghi", Is.EqualTo(newPlayers[1].Id));
     }
 
     protected override PlayerController CreateController(IPlayerService playerService) 

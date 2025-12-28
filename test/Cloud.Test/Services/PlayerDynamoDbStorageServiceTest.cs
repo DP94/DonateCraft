@@ -60,7 +60,7 @@ public class PlayerDynamoDbStorageServiceTest
         
         var retrievedPlayers = await this._cloudService.GetPlayers();
         //Collections assert being weird, need to re-visit
-        Assert.AreEqual(players.Count, retrievedPlayers.Count);
+        Assert.That(players.Count, Is.EqualTo(retrievedPlayers.Count));
     }
     
     [Test]
@@ -73,8 +73,8 @@ public class PlayerDynamoDbStorageServiceTest
         };
         await this._cloudService.CreatePlayer(player);
         var retrievedPlayer = await this._cloudService.GetPlayerById(player.Id);
-        Assert.AreEqual(player.Id, retrievedPlayer.Id);
-        Assert.AreEqual(player.Name,retrievedPlayer.Name);
+        Assert.That(player.Id, Is.EqualTo(retrievedPlayer.Id));
+        Assert.That(player.Name, Is.EqualTo(retrievedPlayer.Name));
     }
 
     [Test]
@@ -93,8 +93,8 @@ public class PlayerDynamoDbStorageServiceTest
         };
         await this._cloudService.CreatePlayer(player);
         var retrievedPlayer = await GetPlayer(player.Id);
-        Assert.AreEqual(player.Id, retrievedPlayer.Id);
-        Assert.AreEqual(player.Name,retrievedPlayer.Name);
+        Assert.That(player.Id, Is.EqualTo(retrievedPlayer.Id));
+        Assert.That(player.Name, Is.EqualTo(retrievedPlayer.Name));
     }
     
         
@@ -123,8 +123,8 @@ public class PlayerDynamoDbStorageServiceTest
         await this._cloudService.UpdatePlayer(player);
         
         var retrievedPlayer = await GetPlayer(player.Id);
-        Assert.AreEqual(player.Id, retrievedPlayer.Id);
-        Assert.AreEqual("Updated", retrievedPlayer.Name);
+        Assert.That(player.Id, Is.EqualTo(retrievedPlayer.Id));
+        Assert.That("Updated", Is.EqualTo(retrievedPlayer.Name));
     }
 
     [Test]
@@ -144,11 +144,11 @@ public class PlayerDynamoDbStorageServiceTest
         };
         await this._cloudService.CreatePlayer(player);
         var retrievedPlayer = await GetPlayer(player.Id);
-        Assert.NotNull(retrievedPlayer);
+        Assert.That(retrievedPlayer, Is.Not.Null);
 
         await this._cloudService.DeletePlayer(player.Id);
         retrievedPlayer = await GetPlayer(player.Id);
-        Assert.Null(retrievedPlayer);
+        Assert.That(retrievedPlayer, Is.Null);
     }
 
     //Purposefully not using the service method for GET for test code isolation

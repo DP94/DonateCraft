@@ -48,9 +48,9 @@ public class DeathDynamoDbCloudServiceTest
         var deathId = Guid.NewGuid().ToString();
         await this.CreateDeathForPlayer(playerId, deathId);
         var death = await this._deathCloudService.GetDeathById(playerId, deathId);
-        Assert.AreEqual(deathId, death.Id);
-        Assert.AreEqual("Test", death.Reason);
-        Assert.AreEqual(playerId, death.PlayerId);
+        Assert.That(deathId, Is.EqualTo(death.Id));
+        Assert.That("Test", Is.EqualTo(death.Reason));
+        Assert.That(playerId, Is.EqualTo(death.PlayerId));
     }
     
     [Test]
@@ -87,7 +87,7 @@ public class DeathDynamoDbCloudServiceTest
         };
         await this._playerCloudService.CreatePlayer(player);
         var deaths = await this._deathCloudService.GetDeaths(player.Id);
-        Assert.AreEqual(2, deaths.Count);
+        Assert.That(2, Is.EqualTo(deaths.Count));
     }
     
     [Test]
@@ -106,12 +106,12 @@ public class DeathDynamoDbCloudServiceTest
         var player = await this._playerCloudService.GetPlayerById(playerId);
         var death = await this._deathCloudService.GetDeathById(playerId, deathId);
         
-        Assert.AreEqual(1, player.Deaths.Count);
+        Assert.That(1, Is.EqualTo(player.Deaths.Count));
 
         var savedDeath = player.Deaths.First();
-        Assert.AreEqual(death.Id, savedDeath.Id);
-        Assert.AreEqual(death.Reason, savedDeath.Reason);
-        Assert.AreEqual(player.Id, savedDeath.PlayerId);
+        Assert.That(death.Id, Is.EqualTo(savedDeath.Id));
+        Assert.That(death.Reason, Is.EqualTo(savedDeath.Reason));
+        Assert.That(player.Id, Is.EqualTo(savedDeath.PlayerId));
     }
     
     [Test]
@@ -121,8 +121,8 @@ public class DeathDynamoDbCloudServiceTest
         var deathId = Guid.NewGuid().ToString();
         await this.CreateDeathForPlayer(playerId, deathId);
         var theLock = await this._lockCloudService.GetLock(playerId);
-        Assert.AreEqual(playerId, theLock.Id);
-        Assert.False(theLock.Unlocked);
+        Assert.That(playerId, Is.EqualTo(theLock.Id));
+        Assert.That(theLock.Unlocked, Is.False);
     }
     
     [Test]
@@ -139,7 +139,7 @@ public class DeathDynamoDbCloudServiceTest
         player = await this._playerCloudService.GetPlayerById(player.Id);
         death = player.Deaths.First();
         
-        Assert.AreEqual("Updated reason", death.Reason);
+        Assert.That("Updated reason", Is.EqualTo(death.Reason));
     }
     
     [Test]

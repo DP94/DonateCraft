@@ -22,7 +22,7 @@ public abstract class AbstractWithIdControllerTest<C, T, S> : AbstractController
     public async Task Delete_Deletes_Successfully()
     {
         var result = await this._controller.Delete("abc") as StatusCodeResult;
-        Assert.AreEqual(204, result.StatusCode);
+        Assert.That(204, Is.EqualTo(result.StatusCode));
     }
     
     [Test]
@@ -33,8 +33,8 @@ public abstract class AbstractWithIdControllerTest<C, T, S> : AbstractController
         A.CallTo(() => this._service.GetById(id)).Returns(value);
         var result = await this._controller.GetById(id) as ObjectResult;
         A.CallTo(() => this._service.GetById(id)).MustHaveHappenedOnceExactly();
-        Assert.AreEqual(value, result.Value);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.That(value, Is.EqualTo(result.Value));
+        Assert.That(200, Is.EqualTo(result.StatusCode));
     }
     
     [Test]
@@ -43,8 +43,8 @@ public abstract class AbstractWithIdControllerTest<C, T, S> : AbstractController
         var value = CreateData();
         A.CallTo(() => this._service.Create(value)).Returns(value);
         var result = await this._controller.Create(value) as ObjectResult;
-        Assert.AreEqual(value, result.Value);
-        Assert.AreEqual(201, result.StatusCode);
+        Assert.That(value, Is.EqualTo(result.Value));
+        Assert.That(201, Is.EqualTo(result.StatusCode));
     }
     
     
@@ -57,8 +57,8 @@ public abstract class AbstractWithIdControllerTest<C, T, S> : AbstractController
         A.CallTo(() => this._service.GetById(existingValue.Id)).Returns(existingValue);
         var result = await this._controller.Update(newValue) as ObjectResult;
         A.CallTo(() => this._service.Update(newValue)).MustHaveHappenedOnceExactly();
-        Assert.AreEqual(newValue, result.Value);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.That(newValue, Is.EqualTo(result.Value));
+        Assert.That(200, Is.EqualTo(result.StatusCode));
     }
     
     [Test]
@@ -67,7 +67,7 @@ public abstract class AbstractWithIdControllerTest<C, T, S> : AbstractController
         var values = new List<T>() {CreateData(), CreateData()};
         A.CallTo(() => this._service.GetAll()).Returns(values);
         var result = await this._controller.GetAll() as ObjectResult;
-        CollectionAssert.AreEqual(values, (IEnumerable) result.Value);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.That(values, Is.EqualTo(result.Value).AsCollection);
+        Assert.That(200, Is.EqualTo(result.StatusCode));
     }
 }
