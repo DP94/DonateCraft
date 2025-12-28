@@ -14,7 +14,7 @@ public abstract class AbstractWithPlayerIdControllerTest<C, T, S> : AbstractCont
     public async Task Delete_Deletes_Successfully()
     {
         var result = await this._controller.Delete("test", "abc") as StatusCodeResult;
-        Assert.AreEqual(204, result.StatusCode);
+        Assert.That(204, Is.EqualTo(result.StatusCode));
     }
     
     [Test]
@@ -23,8 +23,8 @@ public abstract class AbstractWithPlayerIdControllerTest<C, T, S> : AbstractCont
         var values = new List<T>() { CreateData(), CreateData() };
         A.CallTo(() => this._service.GetAllForPlayerId("test")).Returns(values);
         var result = await this._controller.GetAllForPlayer("test") as ObjectResult;
-        CollectionAssert.AreEqual(values, (IEnumerable)result.Value);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.That(values, Is.EqualTo(result.Value).AsCollection);
+        Assert.That(200, Is.EqualTo(result.StatusCode));
     }
 
     [Test]
@@ -33,8 +33,8 @@ public abstract class AbstractWithPlayerIdControllerTest<C, T, S> : AbstractCont
         var value = CreateData();
         A.CallTo(() => this._service.GetByPlayerId("test", "abc")).Returns(value);
         var result = await this._controller.GetByIdForPlayer("test", "abc") as ObjectResult;
-        Assert.AreEqual(value, result.Value);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.That(value, Is.EqualTo(result.Value));
+        Assert.That(200, Is.EqualTo(result.StatusCode));
     }
     
     [Test]
@@ -43,8 +43,8 @@ public abstract class AbstractWithPlayerIdControllerTest<C, T, S> : AbstractCont
         var value = CreateData();
         A.CallTo(() => this._service.Create("test", value)).Returns(value);
         var result = await this._controller.Create("test", value) as ObjectResult;
-        Assert.AreEqual(value, result.Value);
-        Assert.AreEqual(201, result.StatusCode);
+        Assert.That(value, Is.EqualTo(result.Value));
+        Assert.That(201, Is.EqualTo(result.StatusCode));
     }
 
     [Test]
@@ -53,7 +53,7 @@ public abstract class AbstractWithPlayerIdControllerTest<C, T, S> : AbstractCont
         var value = CreateData();
         A.CallTo(() => this._service.Update("test", value)).Returns(value);
         var result = await this._controller.Update("test", value) as ObjectResult;
-        Assert.AreEqual(value, result.Value);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.That(value, Is.EqualTo(result.Value));
+        Assert.That(200, Is.EqualTo(result.StatusCode));
     }
 }

@@ -24,8 +24,8 @@ public class CharityControllerSortingTest : AbstractControllerSortingTest<Charit
         });
         var result = await this._controller.GetAll() as ObjectResult;
         var newCharities = result.Value as List<Charity>;
-        Assert.AreEqual("abc", newCharities[0].Id);
-        Assert.AreEqual("ghi", newCharities[1].Id);
+        Assert.That("abc", Is.EqualTo(newCharities[0].Id));
+        Assert.That("ghi", Is.EqualTo(newCharities[1].Id));
     }
 
     [Test]
@@ -40,8 +40,8 @@ public class CharityControllerSortingTest : AbstractControllerSortingTest<Charit
         });
         var result = await this._controller.GetAll() as ObjectResult;
         var newCharities = result.Value as List<Charity>;
-        Assert.AreEqual("ghi", newCharities[0].Id);
-        Assert.AreEqual("abc", newCharities[1].Id);
+        Assert.That("ghi", Is.EqualTo(newCharities[0].Id));
+        Assert.That("abc", Is.EqualTo(newCharities[1].Id));
     }
 
     protected override List<Charity> CreateData()

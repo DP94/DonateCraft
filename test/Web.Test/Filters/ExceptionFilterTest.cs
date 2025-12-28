@@ -49,7 +49,7 @@ public class ExceptionFilterTest
         await this._filter.OnExceptionAsync(context);
         var result = context.Result as JsonResult;
         var value = result.Value as ExceptionModel;
-        Assert.AreEqual(expectedCode, result.StatusCode);
-        Assert.AreEqual(expectedMessage, value.Error);
+        Assert.That(expectedCode, Is.EqualTo(result.StatusCode));
+        Assert.That(expectedMessage, Is.EqualTo(value.Error));
     }
 }

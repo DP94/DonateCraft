@@ -77,7 +77,7 @@ public class DonationDynamoDbCloudServiceTest
         };
         await this._playerCloudService.CreatePlayer(player);
         var donations = await this._donationCloudService.GetDonations(player.Id);
-        Assert.AreEqual(2, donations.Count);
+        Assert.That(2, Is.EqualTo(donations.Count));
     }
     
     [Test]
@@ -96,15 +96,15 @@ public class DonationDynamoDbCloudServiceTest
         var player = await this._playerCloudService.GetPlayerById(playerId);
         var donation = await this._donationCloudService.GetDonation(playerId, donationId);
         
-        Assert.AreEqual(1, player.Donations.Count);
+        Assert.That(1, Is.EqualTo(player.Donations.Count));
 
         var savedDonation = player.Donations.First();
-        Assert.AreEqual(donation.Id, savedDonation.Id);
-        Assert.AreEqual(donation.Amount, savedDonation.Amount);
-        Assert.AreEqual(donation.CharityId, savedDonation.CharityId);
-        Assert.AreEqual(donation.CharityName, savedDonation.CharityName);
-        Assert.AreEqual(donation.PaidForId, savedDonation.PaidForId);
-        Assert.True(savedDonation.Private);
+        Assert.That(donation.Id, Is.EqualTo(savedDonation.Id));
+        Assert.That(donation.Amount, Is.EqualTo(savedDonation.Amount));
+        Assert.That(donation.CharityId, Is.EqualTo(savedDonation.CharityId));
+        Assert.That(donation.CharityName, Is.EqualTo(savedDonation.CharityName));
+        Assert.That(donation.PaidForId, Is.EqualTo(savedDonation.PaidForId));
+        Assert.That(savedDonation.Private, Is.True);
     }
     
     [Test]
@@ -121,7 +121,7 @@ public class DonationDynamoDbCloudServiceTest
         player = await this._playerCloudService.GetPlayerById(player.Id);
         donation = player.Donations.First();
 
-        Assert.AreEqual(2, donation.Amount);
+        Assert.That(2, Is.EqualTo(donation.Amount));
     }
     
     

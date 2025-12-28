@@ -53,7 +53,7 @@ public class CharityDynamoDbCloudServiceTest
         
         var retrievedCharities = await this._cloudService.GetCharities();
         //Collections assert being weird, need to re-visit
-        Assert.AreEqual(charities.Count, retrievedCharities.Count);
+        Assert.That(charities.Count, Is.EqualTo(retrievedCharities.Count));
     }
     
     [Test]
@@ -62,8 +62,8 @@ public class CharityDynamoDbCloudServiceTest
         var charity = CreateCharity();
         await this._cloudService.CreateCharity(charity);
         var retrievedCharity = await GetCharity(charity.Id);
-        Assert.AreEqual(charity.Id, retrievedCharity.Id);
-        Assert.AreEqual(charity.DonationCount, retrievedCharity.DonationCount);
+        Assert.That(charity.Id, Is.EqualTo(retrievedCharity.Id));
+        Assert.That(charity.DonationCount, Is.EqualTo(retrievedCharity.DonationCount));
     }
 
     [Test]
@@ -80,8 +80,8 @@ public class CharityDynamoDbCloudServiceTest
         var charity = CreateCharity();
         await this._cloudService.CreateCharity(charity);
         var retrievedCharity = await this._cloudService.GetCharityById(charity.Id);
-        Assert.AreEqual(charity.Id, retrievedCharity.Id);
-        Assert.AreEqual(charity.DonationCount, retrievedCharity.DonationCount);
+        Assert.That(charity.Id, Is.EqualTo(retrievedCharity.Id));
+        Assert.That(charity.DonationCount, Is.EqualTo(retrievedCharity.DonationCount));
     }
     
     [Test]
@@ -106,11 +106,11 @@ public class CharityDynamoDbCloudServiceTest
         var charity = CreateCharity();
         await this._cloudService.CreateCharity(charity);
         var retrievedCharity = await GetCharity(charity.Id);
-        Assert.NotNull(retrievedCharity);
+        Assert.That(retrievedCharity, Is.Not.Null);
 
         await this._cloudService.DeleteCharity(charity.Id);
         retrievedCharity = await GetCharity(charity.Id);
-        Assert.Null(retrievedCharity);
+        Assert.That(retrievedCharity, Is.Null);
     }
     
     //Purposefully not using the service method for GET for test code isolation

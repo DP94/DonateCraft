@@ -62,7 +62,7 @@ public class LockDynamoDbCloudServiceTest
         
         var retrievedLocks = await this._cloudService.GetLocks();
         //Collections assert being weird, need to re-visit
-        Assert.AreEqual(locks.Count, retrievedLocks.Count);
+        Assert.That(locks.Count, Is.EqualTo(retrievedLocks.Count));
     }
     
     [Test]
@@ -71,8 +71,8 @@ public class LockDynamoDbCloudServiceTest
         var newLock = CreateLock();
         await this._cloudService.Create(newLock);
         var retrievedLock = await GetLock(newLock.Id);
-        Assert.AreEqual(newLock.Id, retrievedLock.Id);
-        Assert.AreEqual(newLock.Unlocked, retrievedLock.Unlocked);
+        Assert.That(newLock.Id, Is.EqualTo(retrievedLock.Id));
+        Assert.That(newLock.Unlocked, Is.EqualTo(retrievedLock.Unlocked));
     }
     
     [Test]
@@ -89,8 +89,8 @@ public class LockDynamoDbCloudServiceTest
         var newLock = CreateLock();
         await this._cloudService.Create(newLock);
         var retrievedLock = await this._cloudService.GetLock(newLock.Id);
-        Assert.AreEqual(newLock.Id, retrievedLock.Id);
-        Assert.AreEqual(newLock.Unlocked, retrievedLock.Unlocked);
+        Assert.That(newLock.Id, Is.EqualTo(retrievedLock.Id));
+        Assert.That(newLock.Unlocked, Is.EqualTo(retrievedLock.Unlocked));
     }
 
     [Test]
@@ -100,9 +100,9 @@ public class LockDynamoDbCloudServiceTest
         var lock2 = await this._cloudService.Create(CreateLock());
         var locks = await this._cloudService.GetLocksForPlayers(new List<string> { lock1.Id });
         var retrievedLock = locks[0];
-        Assert.AreEqual(1, locks.Count);
-        Assert.AreEqual(lock1.Id, retrievedLock.Id);
-        Assert.AreNotEqual(lock2.Id, retrievedLock.Id);
+        Assert.That(1, Is.EqualTo(locks.Count));
+        Assert.That(lock1.Id, Is.EqualTo(retrievedLock.Id));
+        Assert.That(lock2.Id, Is.Not.EqualTo(retrievedLock.Id));
     }
     
     [Test]
@@ -114,14 +114,14 @@ public class LockDynamoDbCloudServiceTest
         {
             lock1.Id, lock2.Id
         });
-        Assert.AreEqual(2, locks.Count);
+        Assert.That(2, Is.EqualTo(locks.Count));
     }
     
     [Test]
     public async Task GetLockWithPlayerId_SuccessfullyReturns_NoLocks_IfNoLocksSpecified()
     {
         var locks = await this._cloudService.GetLocksForPlayers(new List<string>());
-        Assert.AreEqual(0, locks.Count);
+        Assert.That(0, Is.EqualTo(locks.Count));
     }
 
     [Test]
@@ -149,11 +149,11 @@ public class LockDynamoDbCloudServiceTest
 
         var result = await this._cloudService.GetLocksForPlayers(new List<string> { lock1.Id });
         var retrievedDonation = result[0].Donation;
-        Assert.AreEqual(donation.Id, retrievedDonation.Id);
-        Assert.AreEqual(donation.Amount, retrievedDonation.Amount);
-        Assert.AreEqual(donation.CharityId, retrievedDonation.CharityId);
-        Assert.AreEqual(donation.CharityName, retrievedDonation.CharityName);
-        Assert.AreEqual(donation.PaidForId, retrievedDonation.PaidForId);
+        Assert.That(donation.Id, Is.EqualTo(retrievedDonation.Id));
+        Assert.That(donation.Amount, Is.EqualTo(retrievedDonation.Amount));
+        Assert.That(donation.CharityId, Is.EqualTo(retrievedDonation.CharityId));
+        Assert.That(donation.CharityName, Is.EqualTo(retrievedDonation.CharityName));
+        Assert.That(donation.PaidForId, Is.EqualTo(retrievedDonation.PaidForId));
     }
     
     [Test]
@@ -168,11 +168,11 @@ public class LockDynamoDbCloudServiceTest
         var newLock = CreateLock();
         await this._cloudService.Create(newLock);
         var retrievedLock = await GetLock(newLock.Id);
-        Assert.NotNull(retrievedLock);
+        Assert.That(retrievedLock, Is.Not.Null);
 
         await this._cloudService.DeleteLock(newLock.Id);
         retrievedLock = await GetLock(newLock.Id);
-        Assert.Null(retrievedLock);
+        Assert.That(retrievedLock, Is.Null);
     }
     
     

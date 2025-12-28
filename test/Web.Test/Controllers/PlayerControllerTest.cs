@@ -30,8 +30,8 @@ public class PlayerWithIdControllerTest : AbstractWithIdControllerTest<PlayerCon
 
         var result = await this._controller.GetAll() as ObjectResult;
         var playersResult = result.Value as List<Player>;
-        Assert.IsFalse(playersResult[0].IsDead);
-        Assert.IsTrue(playersResult[1].IsDead);
+        Assert.That(playersResult[0].IsDead, Is.False);
+        Assert.That(playersResult[1].IsDead, Is.True);
     }
 
     [Test]
@@ -39,8 +39,8 @@ public class PlayerWithIdControllerTest : AbstractWithIdControllerTest<PlayerCon
     {
         A.CallTo(() => this._service.Create(A<Player>.Ignored)).Throws<ResourceExistsException>();
         var result = await this._controller.Create(new Player()) as ObjectResult;
-        Assert.AreEqual(400, result.StatusCode);
-        Assert.AreEqual("Player id must be supplied when creating a player", result.Value);
+        Assert.That(400, Is.EqualTo(result.StatusCode));
+        Assert.That("Player id must be supplied when creating a player", Is.EqualTo(result.Value));
     }
 
     protected override IPlayerService CreateServiceFake()
