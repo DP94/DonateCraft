@@ -35,7 +35,7 @@ jobs:
         with:
           type: 'zip'
           directory: src/Web/bin/Release/net10.0/publish/
-          filename: 'donatecraft_api${{ inputs.environment }}.zip'
+          filename: 'donatecraft_api${{ inputs.environment }}_${{github.event.pull_request.head.sha || github.sha }}.zip'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@main
@@ -45,4 +45,4 @@ jobs:
           aws-region: eu-west-2
 
       - name: Upload Donatecraft lambda to S3
-        run: aws s3 cp src/Web/bin/Release/net10.0/publish/donatecraft_api${{ inputs.environment }}.zip s3://donatecraft/donatecraft_api${{ inputs.environment }}.zip --content-type application/zip
+        run: aws s3 cp src/Web/bin/Release/net10.0/publish/donatecraft_api${{ inputs.environment }}_${{github.event.pull_request.head.sha || github.sha }}.zip s3://donatecraft/donatecraft_api${{ inputs.environment }}_${{github.event.pull_request.head.sha || github.sha }}.zip --content-type application/zip

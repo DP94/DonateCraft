@@ -2,6 +2,10 @@ variable "aws_region" {
   default = "eu-west-2"
 }
 
+variable "git_commit" {
+  description = "The commit of the code being deployed"
+}
+
 variable "donate_craft_environment" {
   description = "The environment DonateCraft is running on - used for DDB tables to keep them consistent across PR builds"
   default = ""
