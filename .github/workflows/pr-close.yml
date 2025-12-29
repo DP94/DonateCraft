@@ -5,35 +5,17 @@ on:
     types: [closed]
     
 jobs:
-  cleanup-aws:
+  destroy-terraform:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: '-pr${{ github.event.number }}'
+      destroy: true
+    secrets: inherit
+    
+  cleanup-s3:
+    needs: destroy-terraform
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: "./src/Cloud/Terraform"
     steps:
-      - uses: actions/checkout@v3
-          
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.1.9
-          terraform_wrapper: false
-
-      - name: Terraform init
-        id: init
-        run: terraform init -var=donate_craft_version=-pr-${{ github.event.number }}-${{ github.run_number }} -var=donate_craft_environment=-pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -backend-config="key=donatecraft-pr-${{ github.event.number }}.tfstate"
-
-      - name: Terraform destroy
-        id: destroy
-        run: terraform destroy -var=donate_craft_version=-pr-${{ github.event.number }}-${{ github.run_number }} -var=donate_craft_environment=-pr-${{ github.event.number }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -auto-approve
-        
       - name: Cleanup S3
         run: |
           aws s3 rm s3://donatecraft --recursive --exclude "*" --include "*pr-${{ github.event.number }}*"
