@@ -7,7 +7,7 @@ jobs:
   build:
     uses: ./.github/workflows/build-publish.yml
     with:
-      version-suffix: ''
+      environment: ''
     secrets: inherit
   
   terraform:

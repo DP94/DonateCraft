@@ -8,13 +8,12 @@ jobs:
   build:
     uses: ./.github/workflows/build-publish.yml
     with:
-      version-suffix: '-dev'
+      environment: '-dev'
     secrets: inherit
         
   deploy:
     needs: build
     uses: ./.github/workflows/deploy.yml
     with:
-      version: '-dev'
       environment: '-dev'
     secrets: inherit
