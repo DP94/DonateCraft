@@ -1,8 +1,8 @@
 ﻿resource "aws_lambda_function" "donatecraft" {
-  function_name = "donatecraft${var.donate_craft_version}"
+  function_name = "donatecraft${var.donate_craft_environment}"
   
   s3_bucket = "donatecraft"
-  s3_key    = "donatecraft_api${var.donate_craft_version}.zip"
+  s3_key    = "donatecraft_api${var.donate_craft_environment}.zip"
   
   handler = "Web::Web.LambdaEntryPoint::FunctionHandlerAsync"
   runtime = "dotnet10"

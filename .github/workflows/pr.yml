@@ -11,13 +11,12 @@ jobs:
   build:
     uses: ./.github/workflows/build-publish.yml
     with:
-      version-suffix: '-pr-${{ github.event.number }}-${{github.run_number}}'
+      environment: '-pr${{ github.event.number }}'
     secrets: inherit
     
   deploy:
     needs: build
     uses: ./.github/workflows/deploy.yml
     with:
-      version: '-pr-${{ github.event.number }}-${{github.run_number}}'
-      environment: '-pr-${{ github.event.number }}'
+      environment: '-pr${{ github.event.number }}'
     secrets: inherit

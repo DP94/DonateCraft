@@ -2,11 +2,6 @@ variable "aws_region" {
   default = "eu-west-2"
 }
 
-variable "donate_craft_version" {
-  description = "The version of the DonateCraft API - version used in all resources such as Lambda etc. E.g. pr-, prod-, dev-, qa-"
-  default = ""
-}
-
 variable "donate_craft_environment" {
   description = "The environment DonateCraft is running on - used for DDB tables to keep them consistent across PR builds"
   default = ""
