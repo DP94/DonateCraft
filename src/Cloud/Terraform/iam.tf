@@ -24,7 +24,8 @@
           "logs:PutLogEvents",
           "logs:GetLogEvents",
           "logs:FilterLogEvents",
-          "dynamodb:*"
+          "dynamodb:*",
+          "lambda:*"
         ],
         "Resource": "*"
       }
