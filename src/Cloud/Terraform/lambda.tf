@@ -7,7 +7,7 @@
   handler = "Web::Web.LambdaEntryPoint::FunctionHandlerAsync"
   runtime = "dotnet10"
 
-  role = "arn:aws:iam::043470831800:role/donatecraft-AspNetCoreFunctionRole-JZ3T6L7H5ZXQ"
+  role = aws_iam_role.lambda_role.arn
   
   timeout = 60
   memory_size = 512
