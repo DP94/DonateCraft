@@ -34,6 +34,7 @@ jobs:
           name: Unit tests
           path: '**.trx'
           reporter: dotnet-trx
+          use-actions-summary: 'true'
 
       - name: Publish
         run: dotnet publish --no-build src/Web/Web.csproj -c Release
