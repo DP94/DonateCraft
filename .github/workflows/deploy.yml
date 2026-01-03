@@ -26,7 +26,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.1.9
           terraform_wrapper: false
 
       - name: Terraform init
@@ -43,7 +42,13 @@ jobs:
         id: apply
         run: terraform apply -var=donate_craft_environment=${{ inputs.environment }} -var=git_commit=${{github.event.pull_request.head.sha || github.sha }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -auto-approve
 
-      - run: echo ${{ steps.apply.outputs.execution_arn}}
+      - name: Save terraform outputs
+        id: save-outputs
+        run: echo 'id=$(terraform output -raw execution_arn)' >> "$GITHUB_OUTPUT"
+        
+      - name: Print outputs
+        id: print-outputs
+        run: echo "${{steps.save-outputs.outputs.id}}"
 
       - name: Terraform destroy
         if: ${{ inputs.destroy }}
