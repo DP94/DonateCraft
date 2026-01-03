@@ -71,7 +71,7 @@ resource "aws_lambda_permission" "apigw" {
 
 
 output "execution_arn" {
-  value = aws_api_gateway_rest_api.donatecraft.execution_arn
+  value = aws_api_gateway_rest_api.donatecraft.id
   depends_on = [
     aws_api_gateway_deployment.example,
   ]
