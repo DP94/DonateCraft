@@ -48,7 +48,7 @@ jobs:
 
       - name: Save terraform outputs
         id: save-outputs
-        run: echo 'id=$(terraform output -raw execution_arn)' >> "$GITHUB_OUTPUT"
+        run: echo "id=$(terraform output -raw execution_arn)" >> "$GITHUB_OUTPUT"
         
       - name: Print outputs
         id: print-outputs
