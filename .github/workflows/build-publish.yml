@@ -25,7 +25,16 @@ jobs:
           cors: '*'
 
       - name: Test
-        run: dotnet test -c Release --no-build --verbosity normal
+        run: dotnet test -c Release --no-build --verbosity normal --filter FullyQualifiedName!~IntegrationTest --logger "trx;LogFileName=test-results.trx"
+        
+      - name: Test Report
+        uses: dorny/test-reporter@v2
+        if: ${{ !cancelled() }}
+        with:
+          name: Unit tests
+          path: '**.trx'
+          reporter: dotnet-trx
+          use-actions-summary: 'true'
 
       - name: Publish
         run: dotnet publish --no-build src/Web/Web.csproj -c Release
