@@ -32,7 +32,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: Unit tests
-          path: 'TestResults/*.trx'
+          path: '**.trx'
           reporter: dotnet-trx
 
       - name: Publish

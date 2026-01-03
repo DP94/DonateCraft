@@ -33,5 +33,5 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: Integration tests
-          path: 'TestResults/*.trx'
+          path: '**.trx'
           reporter: dotnet-trx
