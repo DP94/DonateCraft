@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{A1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cloud.Test", "test\Cloud.Test\Cloud.Test.csproj", "{7B30948F-4B9D-4B3A-A10D-398640675C68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration.Test", "test\Integration.Test\Integration.Test.csproj", "{12797CBA-0913-4677-B145-D989852AC370}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{7B30948F-4B9D-4B3A-A10D-398640675C68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B30948F-4B9D-4B3A-A10D-398640675C68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B30948F-4B9D-4B3A-A10D-398640675C68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12797CBA-0913-4677-B145-D989852AC370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12797CBA-0913-4677-B145-D989852AC370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12797CBA-0913-4677-B145-D989852AC370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12797CBA-0913-4677-B145-D989852AC370}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

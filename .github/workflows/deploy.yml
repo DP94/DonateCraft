@@ -43,6 +43,8 @@ jobs:
         id: apply
         run: terraform apply -var=donate_craft_environment=${{ inputs.environment }} -var=git_commit=${{github.event.pull_request.head.sha || github.sha }} -var=just_giving_api_key=${{ secrets.JUST_GIVING_API_KEY }} -auto-approve
 
+      - run: echo ${{ steps.apply.outputs.execution_arn}}
+
       - name: Terraform destroy
         if: ${{ inputs.destroy }}
         id: destroy

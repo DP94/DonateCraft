@@ -68,3 +68,11 @@ resource "aws_lambda_permission" "apigw" {
   # within the API Gateway "REST API".
   source_arn = "${aws_api_gateway_rest_api.donatecraft.execution_arn}/*/*"
 }
+
+
+output "execution_arn" {
+  value = aws_api_gateway_rest_api.donatecraft.execution_arn
+  depends_on = [
+    aws_api_gateway_deployment.example,
+  ]
+}

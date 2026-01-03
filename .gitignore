@@ -13,6 +13,8 @@ test/Core.Test/bin/
 test/Core.Test/obj/
 test/Cloud.Test/obj/
 test/Cloud.Test/bin/
+test/Integration.Test/obj/
+test/Integration.Test/bin/
 .vs
 packages
 .idea/*
