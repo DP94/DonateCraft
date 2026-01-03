@@ -7,6 +7,10 @@ on:
       destroy:
         type: boolean
         default: false
+    outputs:
+      api_id:
+        description: The id of the API in API Gateway
+        value: ${{ jobs.terraform.outputs.id }}
 
 jobs:
   terraform:

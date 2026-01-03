@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Test
-        run: dotnet test ./test/Integration.Test/ -c Release -e TEST_URL= --verbosity normal --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test ./test/Integration.Test/ -c Release -e TEST_URL=${{needs.deploy.outputs.id}} --verbosity normal --logger "trx;LogFileName=test-results.trx"
       - name: Test Report
         uses: dorny/test-reporter@v2
         if: ${{ !cancelled() }}
