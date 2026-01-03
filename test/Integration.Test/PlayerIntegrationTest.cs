@@ -12,7 +12,7 @@ public class PlayerIntegrationTest {
     [OneTimeSetUp]
     public void Setup()
     {
-        this._baseUrl = Environment.GetEnvironmentVariable("TEST_URL") ??  "http://localhost:5000/v1/";
+        this._baseUrl = Environment.GetEnvironmentVariable("TEST_URL") ??  "http://localhost:5000/v1";
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class PlayerIntegrationTest {
         var response = await CreatePlayer(player);
         var location = response.Headers.Location?.ToString();
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
-        Assert.That(location, Is.EqualTo($"http://localhost:5000/v1/Player/{id}"));
+        Assert.That(location, Is.EqualTo($"{this._baseUrl}/Player/{id}"));
     }
 
     [Test]
