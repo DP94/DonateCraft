@@ -28,6 +28,16 @@ public abstract class IntegrationTestBase
         httpRequestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         return await this._client.SendAsync(httpRequestMessage);
     }
+    
+    protected async Task<HttpResponseMessage> CreateDeath(Player player, Death death)
+    {
+        var httpRequestMessage = new HttpRequestMessage();
+        httpRequestMessage.RequestUri = new Uri($"Player/{player.Id}/Death", UriKind.Relative);
+        httpRequestMessage.Method = HttpMethod.Post;
+        httpRequestMessage.Content = new StringContent(JsonSerializer.Serialize(death));
+        httpRequestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        return await this._client.SendAsync(httpRequestMessage);
+    }
 
     protected static T Deserialise<T>(string json)
     {

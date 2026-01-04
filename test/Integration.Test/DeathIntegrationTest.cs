@@ -43,14 +43,4 @@ public class DeathIntegrationTest : IntegrationTestBase
         Assert.That(player.Deaths[0].Reason, Is.EqualTo(deathResponseObject.Reason));
         Assert.That(deathResponseObject.PlayerId, Is.EqualTo(id));
     }
-
-    private async Task<HttpResponseMessage> CreateDeath(Player player, Death death)
-    {
-        var httpRequestMessage = new HttpRequestMessage();
-        httpRequestMessage.RequestUri = new Uri($"Player/{player.Id}/Death", UriKind.Relative);
-        httpRequestMessage.Method = HttpMethod.Post;
-        httpRequestMessage.Content = new StringContent(JsonSerializer.Serialize(death));
-        httpRequestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        return await this._client.SendAsync(httpRequestMessage);
-    }
 }
