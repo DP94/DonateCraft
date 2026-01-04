@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v3
         
       - name: Test
-        run: dotnet test ./test/Integration.Test/ -c Release -e TEST_URL="https://${{needs.deploy.outputs.api_id}}.execute-api.eu-west-2.amazonaws.com/donatecraft-pr${{ github.event.number }}/v1" --verbosity normal --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test ./test/Integration.Test/ -c Release -e TEST_URL="https://${{needs.deploy.outputs.api_id}}.execute-api.eu-west-2.amazonaws.com/donatecraft-pr${{ github.event.number }}/v1/" --verbosity normal --logger "trx;LogFileName=test-results.trx"
         
       - name: Test Report
         uses: dorny/test-reporter@v2
