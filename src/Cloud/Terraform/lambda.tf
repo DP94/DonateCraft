@@ -20,6 +20,7 @@
       DonateCraft__PlayerTableName  = aws_dynamodb_table.player.name
       DonateCraft__LockTableName    = aws_dynamodb_table.lock.name
       DonateCraft__CharityTableName = aws_dynamodb_table.charity.name
+      DonateCraft__RevivalQueueUrl  = aws_sqs_queue.revival_queue.url
     }
   }
 }

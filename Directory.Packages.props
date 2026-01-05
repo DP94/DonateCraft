@@ -10,6 +10,7 @@
     <PackageVersion Include="AWSSDK.Core" Version="4.0.3.6" />
     <PackageVersion Include="AWSSDK.DynamoDBv2" Version="4.0.10.4" />
     <PackageVersion Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.17" />
+    <PackageVersion Include="AWSSDK.SQS" Version="4.0.2.9" />
     <PackageVersion Include="FakeItEasy" Version="8.3.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.1" />

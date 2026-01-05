@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
+using Cloud.Services;
 using Common.Exceptions;
 using Common.Models;
 using Core.Services.Charity;
@@ -23,17 +24,19 @@ public class CallbackController : ControllerBase
     private readonly string _apiKey;
     private readonly string _donateCraftUi;
     private readonly ILogger<CallbackController> _logger;
+    private IRevivalQueueService _revivalQueueService;
 
     private const int DONATION_ID = 0;
     private const int PLAYER_ID = 1;
     private const int DONOR_ID = 2;
 
-    public CallbackController(HttpClient client, IDonationService donationService, ILockService lockService, IOptions<DonateCraftOptions> options, ICharityService charityService, ILogger<CallbackController> logger)
+    public CallbackController(HttpClient client, IDonationService donationService, ILockService lockService, IOptions<DonateCraftOptions> options, ICharityService charityService, IRevivalQueueService revivalQueueService, ILogger<CallbackController> logger)
     {
         this._client = client;
         this._donationService = donationService;
         this._lockService = lockService;
         this._charityService = charityService;
+        this._revivalQueueService = revivalQueueService;
         this._logger = logger;
         this._apiKey = options.Value.JustGivingApiKey;
         this._donateCraftUi = options.Value.DonateCraftUiUrl;
@@ -62,57 +65,64 @@ public class CallbackController : ControllerBase
             return Redirect($"{this._donateCraftUi}?status=error&code=3");
         }
 
-        Lock currentLock = null;
-        try
+        await this._revivalQueueService.Enqueue(new RevivalMessage
         {
-            currentLock = await this._lockService.GetById(player);
-        }
-        catch (ResourceNotFoundException)
-        {
-            this._logger.LogWarning("Lock with id {Player} not found, error code 4", player);
-        }
-        if (currentLock == null)
-        {
-            //In the event of someone donating when no lock is present
-            return Redirect($"{this._donateCraftUi}?status=error&code=4");
-        }
-        if (currentLock.Unlocked)
-        {
-            //Send message here saying lock already unlocked
-            return Redirect($"{this._donateCraftUi}?status=warning");
-        }
-
-        this._client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        var justGivingDonation = await this.GetDonationData(donationId);
-        if (justGivingDonation is not { Status: "Accepted" or "Pending" })
-        {
-            //Send error back here
-            this._logger.LogInformation("Donation was not successful! Status is {Status}, error code 5", justGivingDonation?.Status);
-            return Redirect($"{this._donateCraftUi}?status=error&code=5");
-        }
-
-        var charityData = await GetCharityData(justGivingDonation.CharityId);
-        var name = charityData.Name;
-        var id = justGivingDonation.CharityId;
-        
-        
-        await this._donationService.Create(player, new Donation
-        {
-            Amount = Convert.ToDouble(justGivingDonation.Amount),
-            Id = justGivingDonation.Id.ToString(),
-            CharityId = id,
-            CharityName = name,
-            CreatedDate = DateTime.Now,
-            PaidForId = paidForKey ?? player,
-            Private = string.IsNullOrWhiteSpace(justGivingDonation.Amount)
+            DonationId = donationId,
+            PaidForById = paidForKey,
+            PlayerId = player,
         });
-        var charity = await this._charityService.GetById(id.ToString());
-        charity.DonationCount++;
-        await this._charityService.Update(charity);
 
-        currentLock.DonationId = justGivingDonation.Id.ToString();
-        currentLock.Unlocked = true;
-        await this._lockService.Update(currentLock);
+        // Lock currentLock = null;
+        // try
+        // {
+        //     currentLock = await this._lockService.GetById(player);
+        // }
+        // catch (ResourceNotFoundException)
+        // {
+        //     this._logger.LogWarning("Lock with id {Player} not found, error code 4", player);
+        // }
+        // if (currentLock == null)
+        // {
+        //     //In the event of someone donating when no lock is present
+        //     return Redirect($"{this._donateCraftUi}?status=error&code=4");
+        // }
+        // if (currentLock.Unlocked)
+        // {
+        //     //Send message here saying lock already unlocked
+        //     return Redirect($"{this._donateCraftUi}?status=warning");
+        // }
+        //
+        // this._client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        // var justGivingDonation = await this.GetDonationData(donationId);
+        // if (justGivingDonation is not { Status: "Accepted" or "Pending" })
+        // {
+        //     //Send error back here
+        //     this._logger.LogInformation("Donation was not successful! Status is {Status}, error code 5", justGivingDonation?.Status);
+        //     return Redirect($"{this._donateCraftUi}?status=error&code=5");
+        // }
+        //
+        // var charityData = await GetCharityData(justGivingDonation.CharityId);
+        // var name = charityData.Name;
+        // var id = justGivingDonation.CharityId;
+        //
+        //
+        // await this._donationService.Create(player, new Donation
+        // {
+        //     Amount = Convert.ToDouble(justGivingDonation.Amount),
+        //     Id = justGivingDonation.Id.ToString(),
+        //     CharityId = id,
+        //     CharityName = name,
+        //     CreatedDate = DateTime.Now,
+        //     PaidForId = paidForKey ?? player,
+        //     Private = string.IsNullOrWhiteSpace(justGivingDonation.Amount)
+        // });
+        // var charity = await this._charityService.GetById(id.ToString());
+        // charity.DonationCount++;
+        // await this._charityService.Update(charity);
+        //
+        // currentLock.DonationId = justGivingDonation.Id.ToString();
+        // currentLock.Unlocked = true;
+        // await this._lockService.Update(currentLock);
         return Redirect($"{this._donateCraftUi}/players?status=success");
     }
 
