@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cloud.Test", "test\Cloud.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration.Test", "test\Integration.Test\Integration.Test.csproj", "{12797CBA-0913-4677-B145-D989852AC370}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevivalLambda", "App2\src\RevivalLambda\RevivalLambda.csproj", "{D82A06E5-091A-4E59-A2A3-5BD169AF9D83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevivalLambda", "src\RevivalLambda\RevivalLambda.csproj", "{D82A06E5-091A-4E59-A2A3-5BD169AF9D83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -9,6 +9,8 @@ src/Cloud/bin/
 src/Cloud/DynamoDbLocal/DynamoDBLocal_lib/
 src/Common/obj/
 src/Common/bin/
+src/RevivalLambda/obj/
+src/RevivalLambda/bin/
 test/Core.Test/bin/
 test/Core.Test/obj/
 test/Cloud.Test/obj/
