@@ -25,7 +25,8 @@ resource "aws_iam_role_policy" "dc_lambda_policy" {
           "logs:GetLogEvents",
           "logs:FilterLogEvents",
           "dynamodb:*",
-          "lambda:*"
+          "lambda:*",
+          "sqs:*"
         ],
         "Resource" : "*"
       }
