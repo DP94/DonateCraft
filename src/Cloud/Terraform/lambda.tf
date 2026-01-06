@@ -42,6 +42,6 @@ resource "aws_lambda_function" "revival_lambda" {
 }
 
 resource "aws_lambda_event_source_mapping" "revival_lambda_mapping" {
-  function_name = aws_lambda_function.revival_lambda
+  function_name = aws_lambda_function.revival_lambda.arn
   event_source_arn = aws_sqs_queue.revival_queue.arn
 }
