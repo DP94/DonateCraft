@@ -1,4 +1,4 @@
-﻿resource "aws_api_gateway_rest_api" "donatecraft" {
+resource "aws_api_gateway_rest_api" "donatecraft" {
   name        = "donatecraft${var.donate_craft_environment}"
   description = "Donatecraft API"
 }
@@ -54,8 +54,8 @@ resource "aws_api_gateway_deployment" "example" {
 
 resource "aws_api_gateway_stage" "example" {
   deployment_id = aws_api_gateway_deployment.example.id
-  rest_api_id = aws_api_gateway_rest_api.donatecraft.id
-  stage_name  = "donatecraft${var.donate_craft_environment}"
+  rest_api_id   = aws_api_gateway_rest_api.donatecraft.id
+  stage_name    = "donatecraft${var.donate_craft_environment}"
 }
 
 resource "aws_lambda_permission" "apigw" {

@@ -3,8 +3,11 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Amazon.Lambda.Annotations" Version="1.8.0" />
     <PackageVersion Include="Amazon.Lambda.AspNetCoreServer" Version="9.2.0" />
     <PackageVersion Include="Amazon.Lambda.Core" Version="2.8.0" />
+    <PackageVersion Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
+    <PackageVersion Include="Amazon.Lambda.SQSEvents" Version="2.2.0" />
     <PackageVersion Include="Amazon.Lambda.TestUtilities" Version="3.0.1" />
     <PackageVersion Include="Amazon.Lambda.APIGatewayEvents" Version="2.7.3" />
     <PackageVersion Include="AWSSDK.Core" Version="4.0.3.6" />
@@ -13,6 +16,7 @@
     <PackageVersion Include="AWSSDK.SQS" Version="4.0.2.9" />
     <PackageVersion Include="FakeItEasy" Version="8.3.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="NUnit" Version="4.4.0" />

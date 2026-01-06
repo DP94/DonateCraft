@@ -1,15 +1,15 @@
-﻿resource "aws_lambda_function" "donatecraft" {
+resource "aws_lambda_function" "donatecraft" {
   function_name = "donatecraft${var.donate_craft_environment}"
-  
+
   s3_bucket = "donatecraft"
   s3_key    = "donatecraft_api${var.donate_craft_environment}_${var.git_commit}.zip"
-  
+
   handler = "Web::Web.LambdaEntryPoint::FunctionHandlerAsync"
   runtime = "dotnet10"
 
   role = aws_iam_role.lambda_role.arn
-  
-  timeout = 60
+
+  timeout     = 60
   memory_size = 512
 
   environment {
@@ -23,4 +23,25 @@
       DonateCraft__RevivalQueueUrl  = aws_sqs_queue.revival_queue.url
     }
   }
+}
+
+resource "aws_lambda_function" "revival_lambda" {
+  function_name = "revival-lambda${var.donate_craft_environment}"
+
+  s3_bucket = "donatecraft"
+  s3_key    = "revival-lambda${var.donate_craft_environment}_${var.git_commit}.zip"
+
+  handler = "RevivalLambda::RevivalLambda.Function::HandleRequest"
+
+  runtime = "dotnet10"
+
+  role = aws_iam_role.lambda_role.arn
+
+  timeout     = 120
+  memory_size = 512
+}
+
+resource "aws_lambda_event_source_mapping" "revival_lambda_mapping" {
+  function_name = aws_lambda_function.revival_lambda
+  event_source_arn = aws_sqs_queue.revival_queue.arn
 }
