@@ -37,7 +37,7 @@ resource "aws_lambda_function" "revival_lambda" {
 
   role = aws_iam_role.lambda_role.arn
 
-  timeout     = 120
+  timeout     = 300
   memory_size = 512
 }
 
