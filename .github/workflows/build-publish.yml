@@ -37,7 +37,7 @@ jobs:
           use-actions-summary: 'true'
 
       - name: Publish
-        run: dotnet publish --no-build src/Web/Web.csproj -c Release
+        run: dotnet publish --no-build -c Release
 
       - name: Zip API Lambda
         uses: thedoctor0/zip-release@master
