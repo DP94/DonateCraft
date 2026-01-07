@@ -10,7 +10,7 @@ public class Tests
     [Test]
     public void Test1()
     {
-        new Function();//.HandleRequest(new SQSEvent
+        //new Function().HandleRequest(new SQSEvent
         // {
         //     Records =
         //     [
