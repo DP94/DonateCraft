@@ -46,6 +46,7 @@ resource "aws_lambda_function" "revival_lambda" {
       DonateCraft__JustGivingApiUrl = var.just_giving_api_url
       DonateCraft__PlayerTableName  = aws_dynamodb_table.player.name
       DonateCraft__LockTableName    = aws_dynamodb_table.lock.name
+      DonateCraft__CharityTableName = aws_dynamodb_table.charity.name
     }
   }
 }
