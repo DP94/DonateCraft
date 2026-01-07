@@ -1,10 +1,8 @@
-using System;
 using System.Net.Http.Headers;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.SQSEvents;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Amazon.Lambda.Annotations;
+using Amazon.DynamoDBv2;
 using Cloud.Services;
 using Cloud.Services.Aws;
 using Common.Exceptions;
@@ -13,8 +11,10 @@ using Common.Util;
 using Core.Services.Charity;
 using Core.Services.Donation;
 using Core.Services.Lock;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Lock = Common.Models.Lock;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
@@ -44,6 +44,16 @@ public class Function
         services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
         services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
         services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
+        services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
+        services.AddAWSService<IAmazonDynamoDB>();
+
+        var options = new DonateCraftOptions();
+        var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
+        configuration.Bind(options);
+        var wrapper = Options.Create(options);
+        services.AddSingleton(wrapper);
+        
+        
         var serviceProvider = services.BuildServiceProvider();
         this._donationService = serviceProvider.GetService<IDonationService>();
         this._charityService = serviceProvider.GetService<ICharityService>();
