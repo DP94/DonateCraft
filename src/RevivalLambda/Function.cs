@@ -37,25 +37,7 @@ public class Function
     /// </summary>
     public Function()
     {
-        var services = new ServiceCollection();
-        services.AddSingleton<ILockService, LockService>();
-        services.AddSingleton<ICharityService, CharityService>();
-        services.AddSingleton<IDonationService, DonationService>();
-        services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
-        services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
-        services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
-        services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
-        services.AddAWSService<IAmazonDynamoDB>();
-        services.AddMemoryCache();
-
-        var options = new DonateCraftOptions();
-        var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build().GetSection("DonateCraft");
-        configuration.Bind(options);
-        var wrapper = Options.Create(options);
-        services.AddSingleton(wrapper);
-        
-        
-        var serviceProvider = services.BuildServiceProvider();
+        var serviceProvider = ConfigureServices();
         this._donationService = serviceProvider.GetService<IDonationService>();
         this._charityService = serviceProvider.GetService<ICharityService>();
         this._lockService = serviceProvider.GetService<ILockService>();
@@ -73,7 +55,10 @@ public class Function
         foreach (var record in evnt.Records)
         {
             var json = record.Body;
-            var message = JsonSerializer.Deserialize<RevivalMessage>(json);
+            var message = JsonSerializer.Deserialize<RevivalMessage>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
             var player = message.PlayerId;
             var donationId = message.DonationId;
             var paidForKey = message.PaidForById;
@@ -130,6 +115,7 @@ public class Function
             currentLock.DonationId = justGivingDonation.Id.ToString();
             currentLock.Unlocked = true;
             await this._lockService.Update(currentLock);
+            this._logger.LogInformation("Successfully unlocked player {Player}", player);
         }
     }
     
@@ -174,5 +160,29 @@ public class Function
             throw new InvalidOperationException($"Could not find a charity with id of {charityId}");
         }
         return charityData;
+    }
+
+    private static IServiceProvider ConfigureServices()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ILockService, LockService>();
+        services.AddSingleton<ICharityService, CharityService>();
+        services.AddSingleton<IDonationService, DonationService>();
+        services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
+        services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
+        services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
+        services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
+        services.AddAWSService<IAmazonDynamoDB>();
+        services.AddMemoryCache();
+
+        var options = new DonateCraftOptions();
+        var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build().GetSection("DonateCraft");
+        configuration.Bind(options);
+        var wrapper = Options.Create(options);
+        services.AddSingleton(wrapper);
+        
+        
+        var serviceProvider = services.BuildServiceProvider();
+        return serviceProvider;
     }
 }
