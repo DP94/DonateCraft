@@ -17,6 +17,8 @@ test/Cloud.Test/obj/
 test/Cloud.Test/bin/
 test/Integration.Test/obj/
 test/Integration.Test/bin/
+test/RevivalLambda.Test/obj/
+test/RevivalLambda.Test/bin/
 .vs
 packages
 .idea/*
