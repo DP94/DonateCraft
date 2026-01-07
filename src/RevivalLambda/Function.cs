@@ -49,7 +49,7 @@ public class Function
         services.AddMemoryCache();
 
         var options = new DonateCraftOptions();
-        var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
+        var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build().GetSection("DonateCraft");
         configuration.Bind(options);
         var wrapper = Options.Create(options);
         services.AddSingleton(wrapper);
@@ -67,7 +67,7 @@ public class Function
         };
         this._apiKey =  Environment.GetEnvironmentVariable(Constants.JG_API_KEY);
     }
-
+    
     public async Task HandleRequest(SQSEvent evnt, ILambdaContext context)
     {
         foreach (var record in evnt.Records)
