@@ -1,7 +1,9 @@
 using Amazon.Lambda.Core;
 using Amazon.Lambda.SQSEvents;
 using System.Text.Json;
+using Amazon;
 using Amazon.DynamoDBv2;
+using Amazon.Extensions.NETCore.Setup;
 using Cloud.Services;
 using Cloud.Services.Aws;
 using Common.Models;
@@ -69,7 +71,10 @@ public class Function
         services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
         services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
         services.AddSingleton<IRevivalService, RevivalService>();
-        services.AddAWSService<IAmazonDynamoDB>();
+        services.AddAWSService<IAmazonDynamoDB>(new AWSOptions
+        {
+            Region = RegionEndpoint.EUWest2
+        });
         services.AddMemoryCache();
         services.AddLogging();
         var client = new HttpClient { BaseAddress = new Uri(Environment.GetEnvironmentVariable(Constants.JG_API_URL) ??
