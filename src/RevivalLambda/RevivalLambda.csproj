@@ -14,9 +14,11 @@
         <PackageReference Include="Amazon.Lambda.Core"/>
         <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson"/>
         <PackageReference Include="Amazon.Lambda.SQSEvents" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
         <PackageReference Include="Microsoft.Extensions.Configuration" />
         <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     </ItemGroup>
     <ItemGroup>

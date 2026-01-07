@@ -46,6 +46,7 @@ public class Function
         services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
         services.AddSingleton<IPlayerCloudService, PlayerDynamoDbCloudService>();
         services.AddAWSService<IAmazonDynamoDB>();
+        services.AddMemoryCache();
 
         var options = new DonateCraftOptions();
         var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
