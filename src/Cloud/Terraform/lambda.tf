@@ -39,6 +39,13 @@ resource "aws_lambda_function" "revival_lambda" {
 
   timeout     = 300
   memory_size = 512
+
+  environment {
+    variables = {
+      DonateCraft__JustGivingApiKey = var.just_giving_api_key
+      DonateCraft__JustGivingApiUrl = var.just_giving_api_url
+    }
+  }
 }
 
 resource "aws_lambda_event_source_mapping" "revival_lambda_mapping" {
