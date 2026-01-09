@@ -1,4 +1,5 @@
-﻿using Common.Models.Sort;
+﻿using Common.Models;
+using Common.Models.Sort;
 using Core.Services.Lock;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -54,8 +55,9 @@ public class LockController : WithIdController<Lock>
     {
         aLock.Id = Guid.NewGuid().ToString();
         aLock.Unlocked = false;
+        aLock.Status = LockStatus.Created;
         var newLock = await this._lockService.Create(aLock);
-        return Created($"{this.HttpContext?.Request.GetEncodedUrl()}/{aLock.Id}", newLock);
+        return Created($"{this.HttpContext.Request.GetEncodedUrl()}/{aLock.Id}", newLock);
     }
     
     [HttpPut]

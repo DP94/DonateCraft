@@ -29,5 +29,6 @@ public class LockIntegrationTest : IntegrationTestBase
         var locksObject = Deserialise<List<Lock>>(lockResponse);
         var playerLock = locksObject.First();
         Assert.That(playerLock.Unlocked, Is.False);
+        Assert.That(playerLock.Status, Is.EqualTo(LockStatus.Created));
     }
 }

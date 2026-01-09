@@ -22,6 +22,7 @@ public static class DynamoDbConstants
     public const string LockIdColName = "id";
     public const string LockUnlockedColName = "unlocked";
     public const string LockDonationIdColName = "donationId";
+    public const string LockStatusColName = "status";
     #endregion
     
     #region Charity

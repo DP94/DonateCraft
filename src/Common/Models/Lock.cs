@@ -7,6 +7,8 @@ public class Lock : WithId
     public string DonationId { get; set; }
     
     public Donation Donation { get; set; }
+    
+    public LockStatus Status { get; set; }
 
     public Lock()
     {

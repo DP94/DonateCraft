@@ -1,4 +1,6 @@
-﻿namespace RevivalLambda.Test;
+﻿using NUnit.Framework;
+
+namespace RevivalLambda.Test;
 
 public class Tests
 {

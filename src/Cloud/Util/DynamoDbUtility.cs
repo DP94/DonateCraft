@@ -70,6 +70,7 @@ public static class DynamoDbUtility
         {
             attributeValues.TryAdd(DynamoDbConstants.LockDonationIdColName, new AttributeValue(theLock.DonationId));
         }
+        attributeValues.TryAdd(DynamoDbConstants.LockStatusColName, new AttributeValue { S = Enum.GetName(theLock.Status) });
         return attributeValues; 
     }
     
@@ -157,6 +158,10 @@ public static class DynamoDbUtility
             {
                 newLock.DonationId = donationId.S;
             }
+        }
+        if (attributeValues.TryGetValue(DynamoDbConstants.LockStatusColName, out var status))
+        {
+            newLock.Status = Enum.Parse<LockStatus>(status.S);
         }
             
         return newLock;

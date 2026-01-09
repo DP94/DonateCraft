@@ -20,15 +20,17 @@ public class CallbackController : ControllerBase
     private readonly string _donateCraftUi;
     private readonly ILogger<CallbackController> _logger;
     private readonly IRevivalQueueService _revivalQueueService;
+    private readonly ILockService _lockService;
 
     private const int DonationId = 0;
     private const int PlayerId = 1;
     private const int DonorId = 2;
 
-    public CallbackController(IOptions<DonateCraftOptions> options, IRevivalQueueService revivalQueueService, ILogger<CallbackController> logger)
+    public CallbackController(IOptions<DonateCraftOptions> options, IRevivalQueueService revivalQueueService, ILockService lockService, ILogger<CallbackController> logger)
     {
         this._revivalQueueService = revivalQueueService;
         this._logger = logger;
+        this._lockService = lockService;
         this._donateCraftUi = options.Value.DonateCraftUiUrl;
     }
 
@@ -61,6 +63,19 @@ public class CallbackController : ControllerBase
             PaidForById = paidForKey,
             PlayerId = player,
         });
+        
+        try
+        {
+            var currentLock = await this._lockService.GetById(player);
+            currentLock.Status = LockStatus.Processing;
+            await this._lockService.Update(currentLock);
+        }
+        catch (ResourceNotFoundException)
+        {
+            //In the event of someone donating when no lock is present
+            return Redirect($"{this._donateCraftUi}?status=error&code=4");
+        }
+        
         return Redirect($"{this._donateCraftUi}/players?status=success");
     }
 

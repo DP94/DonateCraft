@@ -43,17 +43,14 @@ public class RevivalService : IRevivalService
         }
         catch (ResourceNotFoundException)
         {
-            this._logger.LogWarning("Lock with id {Player} not found, error code 4", player);
-        }
-        if (currentLock == null)
-        {
-            //In the event of someone donating when no lock is present
-            return; //Redirect($"{this._donateCraftUi}?status=error&code=4");
+            throw new InvalidOperationException($"Lock with id {player} not found, error code 4");
         }
         if (currentLock.Unlocked)
         {
             //Send message here saying lock already unlocked
-            return; //Redirect($"{this._donateCraftUi}?status=warning");
+            currentLock.Status = LockStatus.Unlocked;
+            await this._lockService.Update(currentLock);
+            return;;
         }
 
         this._client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -63,6 +60,8 @@ public class RevivalService : IRevivalService
             //Send error back here
             this._logger.LogInformation("Donation was not successful! Status is {Status}, error code 5",
                 justGivingDonation?.Status);
+            currentLock.Status = LockStatus.Error;
+            await this._lockService.Update(currentLock);
             return; //Redirect($"{this._donateCraftUi}?status=error&code=5");
         }
 
@@ -87,6 +86,7 @@ public class RevivalService : IRevivalService
 
         currentLock.DonationId = justGivingDonation.Id.ToString();
         currentLock.Unlocked = true;
+        currentLock.Status = LockStatus.Unlocked;
         await this._lockService.Update(currentLock);
         this._logger.LogInformation("Successfully unlocked player {Player}", player);
     }

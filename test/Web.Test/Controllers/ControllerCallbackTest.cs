@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Cloud.Services;
+using Common.Exceptions;
 using Common.Models;
 using Core.Services.Charity;
 using Core.Services.Donation;
@@ -14,11 +15,11 @@ using Lock = Common.Models.Lock;
 
 namespace Web.Test.Controllers;
 
-[Ignore("Currently being refactored")]
 public class ControllerCallbackTest
 {
 
     private HttpClient _client;
+    private ILockService _lockService;
     private CallbackController _controller;
     private IRevivalQueueService  _queueService;
     private IOptions<DonateCraftOptions> _options;
@@ -29,13 +30,14 @@ public class ControllerCallbackTest
     {
         this._queueService  = A.Fake<IRevivalQueueService>();
         this._logger = A.Fake<ILogger<CallbackController>>();
+        this._lockService =  A.Fake<ILockService>();
         this._options = Options.Create(new DonateCraftOptions
         {
             DonateCraftUiUrl = "test.com",
             JustGivingApiKey = "123",
             JustGivingApiUrl = "justgiving.com"
         });
-        this._controller = new CallbackController(this._options, this._queueService, this._logger);
+        this._controller = new CallbackController(this._options, this._queueService, this._lockService, this._logger);
     }
 
     [Test]
@@ -64,5 +66,14 @@ public class ControllerCallbackTest
     {
         var result = await this._controller.Callback("~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         Assert.That("test.com?status=error&code=3", Is.EqualTo(result.Url));
+    }
+    
+    [Test]
+    public async Task CallbackController_RedirectsToUi_WhenLockNotFound()
+    {
+        //FakeItEasy returns a blank proxy (but not null!) when stubs are not specified...
+        A.CallTo(() => this._lockService.GetById(A<string>.Ignored)).Throws<ResourceNotFoundException>();
+        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
+        Assert.That("test.com?status=error&code=4", Is.EqualTo(result.Url));
     }
 }
