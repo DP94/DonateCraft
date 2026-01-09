@@ -65,7 +65,6 @@ public static class DynamoDbUtility
     {
         var attributeValues = new Dictionary<string, AttributeValue>();
         attributeValues.TryAdd(DynamoDbConstants.LockIdColName, new AttributeValue(theLock.Id));
-        attributeValues.TryAdd(DynamoDbConstants.LockUnlockedColName, new AttributeValue {BOOL = theLock.Unlocked});
         if (theLock.DonationId != null)
         {
             attributeValues.TryAdd(DynamoDbConstants.LockDonationIdColName, new AttributeValue(theLock.DonationId));
@@ -149,11 +148,9 @@ public static class DynamoDbUtility
     {
         var newLock = new Lock();
 
-        if (attributeValues.TryGetValue(DynamoDbConstants.LockIdColName, out var id) &&
-            attributeValues.TryGetValue(DynamoDbConstants.LockUnlockedColName, out var unlocked))
+        if (attributeValues.TryGetValue(DynamoDbConstants.LockIdColName, out var id))
         {
             newLock.Id = id.S;
-            newLock.Unlocked = unlocked.BOOL ?? false;
             if (attributeValues.TryGetValue(DynamoDbConstants.LockDonationIdColName, out var donationId))
             {
                 newLock.DonationId = donationId.S;

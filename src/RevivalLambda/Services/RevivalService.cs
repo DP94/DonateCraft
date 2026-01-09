@@ -45,12 +45,12 @@ public class RevivalService : IRevivalService
         {
             throw new InvalidOperationException($"Lock with id {player} not found, error code 4");
         }
-        if (currentLock.Unlocked)
+        if (currentLock.Status == LockStatus.Unlocked)
         {
             //Send message here saying lock already unlocked
             currentLock.Status = LockStatus.Unlocked;
             await this._lockService.Update(currentLock);
-            return;;
+            return;
         }
 
         this._client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -85,7 +85,6 @@ public class RevivalService : IRevivalService
         await this._charityService.Update(charity);
 
         currentLock.DonationId = justGivingDonation.Id.ToString();
-        currentLock.Unlocked = true;
         currentLock.Status = LockStatus.Unlocked;
         await this._lockService.Update(currentLock);
         this._logger.LogInformation("Successfully unlocked player {Player}", player);

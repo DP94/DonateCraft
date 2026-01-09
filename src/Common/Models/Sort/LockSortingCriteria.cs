@@ -14,15 +14,15 @@ public class LockSortCriteria : SortCriteriaBase<Lock>
         };
     }
 
-    public override void DoSort(SortColumn sortColumn, List<Lock> charities)
+    public override void DoSort(SortColumn sortColumn, List<Lock> locks)
     {
         if (sortColumn.Id == IdSortColumn.Id)
         {
-            charities.Sort((lock1, lock2) => string.Compare(lock1.Id, lock2.Id, StringComparison.Ordinal));
+            locks.Sort((lock1, lock2) => string.Compare(lock1.Id, lock2.Id, StringComparison.Ordinal));
         }
         else if (sortColumn.Id == UnlockedSortColumn.Id)
         {
-            charities.Sort((lock1, lock2) => lock1.Unlocked.CompareTo(lock2.Unlocked));
+            locks.Sort((lock1, lock2) => lock1.Status.CompareTo(lock2.Status));
         }
     }
 }

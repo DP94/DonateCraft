@@ -72,7 +72,7 @@ public class LockDynamoDbCloudServiceTest
         await this._cloudService.Create(newLock);
         var retrievedLock = await GetLock(newLock.Id);
         Assert.That(newLock.Id, Is.EqualTo(retrievedLock.Id));
-        Assert.That(newLock.Unlocked, Is.EqualTo(retrievedLock.Unlocked));
+        Assert.That(newLock.Status, Is.EqualTo(LockStatus.Created));
     }
     
     [Test]
@@ -90,7 +90,7 @@ public class LockDynamoDbCloudServiceTest
         await this._cloudService.Create(newLock);
         var retrievedLock = await this._cloudService.GetLock(newLock.Id);
         Assert.That(newLock.Id, Is.EqualTo(retrievedLock.Id));
-        Assert.That(newLock.Unlocked, Is.EqualTo(retrievedLock.Unlocked));
+        Assert.That(newLock.Status, Is.EqualTo(newLock.Status));
     }
 
     [Test]
@@ -180,7 +180,7 @@ public class LockDynamoDbCloudServiceTest
     public void UpdateLock_ThatDoesntExist_ThrowsResourceNotFoundException()
     {
         Assert.ThrowsAsync<ResourceNotFoundException>(() =>
-            this._cloudService.UpdateLock(new Lock(Guid.NewGuid().ToString(), false)));
+            this._cloudService.UpdateLock(new Lock(Guid.NewGuid().ToString())));
     }
     
     //Purposefully not using the service method for GET for test code isolation
@@ -208,7 +208,7 @@ public class LockDynamoDbCloudServiceTest
         return new Lock
         {
             Id = Guid.NewGuid().ToString(),
-            Unlocked = false
+            Status = LockStatus.Created
         };
     }
 

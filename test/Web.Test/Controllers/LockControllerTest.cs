@@ -19,7 +19,7 @@ public class LockWithIdControllerTest : AbstractWithIdControllerTest<LockControl
 
     protected override Lock CreateData()
     {
-        return new Lock("test", false);
+        return new Lock("test");
     }
 
 }

@@ -54,7 +54,6 @@ public class LockController : WithIdController<Lock>
     public async override Task<IActionResult> Create([FromBody] [SwaggerRequestBody("The lock to create - sets the ID and Unlocked value automatically")] Lock aLock)
     {
         aLock.Id = Guid.NewGuid().ToString();
-        aLock.Unlocked = false;
         aLock.Status = LockStatus.Created;
         var newLock = await this._lockService.Create(aLock);
         return Created($"{this.HttpContext.Request.GetEncodedUrl()}/{aLock.Id}", newLock);

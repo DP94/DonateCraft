@@ -122,7 +122,7 @@ public class DeathDynamoDbCloudServiceTest
         await this.CreateDeathForPlayer(playerId, deathId);
         var theLock = await this._lockCloudService.GetLock(playerId);
         Assert.That(playerId, Is.EqualTo(theLock.Id));
-        Assert.That(theLock.Unlocked, Is.False);
+        Assert.That(theLock.Status, Is.EqualTo(LockStatus.Created));
     }
     
     [Test]

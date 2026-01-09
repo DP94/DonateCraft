@@ -43,7 +43,6 @@ public class DeathDynamoDbStorageService : IDeathCloudService
         await this._lockCloudService.Create(new Lock
         {
             Id = playerId,
-            Unlocked = false,
             Status = LockStatus.Created
         });
         LambdaLogger.Log("Created lock");

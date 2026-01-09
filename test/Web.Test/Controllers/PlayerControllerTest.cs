@@ -25,7 +25,7 @@ public class PlayerWithIdControllerTest : AbstractWithIdControllerTest<PlayerCon
         A.CallTo(() => this._service.GetAll()).Returns(players);
         A.CallTo(() => this._lockService.GetAll()).Returns(new List<Lock>()
         {
-            new("ghi", true)
+            new("ghi")
         });
 
         var result = await this._controller.GetAll() as ObjectResult;
