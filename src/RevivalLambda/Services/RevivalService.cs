@@ -47,9 +47,6 @@ public class RevivalService : IRevivalService
         }
         if (currentLock.Status == LockStatus.Unlocked)
         {
-            //Send message here saying lock already unlocked
-            currentLock.Status = LockStatus.Unlocked;
-            await this._lockService.Update(currentLock);
             return;
         }
 
