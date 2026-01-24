@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using Cloud.Services;
+using Common.Exceptions;
 using Common.Models;
 using Core.Services.Charity;
 using Core.Services.Donation;
@@ -17,29 +19,25 @@ public class ControllerCallbackTest
 {
 
     private HttpClient _client;
-    private IDonationService _donationService;
     private ILockService _lockService;
-    private ICharityService _charityService;
     private CallbackController _controller;
+    private IRevivalQueueService  _queueService;
     private IOptions<DonateCraftOptions> _options;
     private ILogger<CallbackController>  _logger;
 
     [SetUp]
-    public async Task SetUp()
+    public void SetUp()
     {
-        this._client = new HttpClient(FakeHttpMessageHandler.GetHttpMessageHandler("{\"Status\": \"Accepted\"}", HttpStatusCode.OK));
-        this._client.BaseAddress = new Uri("http://justgiving.com");
-        this._donationService = A.Fake<IDonationService>();
-        this._charityService = A.Fake<ICharityService>();
-        this._lockService = A.Fake<ILockService>();
+        this._queueService  = A.Fake<IRevivalQueueService>();
         this._logger = A.Fake<ILogger<CallbackController>>();
+        this._lockService =  A.Fake<ILockService>();
         this._options = Options.Create(new DonateCraftOptions
         {
             DonateCraftUiUrl = "test.com",
             JustGivingApiKey = "123",
             JustGivingApiUrl = "justgiving.com"
         });
-        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService, this._logger);
+        this._controller = new CallbackController(this._options, this._queueService, this._lockService, this._logger);
     }
 
     [Test]
@@ -69,89 +67,13 @@ public class ControllerCallbackTest
         var result = await this._controller.Callback("~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         Assert.That("test.com?status=error&code=3", Is.EqualTo(result.Url));
     }
-
-    [Test]
-    public async Task CallbackController_RedirectsToUi_WhenDonationIsNotSuccessOrPending()
-    {
-        this._client = new HttpClient(FakeHttpMessageHandler.GetHttpMessageHandler("{\"Status\": \"Failed\"}", HttpStatusCode.OK));
-        this._client.BaseAddress = new Uri("http://justgiving.com");
-        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService, this._logger);
-        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
-        Assert.That("test.com?status=error&code=5", Is.EqualTo(result.Url));
-    }
     
     [Test]
     public async Task CallbackController_RedirectsToUi_WhenLockNotFound()
     {
         //FakeItEasy returns a blank proxy (but not null!) when stubs are not specified...
-        A.CallTo(() => this._lockService.GetById(A<string>.Ignored)).Returns((Lock)null);
+        A.CallTo(() => this._lockService.GetById(A<string>.Ignored)).Throws<ResourceNotFoundException>();
         var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
         Assert.That("test.com?status=error&code=4", Is.EqualTo(result.Url));
-    }
-    
-        
-    [Test]
-    public async Task CallbackController_RedirectsToUi_WhenLock_AlreadyUnlocked()
-    {
-        A.CallTo(() => this._lockService.GetById(A<string>.Ignored)).Returns(new Lock()
-        {
-            Unlocked = true
-        });
-        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
-        Assert.That("test.com?status=warning", Is.EqualTo(result.Url));
-    }
-    
-    [Test]
-    public async Task CallbackController_SuccessfullyCreatesDonation_AndUnlocksLock()
-    {
-        this._client = new HttpClient(FakeHttpMessageHandler.GetHttpMessageHandler(
-            "{\"amount\":\"1.7441\",\"donationRef\":\"115070563\",\"id\":1500333570,\"status\":\"Accepted\",\"charityId\":2201, \"name\":\"Test\"}",
-            HttpStatusCode.OK));
-        this._client.BaseAddress = new Uri("http://justgiving.com");
-        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService, this._logger);
-        var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
-        A.CallTo(() => this._lockService.GetById(theLock.Id)).Returns(theLock);
-
-        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747") as RedirectResult;
-        
-        A.CallTo(() => this._donationService.Create("5ba92742-af9d-4ad6-a5a7-c768dd9bc747",
-                A<Donation>.That.Matches(donation =>
-                    donation.Amount == 1.7441 &&
-                    donation.CharityName == "Test" &&
-                    donation.CharityId == 2201 &&
-                    donation.Id == "1500333570" &&
-                    donation.PaidForId == "5ba92742-af9d-4ad6-a5a7-c768dd9bc747")))
-            .MustHaveHappenedOnceExactly();
-        A.CallTo(() => this._lockService.Update(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
-            .MustHaveHappenedOnceExactly();
-
-        Assert.That("test.com/players?status=success", Is.EqualTo(result.Url));
-    }
-    
-    [Test]
-    public async Task CallbackController_SuccessfullyCreatesDonation_PaidForByDifferentPlayer_AndUnlocksLock()
-    {
-        this._client = new HttpClient(FakeHttpMessageHandler.GetHttpMessageHandler(
-            "{\"amount\":\"1.7441\",\"donationRef\":\"115070563\",\"id\":1500333570,\"status\":\"Accepted\",\"charityId\":2201, \"name\":\"Test\"}",
-            HttpStatusCode.OK));
-        this._client.BaseAddress = new Uri("http://justgiving.com");
-        this._controller = new CallbackController(this._client, this._donationService, this._lockService, this._options, this._charityService, this._logger);
-        var theLock = new Lock { Id = "5ba92742-af9d-4ad6-a5a7-c768dd9bc747" };
-        A.CallTo(() => this._lockService.GetById(theLock.Id)).Returns(theLock);
-
-        var result = await this._controller.Callback("1~5ba92742-af9d-4ad6-a5a7-c768dd9bc747~3a0c7a69-c12f-4f7f-9aaf-3345bb0f2e38") as RedirectResult;
-        
-        A.CallTo(() => this._donationService.Create("5ba92742-af9d-4ad6-a5a7-c768dd9bc747",
-                A<Donation>.That.Matches(donation =>
-                    donation.Amount == 1.7441 &&
-                    donation.CharityName == "Test" &&
-                    donation.CharityId == 2201 &&
-                    donation.Id == "1500333570" &&
-                    donation.PaidForId == "3a0c7a69-c12f-4f7f-9aaf-3345bb0f2e38")))
-            .MustHaveHappenedOnceExactly();
-        A.CallTo(() => this._lockService.Update(A<Lock>.That.Matches(l => l.Unlocked == true && l.Id == theLock.Id && l.DonationId == "1500333570")))
-            .MustHaveHappenedOnceExactly();
-
-        Assert.That("test.com/players?status=success", Is.EqualTo(result.Url));
     }
 }

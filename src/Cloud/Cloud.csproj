@@ -10,6 +10,7 @@
         <PackageReference Include="AWSSDK.Core" />
         <PackageReference Include="AWSSDK.DynamoDBv2" />
         <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" />
+        <PackageReference Include="AWSSDK.SQS" />
         <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.Options" />
     </ItemGroup>

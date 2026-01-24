@@ -35,7 +35,7 @@ public class DeathDynamoDbStorageService : IDeathCloudService
     public async Task<Death> CreateDeath(string playerId, Death death)
     {
         var player = await this._playerCloudService.GetPlayerById(playerId);
-        LambdaLogger.Log($"Player: {player.ToString()}");
+        LambdaLogger.Log($"Player: {player}");
         player.Deaths.Add(death);
         await this._playerCloudService.UpdatePlayer(player);
         LambdaLogger.Log("Updated player");
@@ -43,7 +43,7 @@ public class DeathDynamoDbStorageService : IDeathCloudService
         await this._lockCloudService.Create(new Lock
         {
             Id = playerId,
-            Unlocked = false
+            Status = LockStatus.Created
         });
         LambdaLogger.Log("Created lock");
         

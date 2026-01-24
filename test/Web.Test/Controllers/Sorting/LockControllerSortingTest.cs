@@ -21,10 +21,10 @@ public class LockControllerSortingTest : AbstractControllerSortingTest<Lock, Loc
 
     protected override List<Lock> CreateData()
     {
-        return new List<Lock>
-        {
-            new("abc", false),
-            new("ghi", false)
-        };
+        return
+        [
+            new Lock("abc"),
+            new Lock("ghi")
+        ];
     }
 }

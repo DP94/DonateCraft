@@ -15,4 +15,6 @@ public class DonateCraftOptions
     public string LockTableName { get; set; }
     
     public string CharityTableName { get; set; }
+    
+    public string RevivalQueueUrl { get; set; }
 }

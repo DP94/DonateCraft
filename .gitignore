@@ -9,12 +9,16 @@ src/Cloud/bin/
 src/Cloud/DynamoDbLocal/DynamoDBLocal_lib/
 src/Common/obj/
 src/Common/bin/
+src/RevivalLambda/obj/
+src/RevivalLambda/bin/
 test/Core.Test/bin/
 test/Core.Test/obj/
 test/Cloud.Test/obj/
 test/Cloud.Test/bin/
 test/Integration.Test/obj/
 test/Integration.Test/bin/
+test/RevivalLambda.Test/obj/
+test/RevivalLambda.Test/bin/
 .vs
 packages
 .idea/*

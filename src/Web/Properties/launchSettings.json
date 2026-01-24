@@ -10,7 +10,8 @@
         "DonateCraft__JustGivingApiKey":"redacted",
         "DonateCraft__JustGivingApiUrl":"https://api.staging.justgiving.com/",
         "DonateCraft__LockTableName":"Lock",
-        "DonateCraft__PlayerTableName":"Player"
+        "DonateCraft__PlayerTableName":"Player",
+        "DonateCraft__RevivalQueueUrl": "https://sqs.eu-west-2.amazonaws.com/043470831800/revival-queue-pr69"
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }

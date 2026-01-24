@@ -2,6 +2,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
+using Amazon.SQS;
 using Cloud.DynamoDbLocal;
 using Cloud.Services;
 using Cloud.Services.Aws;
@@ -34,6 +35,11 @@ public class Startup
             Region = RegionEndpoint.EUWest2
         };
         var env = Environment.GetEnvironmentVariable(Constants.ASPNETCORE_ENVIRONMENT);
+        services.AddAWSService<IAmazonSQS>(new AWSOptions
+        {
+            Region = RegionEndpoint.EUWest2
+        });
+        services.AddDefaultAWSOptions(awsOptions);
         if (env == "LOCAL")
         {
             var localDynamo = new LocalDynamoDbSetup();
@@ -43,8 +49,7 @@ public class Startup
             awsOptions.Credentials = new BasicAWSCredentials("x", "x");
             awsOptions.DefaultClientConfig.ServiceURL = "http://localhost:8000";
         }
-
-        services.AddDefaultAWSOptions(awsOptions);
+        
         services.AddAWSService<IAmazonDynamoDB>(awsOptions);
         RegisterServices(services);
 
@@ -121,6 +126,7 @@ public class Startup
         services.AddSingleton<ILockCloudService, LockDynamoDbCloudService>();
         services.AddSingleton<ICharityCloudService, CharityDynamoDbCloudService>();
         services.AddSingleton<IDonationCloudService, DonationDynamoDbCloudService>();
+        services.AddSingleton<IRevivalQueueService, RevivalQueueService>();
         services.AddLogging();
     }
 }
