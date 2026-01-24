@@ -25,5 +25,5 @@ jobs:
 
       - name: Cleanup S3
         run: |
-          aws s3 rm s3://donatecraft --recursive --exclude "*" --include "*pr-${{ github.event.number }}*"
-          aws s3 rm s3://donatecraft-terraform --recursive --exclude "*" --include "pr-${{ github.event.number }}*"
+          aws s3 rm s3://donatecraft --recursive --exclude "*" --include "*-pr${{ github.event.number }}*"
+          aws s3 rm s3://donatecraft-terraform --recursive --exclude "*" --include "-pr${{ github.event.number }}*"
