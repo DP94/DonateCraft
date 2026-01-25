@@ -73,10 +73,10 @@ public class CallbackController : ControllerBase
         catch (ResourceNotFoundException)
         {
             //In the event of someone donating when no lock is present
-            return Redirect($"{this._donateCraftUi}?status=error&code=4");
+            return Redirect($"{this._donateCraftUi}?revivals=error&code=4");
         }
         
-        return Redirect($"{this._donateCraftUi}/players?status=success");
+        return Redirect($"{this._donateCraftUi}/revivals?status=success");
     }
 
 
