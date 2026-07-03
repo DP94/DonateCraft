@@ -76,7 +76,7 @@ public class CallbackController : ControllerBase
             return Redirect($"{this._donateCraftUi}?status=error&code=4");
         }
         
-        return Redirect($"{this._donateCraftUi}/players?status=success");
+        return Redirect($"{this._donateCraftUi}/revivals?status=success");
     }
 
 
