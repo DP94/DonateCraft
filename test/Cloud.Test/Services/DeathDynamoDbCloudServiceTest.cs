@@ -150,6 +150,51 @@ public class DeathDynamoDbCloudServiceTest
     }
     
     [Test]
+    public async Task CreateDeath_SpendsCredit_AndSkipsLock_WhenPlayerHasCredits()
+    {
+        var playerId = Guid.NewGuid().ToString();
+        var deathId = Guid.NewGuid().ToString();
+        var player = new Player
+        {
+            Id = playerId,
+            Name = "Dan",
+            Credits = 3
+        };
+        await this._playerCloudService.CreatePlayer(player);
+
+        var death = new Death { Id = deathId, Reason = "Test", CreatedDate = DateTime.Now, PlayerId = playerId };
+        var created = await this._deathCloudService.CreateDeath(playerId, death);
+
+        Assert.That(created.AutoRevived, Is.True);
+        var reloaded = await this._playerCloudService.GetPlayerById(playerId);
+        Assert.That(reloaded.Credits, Is.EqualTo(2));
+        Assert.ThrowsAsync<ResourceNotFoundException>(() => this._lockCloudService.GetLock(playerId));
+    }
+
+    [Test]
+    public async Task CreateDeath_DoesNotSpendCredit_WhenPlayerHasZero()
+    {
+        var playerId = Guid.NewGuid().ToString();
+        var deathId = Guid.NewGuid().ToString();
+        var player = new Player
+        {
+            Id = playerId,
+            Name = "Dan",
+            Credits = 0
+        };
+        await this._playerCloudService.CreatePlayer(player);
+
+        var death = new Death { Id = deathId, Reason = "Test", CreatedDate = DateTime.Now, PlayerId = playerId };
+        var created = await this._deathCloudService.CreateDeath(playerId, death);
+
+        Assert.That(created.AutoRevived, Is.False);
+        var reloaded = await this._playerCloudService.GetPlayerById(playerId);
+        Assert.That(reloaded.Credits, Is.EqualTo(0));
+        var theLock = await this._lockCloudService.GetLock(playerId);
+        Assert.That(theLock.Status, Is.EqualTo(LockStatus.Created));
+    }
+
+    [Test]
     public async Task DeleteDeath_SuccessfullyDeletesDeathFromPlayer()
     {
         var playerId = Guid.NewGuid().ToString();

@@ -9,4 +9,7 @@ public static class Constants
 
     public const string SORT_BY = "sortBy";
     public const string SORT_ORDER = "sortOrder";
+
+    public const int MaxRevivalCredits = 5;
+    public const decimal CreditPriceGbp = 2m;
 }

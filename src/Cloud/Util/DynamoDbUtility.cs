@@ -13,6 +13,7 @@ public static class DynamoDbUtility
         var attributeValues = new Dictionary<string, AttributeValue>();
         attributeValues.TryAdd(DynamoDbConstants.PlayerIdColName, new AttributeValue(player.Id));
         attributeValues.TryAdd(DynamoDbConstants.PlayerNameColName, new AttributeValue(player.Name));
+        attributeValues.TryAdd(DynamoDbConstants.PlayerCreditsColName, new AttributeValue { N = player.Credits.ToString(CultureInfo.InvariantCulture) });
         if (player.Deaths?.Count > 0)
         {
             var deathList = new AttributeValue
@@ -58,6 +59,7 @@ public static class DynamoDbUtility
         attributeValues.TryAdd(DynamoDbConstants.DeathPlayerIdColName, new AttributeValue(death.PlayerId));
         attributeValues.TryAdd(DynamoDbConstants.DeathReasonColName, new AttributeValue(death.Reason));
         attributeValues.TryAdd(DynamoDbConstants.DeathCreatedDateColName, new AttributeValue(death.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")));
+        attributeValues.TryAdd(DynamoDbConstants.DeathAutoRevivedColName, new AttributeValue { BOOL = death.AutoRevived });
         return attributeValues;
     }
     
@@ -106,6 +108,11 @@ public static class DynamoDbUtility
             player.Name = name.S;
         }
 
+        if (attributeValues.TryGetValue(DynamoDbConstants.PlayerCreditsColName, out var credits) && !string.IsNullOrEmpty(credits.N))
+        {
+            player.Credits = Convert.ToInt32(credits.N);
+        }
+
         if (criteria.WithDeaths && attributeValues.TryGetValue(DynamoDbConstants.PlayerDeathsColName, out var deaths))
         {
             foreach (var death in deaths.L.Select(deathAttributes => GetDeathFromAttributes(deathAttributes.M)))
@@ -140,7 +147,12 @@ public static class DynamoDbUtility
             death.Reason = reason.S;
             death.CreatedDate = DateTime.ParseExact(createdDate.S, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
-            
+
+        if (attributeValues.TryGetValue(DynamoDbConstants.DeathAutoRevivedColName, out var autoRevived))
+        {
+            death.AutoRevived = autoRevived.BOOL ?? false;
+        }
+
         return death;
     }
     

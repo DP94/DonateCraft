@@ -3,11 +3,13 @@
 public class Player : WithId
 {
     public string Name { get; set; }
-    
+
     public bool IsDead { get; set; }
-    
+
+    public int Credits { get; set; }
+
     public List<Death> Deaths { get; set; }
-    
+
     public List<Donation> Donations { get; set; }
 
     public Player()
@@ -15,7 +17,7 @@ public class Player : WithId
         Deaths = new List<Death>();
         Donations = new List<Donation>();
     }
-    
+
     public Player(string id, string name)
     {
         Id = id;

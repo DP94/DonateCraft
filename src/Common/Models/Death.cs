@@ -6,6 +6,8 @@ public class Death : WithPlayerId
 
     public DateTime CreatedDate { get; set; }
 
+    public bool AutoRevived { get; set; }
+
     public Death()
     {
     }

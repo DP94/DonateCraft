@@ -111,6 +111,38 @@ public class PlayerDynamoDbStorageServiceTest
     }
 
     [Test]
+    public async Task CreatePlayer_PersistsCredits()
+    {
+        var player = new Player
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = "Test",
+            Credits = 3
+        };
+        await this._cloudService.CreatePlayer(player);
+        var retrievedPlayer = await this._cloudService.GetPlayerById(player.Id);
+        Assert.That(retrievedPlayer.Credits, Is.EqualTo(3));
+    }
+
+    [Test]
+    public async Task GetPlayer_DefaultsCreditsToZero_WhenAttributeMissing()
+    {
+        var id = Guid.NewGuid().ToString();
+        await this._dynamoDb.PutItemAsync(new PutItemRequest
+        {
+            TableName = DynamoDbConstants.PlayerTableName,
+            Item = new Dictionary<string, AttributeValue>
+            {
+                { DynamoDbConstants.PlayerIdColName, new AttributeValue(id) },
+                { DynamoDbConstants.PlayerNameColName, new AttributeValue("LegacyPlayer") }
+            }
+        });
+
+        var retrievedPlayer = await this._cloudService.GetPlayerById(id);
+        Assert.That(retrievedPlayer.Credits, Is.EqualTo(0));
+    }
+
+    [Test]
     public async Task UpdatePlayer_SuccessfullyUpdatesPlayer()
     {
         var player = new Player
