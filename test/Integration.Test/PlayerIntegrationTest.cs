@@ -43,5 +43,23 @@ public class PlayerIntegrationTest : IntegrationTestBase
         Assert.That(responsePlayer.Name, Is.EqualTo(player.Name));
         Assert.That(responsePlayer.Id, Is.EqualTo(player.Id));
         Assert.That(responsePlayer.IsDead, Is.EqualTo(player.IsDead));
+        Assert.That(responsePlayer.Credits, Is.EqualTo(0));
+    }
+
+    [Test]
+    public async Task CreatePlayer_PersistsCredits()
+    {
+        var player = new Player
+        {
+            Name = Guid.NewGuid().ToString(),
+            Id = Guid.NewGuid().ToString(),
+            Credits = 3
+        };
+        var createResponse = await CreatePlayer(player);
+        var location = createResponse.Headers.Location?.ToString();
+
+        var response = await this._client.GetAsync(location);
+        var responsePlayer = Deserialise<Player>(await response.Content.ReadAsStringAsync());
+        Assert.That(responsePlayer.Credits, Is.EqualTo(3));
     }
 }

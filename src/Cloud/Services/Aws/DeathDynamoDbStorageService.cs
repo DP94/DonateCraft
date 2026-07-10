@@ -36,6 +36,18 @@ public class DeathDynamoDbStorageService : IDeathCloudService
     {
         var player = await this._playerCloudService.GetPlayerById(playerId);
         LambdaLogger.Log($"Player: {player}");
+
+        if (player.Credits > 0)
+        {
+            player.Credits--;
+            death.AutoRevived = true;
+            player.Deaths.Add(death);
+            await this._playerCloudService.UpdatePlayer(player);
+            LambdaLogger.Log($"Auto-revived player {playerId} using a credit ({player.Credits} remaining)");
+            return death;
+        }
+
+        death.AutoRevived = false;
         player.Deaths.Add(death);
         await this._playerCloudService.UpdatePlayer(player);
         LambdaLogger.Log("Updated player");
@@ -46,7 +58,7 @@ public class DeathDynamoDbStorageService : IDeathCloudService
             Status = LockStatus.Created
         });
         LambdaLogger.Log("Created lock");
-        
+
         return death;
     }
 
